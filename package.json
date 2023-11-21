@@ -1,0 +1,28 @@
+{
+  "name": "delivery-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "@types/node": "^20.9.3",
+    "prisma": "^5.6.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThiLourenco/delivery-backend.git"
+  },
+  "author": "thilourenco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ThiLourenco/delivery-backend/issues"
+  },
+  "homepage": "https://github.com/ThiLourenco/delivery-backend#readme",
+  "dependencies": {
+    "@prisma/client": "5.6.0"
+  }
+}
