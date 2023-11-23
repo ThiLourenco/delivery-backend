@@ -7,10 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Establishment {
+  id             Int     @id @default(autoincrement())
+  companyName    String
+  commercialName String
+  cnpj           Int     @unique
+  phone          Int?
+  email          String?
+  adressId       Int
+  address        Address @relation(fields: [adressId], references: [id])
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
+  phone     String
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -28,13 +40,16 @@ model Admin {
 }
 
 model Address {
-  id       Int    @id @default(autoincrement())
-  address  String
-  district String
-  city     String
-  zipCode  String
-  userId   Int
-  user     User[]
+  id            Int             @id @default(autoincrement())
+  address       String
+  number        Int?
+  zipCode       String
+  district      String
+  city          String
+  state         String
+  userId        Int
+  user          User[]
+  Establishment Establishment[]
 }
 
 model Product {
