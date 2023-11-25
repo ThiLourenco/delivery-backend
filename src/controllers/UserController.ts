@@ -5,9 +5,9 @@ import { AppError } from '../errors/AppError'
 export default {
   async createUser(request: Request, response: Response) {
     try {
-      const { name, email, phone, password } = request.body
+      const { username, name, email, phone, password } = request.body
 
-      const userExist = await prisma.users.findUnique({
+      const userExist = await prisma.user.findUnique({
         where: {
           email,
         },
@@ -17,8 +17,9 @@ export default {
         throw new AppError('User already exists!')
       }
 
-      const user = await prisma.users.create({
+      const user = await prisma.user.create({
         data: {
+          username,
           name,
           email,
           phone,
@@ -33,8 +34,9 @@ export default {
         })
       }
     } catch (error) {
+      console.error(error)
       return response.status(400).json({
-        message: 'Error: User already exists!',
+        message: 'Failed to create user',
       })
     }
   },
