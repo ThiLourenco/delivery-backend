@@ -7,7 +7,7 @@ export default {
     try {
       const { name, email, phone, password } = request.body
 
-      const userExist = await prisma.user.findUnique({
+      const userExist = await prisma.users.findUnique({
         where: {
           email,
         },
@@ -17,7 +17,7 @@ export default {
         throw new AppError('User already exists!')
       }
 
-      const newUser = await prisma.user.create({
+      const newUser = await prisma.users.create({
         data: {
           name,
           email,

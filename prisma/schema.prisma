@@ -18,8 +18,8 @@ datasource db {
 //   address        Address @relation(fields: [adressId], references: [id])
 // }
 
-model User {
-  id        Int      @id @default(autoincrement())
+model Users {
+  id        String   @default(uuid()) @db.Uuid
   name      String
   email     String   @unique
   phone     String
@@ -33,6 +33,8 @@ model User {
   // Address   Address? @relation(fields: [addressId], references: [id])
   // addressId Int?
   // Order     Order[]
+
+  @@map("users")
 }
 
 // model Admin {
