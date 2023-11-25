@@ -17,7 +17,7 @@ export default {
         throw new AppError('User already exists!')
       }
 
-      const newUser = await prisma.users.create({
+      const user = await prisma.users.create({
         data: {
           name,
           email,
@@ -26,20 +26,15 @@ export default {
         },
       })
 
-      return response.json({
-        error: false,
-        message: 'User create with success!',
-        status: 201,
-        user: newUser,
-      })
+      if (user) {
+        return response.status(201).json({
+          message: 'User create with success!',
+          user,
+        })
+      }
     } catch (error) {
-      console.error('Error creating user:', error)
-
       return response.status(400).json({
-        error: true,
-        message:
-          error instanceof AppError ? error.message : 'Failed to create user.',
-        status: 400,
+        message: 'Error: User already exists!',
       })
     }
   },
