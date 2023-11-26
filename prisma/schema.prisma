@@ -38,16 +38,16 @@ model Address {
 // }
 
 model Product {
-  id          String   @id @unique @default(uuid()) @db.Uuid
-  name        String
+  id          String    @id @unique @default(uuid()) @db.Uuid
+  name        String    @unique
   description String
   image       String
   price       Int
   situation   String
-  categoryId  String   @unique @default(uuid()) @db.Uuid
-  category    Category @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  categoryId  String?   @default(uuid()) @db.Uuid
+  category    Category? @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Category {
