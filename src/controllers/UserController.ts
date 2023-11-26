@@ -72,22 +72,28 @@ export default {
   },
   async getUsers(request: Request, response: Response) {
     try {
-      const userExists = await prisma.user.findMany({
+      const users = await prisma.user.findMany({
         include: {
           address: true,
         },
       })
 
-      if (userExists) {
+      if (!users || users.length === 0) {
+        return response.status(404).json({
+          message: 'No users found.',
+        })
+      }
+
+      if (users) {
         return response.status(200).json({
-          message: 'Users get with success!',
-          userExists,
+          message: 'Users retrieved successfully!',
+          users,
         })
       }
     } catch (error) {
       console.error(error)
       return response.status(400).json({
-        message: 'Failed to get all user',
+        message: 'Failed to retrieve users',
       })
     }
   },
@@ -110,14 +116,14 @@ export default {
 
       if (user) {
         return response.status(200).json({
-          message: 'User get with success!',
+          message: 'User retrieved successfully!',
           user,
         })
       }
     } catch (error) {
       console.error(error)
       return response.status(400).json({
-        message: 'Failed to get user',
+        message: 'Failed to retrieve user',
       })
     }
   },
