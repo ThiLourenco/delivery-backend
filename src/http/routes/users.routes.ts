@@ -3,9 +3,9 @@ import UserController from '../../controllers/UserController'
 
 const usersRoutes = Router()
 
-usersRoutes.post('/', UserController.createUser)
-usersRoutes.put('/', UserController.updateAddress)
-usersRoutes.get('/', UserController.getUsers)
-usersRoutes.get('/users/:id', UserController.getUser)
+usersRoutes.post('/user/create', UserController.createUser)
+usersRoutes.put('/user/update', UserController.updateAddress)
+usersRoutes.get('/users', UserController.getUsers)
+usersRoutes.get('/user/:id', UserController.getUser)
 
 export { usersRoutes }
