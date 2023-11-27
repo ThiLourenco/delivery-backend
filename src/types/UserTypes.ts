@@ -1,4 +1,5 @@
-export type UserCreateInput = {
+export type UserTypes = {
+  id?: string
   username: string
   name: string
   email: string
@@ -10,5 +11,6 @@ export type UserCreateInput = {
     city: string
     state: string
     zipCode: string
+    userId: string
   }
 }

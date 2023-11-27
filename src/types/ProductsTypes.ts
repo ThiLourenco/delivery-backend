@@ -1,4 +1,4 @@
-export type ProductsCreateInputs = {
+export type ProductsTypes = {
   name: string
   description: string
   image: string

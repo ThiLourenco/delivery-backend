@@ -1,56 +1,33 @@
 import { Request, Response } from 'express'
-import { prisma } from '../database'
-import { AppError } from '../errors/AppError'
-import { ProductsCreateInputs } from '../types/ProductsCreateInput'
+import { ProductsTypes } from '../types/ProductsTypes'
+import { CreateProductService } from '../service/CreateProductService'
+import ProductRepository from '../repositories/ProductRepository'
 
 export default {
   async createProduct(request: Request, response: Response) {
     try {
-      const {
+      const { name, description, image, price, situation }: ProductsTypes =
+        request.body
+
+      const createProduct = new CreateProductService(ProductRepository)
+      const product = await createProduct.create(
         name,
         description,
         image,
         price,
         situation,
-      }: ProductsCreateInputs = request.body
+      )
 
-      const productExist = await prisma.product.findUnique({
-        where: {
-          name,
-        },
-      })
-
-      if (productExist) {
-        throw new AppError('Product already exists!')
-      }
-
-      const createProduct = await prisma.product.create({
-        data: {
-          name,
-          description,
-          image,
-          price,
-          situation,
-        },
-      })
-
-      // if (createProduct) {
-      //   const createCategory = await prisma.category.create({
-      //     data: {
-      //       category: category?.name,
-      //     },
-      //   })
-
-      if (createProduct) {
+      if (product) {
         return response.status(201).json({
           message: 'User product and Category with success!',
-          createProduct,
+          product,
         })
       }
     } catch (error) {
       console.error(error)
       return response.status(400).json({
-        message: 'Failed to create product',
+        message: 'Product already exists!',
       })
     }
   },
