@@ -45,6 +45,42 @@ class ProductRepository implements IProductRepository {
       throw new AppError('Failed to create product', 500)
     }
   }
+
+  public async findByName(name: string): Promise<ProductsTypes | null> {
+    try {
+      const product = await prisma.product.findUnique({
+        where: {
+          name,
+        },
+      })
+
+      if (product) {
+        return product
+      } else {
+        return null
+      }
+    } catch (error) {
+      throw new AppError('Failed to create product', 500)
+    }
+  }
+
+  public async findById(id: string): Promise<ProductsTypes | null> {
+    try {
+      const products = await prisma.product.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (products) {
+        return products
+      } else {
+        return null
+      }
+    } catch (error) {
+      throw new AppError('Failed to create product', 500)
+    }
+  }
 }
 
 export default new ProductRepository()

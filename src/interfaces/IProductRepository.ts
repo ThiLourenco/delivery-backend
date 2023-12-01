@@ -11,4 +11,6 @@ export interface IProductRepository {
       name: string
     },
   ): Promise<ProductsTypes>
+  findByName(name: string): Promise<ProductsTypes | null>
+  findById(id: string): Promise<ProductsTypes | null>
 }

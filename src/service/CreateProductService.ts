@@ -25,6 +25,18 @@ class CreateProductService {
 
     return product
   }
+
+  public async findProductByName(name: string) {
+    const product = await this.ProductRepository.findByName(name)
+
+    return product
+  }
+
+  public async findProductById(id: string) {
+    const products = await this.ProductRepository.findById(id)
+
+    return products
+  }
 }
 
 export { CreateProductService }

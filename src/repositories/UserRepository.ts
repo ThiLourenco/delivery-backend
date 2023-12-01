@@ -4,7 +4,7 @@ import { IUserRepository } from '../interfaces/IUserRepository'
 import { UserTypes } from '../types/UserTypes'
 
 class UserRepository implements IUserRepository {
-  public async create(
+  public async createUser(
     id: string,
     username: string,
     name: string,

@@ -31,4 +31,45 @@ export default {
       })
     }
   },
+
+  async getProductByName(request: Request, response: Response) {
+    try {
+      const { name }: ProductsTypes = request.body
+
+      const getProduct = new CreateProductService(ProductRepository)
+      const product = await getProduct.findProductByName(name)
+
+      if (product) {
+        return response.status(201).json({
+          message: 'Get product with success!',
+          product,
+        })
+      }
+    } catch (error) {
+      console.error(error)
+      return response.status(400).json({
+        message: 'Product not found !',
+      })
+    }
+  },
+
+  async getProductById(request: Request, response: Response) {
+    try {
+      const { id }: ProductsTypes = request.body
+
+      const getProduct = new CreateProductService(ProductRepository)
+      const product = await getProduct.findProductById(id)
+
+      if (product) {
+        return response.json(201).json({
+          message: 'Get product by id with successfully',
+          product,
+        })
+      }
+    } catch (error) {
+      return response.status(400).json({
+        message: 'No products found',
+      })
+    }
+  },
 }

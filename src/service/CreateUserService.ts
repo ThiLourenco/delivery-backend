@@ -12,7 +12,7 @@ class CreateUserService {
     phone: string,
     password: string,
   ) {
-    const user = await this.UserRepository.create(
+    const user = await this.UserRepository.createUser(
       id,
       username,
       name,

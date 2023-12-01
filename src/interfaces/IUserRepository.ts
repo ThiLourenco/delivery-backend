@@ -1,7 +1,7 @@
 import { UserTypes } from '../types/UserTypes'
 
 export interface IUserRepository {
-  create(
+  createUser(
     id: string,
     username: string,
     name: string,
