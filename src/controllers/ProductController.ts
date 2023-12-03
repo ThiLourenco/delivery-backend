@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { ProductsTypes } from '../types/ProductsTypes'
+import { ProductsTypes } from '../dtos/ProductsTypes'
 import { CreateProductService } from '../service/CreateProductService'
 import ProductRepository from '../repositories/ProductRepository'
 

@@ -1,7 +1,7 @@
 import { prisma } from '../database'
 import { AppError } from '../errors/AppError'
 import { IProductRepository } from '../interfaces/IProductRepository'
-import { ProductsTypes } from '../types/ProductsTypes'
+import { ProductsTypes } from '../dtos/ProductsTypes'
 
 class ProductRepository implements IProductRepository {
   public async create(

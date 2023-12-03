@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { prisma } from '../database'
 import { AppError } from '../errors/AppError'
-import { UserTypes } from '../types/UserTypes'
+import { UserTypes } from '../dtos/UserTypes'
 import { CreateUserService } from '../service/CreateUserService'
 import UserRepository from '../repositories/UserRepository'
 
@@ -20,27 +20,6 @@ export default {
         phone,
       )
 
-      // If the user was created successfully, create the associated address
-      // if (user) {
-      //   const createdAddress = await prisma.address.create({
-      //     data: {
-      //       street: address?.street,
-      //       number: address?.number,
-      //       city: address?.city,
-      //       state: address?.state,
-      //       zipCode: address?.zipCode,
-      //       userId: user.id,
-      //     },
-      //   })
-
-      // if (user && createdAddress) {
-      //   return response.status(201).json({
-      //     message: 'User create and Address with success!',
-      //     user,
-      //     createdAddress,
-      //   })
-      // }
-
       if (user) {
         return response.status(201).json({
           message: 'User create with success!',
@@ -54,13 +33,32 @@ export default {
       })
     }
   },
+  async getUser(request: Request, response: Response) {
+    try {
+      const { id } = request.params
+
+      const getUser = new CreateUserService(UserRepository)
+      const user = await getUser.findUserById(id)
+      if (!user) {
+        throw new AppError('User not exist!')
+      }
+
+      if (user) {
+        return response.status(200).json({
+          message: 'User retrieved successfully!',
+          user,
+        })
+      }
+    } catch (error) {
+      return response.status(400).json({
+        message: 'Failed to retrieve user',
+      })
+    }
+  },
   async getUsers(request: Request, response: Response) {
     try {
-      const users = await prisma.user.findMany({
-        include: {
-          address: true,
-        },
-      })
+      const getUsers = new CreateUserService(UserRepository)
+      const users = await getUsers.findAllUsers()
 
       if (!users || users.length === 0) {
         return response.status(404).json({
@@ -78,36 +76,6 @@ export default {
       console.error(error)
       return response.status(400).json({
         message: 'Failed to retrieve users',
-      })
-    }
-  },
-  async getUser(request: Request, response: Response) {
-    try {
-      const { id } = request.params
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id,
-        },
-        include: {
-          address: true,
-        },
-      })
-
-      if (!user) {
-        throw new AppError('User not exists!')
-      }
-
-      if (user) {
-        return response.status(200).json({
-          message: 'User retrieved successfully!',
-          user,
-        })
-      }
-    } catch (error) {
-      console.error(error)
-      return response.status(400).json({
-        message: 'Failed to retrieve user',
       })
     }
   },

@@ -1,4 +1,4 @@
-import { ProductsTypes } from '../types/ProductsTypes'
+import { ProductsTypes } from '../dtos/ProductsTypes'
 
 export interface IProductRepository {
   create(

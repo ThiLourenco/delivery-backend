@@ -1,4 +1,4 @@
-import { UserTypes } from '../types/UserTypes'
+import { UserTypes } from '../dtos/UserTypes'
 
 export interface IUserRepository {
   createUser(
@@ -9,4 +9,6 @@ export interface IUserRepository {
     phone: string,
     password: string,
   ): Promise<UserTypes>
+  getUser(id: string): Promise<UserTypes | null>
+  getUsers(): Promise<UserTypes[]>
 }

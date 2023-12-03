@@ -23,6 +23,18 @@ class CreateUserService {
 
     return user
   }
+
+  public async findUserById(id: string) {
+    const userById = await this.UserRepository.getUser(id)
+
+    return userById
+  }
+
+  public async findAllUsers() {
+    const users = await this.UserRepository.getUsers()
+
+    return users
+  }
 }
 
 export { CreateUserService }
