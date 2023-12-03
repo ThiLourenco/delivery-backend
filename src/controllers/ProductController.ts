@@ -20,14 +20,14 @@ export default {
 
       if (product) {
         return response.status(201).json({
-          message: 'User product and Category with success!',
+          message: 'Product created with success!',
           product,
         })
       }
     } catch (error) {
       console.error(error)
       return response.status(400).json({
-        message: 'Product already exists!',
+        message: 'Error to create new product, verify all fields are valid!',
       })
     }
   },
@@ -45,10 +45,17 @@ export default {
           product,
         })
       }
+
+      if (!product) {
+        return response.status(400).json({
+          message: 'Product not found !',
+          product,
+        })
+      }
     } catch (error) {
       console.error(error)
-      return response.status(400).json({
-        message: 'Product not found !',
+      return response.status(500).json({
+        message: 'Error finding products',
       })
     }
   },
@@ -61,14 +68,22 @@ export default {
       const product = await getProduct.findProductById(id)
 
       if (product) {
-        return response.json(201).json({
-          message: 'Get product by id with successfully',
+        return response.status(201).json({
+          message: 'Get product with successfully',
+          product,
+        })
+      }
+
+      if (!product) {
+        return response.status(400).json({
+          message: 'Product not found, verify!',
           product,
         })
       }
     } catch (error) {
-      return response.status(400).json({
-        message: 'No products found',
+      return response.status(500).json({
+        message: 'Error finding products',
+        error,
       })
     }
   },

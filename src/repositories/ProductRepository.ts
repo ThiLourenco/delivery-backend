@@ -9,14 +9,14 @@ class ProductRepository implements IProductRepository {
     description: string,
     image: string,
     price: number,
-    situation: string,
+    situation: boolean,
     category?: {
       name: string
     },
   ): Promise<ProductsTypes> {
     try {
       if (!name || !description || !image || !price || !situation) {
-        throw new AppError('Incomplete product data provided')
+        throw new AppError('Incomplete product data provided', 400)
       }
       const productExists = await prisma.product.findUnique({
         where: {
@@ -25,7 +25,7 @@ class ProductRepository implements IProductRepository {
       })
 
       if (productExists) {
-        throw new AppError('Product already exists!')
+        throw new AppError('Product already exists!', 400)
       }
 
       const productData = {
@@ -42,7 +42,10 @@ class ProductRepository implements IProductRepository {
 
       return product
     } catch (error) {
-      throw new AppError('Failed to create product', 500)
+      throw new AppError(
+        'Error to create new product, verify all fields are valid 2!',
+        400,
+      )
     }
   }
 
@@ -66,14 +69,14 @@ class ProductRepository implements IProductRepository {
 
   public async findById(id: string): Promise<ProductsTypes | null> {
     try {
-      const products = await prisma.product.findUnique({
+      const product = await prisma.product.findUnique({
         where: {
           id,
         },
       })
 
-      if (products) {
-        return products
+      if (product) {
+        return product
       } else {
         return null
       }

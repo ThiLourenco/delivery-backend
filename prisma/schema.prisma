@@ -14,9 +14,12 @@ model User {
   email     String   @unique
   phone     String
   password  String
+  isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   address   Address?
+
+  @@map("user")
 }
 
 model Address {
@@ -26,34 +29,34 @@ model Address {
   city    String?
   state   String?
   zipCode String?
-  userId  String  @unique @default(uuid()) @db.Uuid
+  userId  String  @default(uuid()) @db.Uuid
   user    User    @relation(fields: [userId], references: [id])
-}
 
-// model Admin {
-//   id     Int     @id @default(autoincrement())
-//   userId Int
-//   admin  Boolean @default(false)
-//   user   User    @relation(fields: [userId], references: [id])
-// }
+  @@unique([userId])
+  @@map("address")
+}
 
 model Product {
   id          String    @id @unique @default(uuid()) @db.Uuid
   name        String    @unique
-  description String
+  description String    @db.VarChar(200)
   image       String
   price       Int
-  situation   String
+  situation   Boolean   @default(true)
   categoryId  String?   @default(uuid()) @db.Uuid
   category    Category? @relation(fields: [categoryId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@map("product")
 }
 
 model Category {
   id       String    @id @unique @default(uuid()) @db.Uuid
   name     String
   products Product[]
+
+  @@map("category")
 }
 
 // model Order {

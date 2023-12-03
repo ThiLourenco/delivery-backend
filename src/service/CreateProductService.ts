@@ -9,7 +9,7 @@ class CreateProductService {
     description: string,
     image: string,
     price: number,
-    situation: string,
+    situation: boolean,
     category?: {
       name: string
     },
@@ -33,9 +33,9 @@ class CreateProductService {
   }
 
   public async findProductById(id: string) {
-    const products = await this.ProductRepository.findById(id)
+    const product = await this.ProductRepository.findById(id)
 
-    return products
+    return product
   }
 }
 

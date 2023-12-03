@@ -4,7 +4,7 @@ export type ProductsTypes = {
   description: string
   image: string
   price: number
-  situation: string
+  situation: boolean
   category?: {
     name: string
   }

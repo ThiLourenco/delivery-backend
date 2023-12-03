@@ -5,6 +5,7 @@ export type UserTypes = {
   email: string
   phone: string
   password: string
+  isAdmin: boolean
   address?: {
     street: string
     number?: string
