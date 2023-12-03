@@ -87,4 +87,28 @@ export default {
       })
     }
   },
+
+  async getAllProducts(request: Request, response: Response) {
+    try {
+      const getProducts = new CreateProductService(ProductRepository)
+      const products = await getProducts.getAllProducts()
+
+      if (!products || products.length === 0) {
+        return response.status(400).json({
+          message: 'No products found',
+        })
+      }
+
+      if (products.length > 0) {
+        return response.status(200).json({
+          message: 'Products found with success',
+          products,
+        })
+      }
+    } catch (error) {
+      return response.status(400).json({
+        message: 'Failed to find products',
+      })
+    }
+  },
 }

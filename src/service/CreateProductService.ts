@@ -37,6 +37,12 @@ class CreateProductService {
 
     return product
   }
+
+  public async getAllProducts() {
+    const products = await this.ProductRepository.findAllProducts()
+
+    return products
+  }
 }
 
 export { CreateProductService }
