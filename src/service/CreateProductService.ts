@@ -1,7 +1,6 @@
 import { IProductRepository } from '../interfaces/IProductRepository'
 
 class CreateProductService {
-  // eslint-disable-next-line no-useless-constructor
   constructor(private ProductRepository: IProductRepository) {
     this.ProductRepository = ProductRepository
   }
