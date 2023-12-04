@@ -23,7 +23,7 @@ model User {
 }
 
 model Address {
-  id      Int     @id @default(autoincrement())
+  id      String  @id @unique @default(uuid()) @db.Uuid
   street  String?
   number  String?
   city    String?

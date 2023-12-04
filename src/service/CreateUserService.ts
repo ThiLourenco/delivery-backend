@@ -1,8 +1,10 @@
+import { UserTypes } from '../dtos/UserTypes'
 import { IUserRepository } from '../interfaces/IUserRepository'
 
 class CreateUserService {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(private UserRepository: IUserRepository) {}
+  constructor(private UserRepository: IUserRepository) {
+    this.UserRepository = UserRepository
+  }
 
   public async execute(
     id: string,
@@ -12,7 +14,7 @@ class CreateUserService {
     phone: string,
     password: string,
   ) {
-    const user = await this.UserRepository.createUser(
+    return await this.UserRepository.createUser(
       id,
       username,
       name,
@@ -20,20 +22,14 @@ class CreateUserService {
       password,
       phone,
     )
-
-    return user
   }
 
-  public async findUserById(id: string) {
-    const userById = await this.UserRepository.getUser(id)
-
-    return userById
+  public async findUserById(id: string): Promise<UserTypes | null> {
+    return await this.UserRepository.getUser(id)
   }
 
   public async findAllUsers() {
-    const users = await this.UserRepository.getUsers()
-
-    return users
+    return await this.UserRepository.getUsers()
   }
 }
 

@@ -2,7 +2,9 @@ import { IProductRepository } from '../interfaces/IProductRepository'
 
 class CreateProductService {
   // eslint-disable-next-line no-useless-constructor
-  constructor(private ProductRepository: IProductRepository) {}
+  constructor(private ProductRepository: IProductRepository) {
+    this.ProductRepository = ProductRepository
+  }
 
   public async create(
     name: string,
@@ -14,7 +16,7 @@ class CreateProductService {
       name: string
     },
   ) {
-    const product = await this.ProductRepository.create(
+    return await this.ProductRepository.create(
       name,
       description,
       image,
@@ -22,8 +24,6 @@ class CreateProductService {
       situation,
       category,
     )
-
-    return product
   }
 
   public async findProductByName(name: string) {
