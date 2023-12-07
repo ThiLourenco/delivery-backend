@@ -15,7 +15,14 @@ class ProductRepository implements IProductRepository {
     },
   ): Promise<ProductsTypes> {
     try {
-      if (!name || !description || !image || !price || !situation) {
+      if (
+        !name ||
+        !description ||
+        !image ||
+        !price ||
+        !situation ||
+        !category
+      ) {
         throw new AppError('Incomplete product data provided', 400)
       }
       const productExists = await prisma.product.findUnique({
@@ -28,16 +35,19 @@ class ProductRepository implements IProductRepository {
         throw new AppError('Product already exists!', 400)
       }
 
-      const productData = {
-        name,
-        description,
-        image,
-        price,
-        situation,
-      }
-
       const product = await prisma.product.create({
-        data: productData,
+        data: {
+          name,
+          description,
+          image,
+          price,
+          situation,
+          category: {
+            create: {
+              name,
+            },
+          },
+        },
       })
 
       return product

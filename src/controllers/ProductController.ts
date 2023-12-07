@@ -5,8 +5,14 @@ import ProductRepository from '../repositories/ProductRepository'
 
 const createProduct = async (request: Request, response: Response) => {
   try {
-    const { name, description, image, price, situation }: ProductsTypes =
-      request.body
+    const {
+      name,
+      description,
+      image,
+      price,
+      situation,
+      category,
+    }: ProductsTypes = request.body
 
     const createProduct = new CreateProductService(ProductRepository)
     const product = await createProduct.create(
@@ -15,6 +21,7 @@ const createProduct = async (request: Request, response: Response) => {
       image,
       price,
       situation,
+      category,
     )
 
     return response.status(201).json({
