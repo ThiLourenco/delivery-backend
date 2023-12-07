@@ -53,7 +53,7 @@ model Product {
 
 model Category {
   id       String    @id @unique @default(uuid()) @db.Uuid
-  name     String
+  name     String    @unique
   products Product[]
 
   @@map("category")
