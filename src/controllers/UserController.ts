@@ -1,9 +1,11 @@
 import { Request, Response } from 'express'
-import { AppError } from '../errors/AppError'
+import { AppError, BadRequestError } from '../errors/AppError'
 import { UserTypes } from '../dtos/UserTypes'
 import { CreateUserService } from '../service/CreateUserService'
 import UserRepository from '../repositories/UserRepository'
 import { prisma } from '../database'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const createUser = async (request: Request, response: Response) => {
   try {
@@ -40,6 +42,29 @@ const getUser = async (request: Request, response: Response) => {
 
     if (!user) {
       throw new AppError('User not exist!', 404)
+    }
+
+    return response.status(200).json({
+      message: 'User retrieved successfully!',
+      user,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to retrieve user',
+    })
+  }
+}
+
+const getUserByEmail = async (request: Request, response: Response) => {
+  try {
+    const { email } = request.body
+
+    const getEmail = new CreateUserService(UserRepository)
+    const user = await getEmail.findUserByEmail(email)
+
+    if (!user) {
+      throw new AppError('Email not exists!')
     }
 
     return response.status(200).json({
@@ -116,9 +141,46 @@ const updateAddress = async (request: Request, response: Response) => {
   }
 }
 
+const login = async (request: Request, response: Response) => {
+  try {
+    const { email, password } = request.body
+
+    const getUser = new CreateUserService(UserRepository)
+    const user = await getUser.login(email, password)
+
+    if (!user) {
+      throw new BadRequestError('E-mail or password invalid')
+    }
+
+    const verifyPass = await bcrypt.compare(password, user.password)
+
+    if (!verifyPass) {
+      throw new BadRequestError('E-mail or password invalid')
+    }
+
+    const token = jwt.sign({ id: user.id }, process.env.JWT_PASS ?? '', {
+      expiresIn: '4h',
+    })
+
+    const { password: _, ...userLogin } = user
+
+    return response.status(200).json({
+      user: userLogin,
+      token,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to login',
+    })
+  }
+}
+
 export default {
   createUser,
   getUser,
   getUsers,
   updateAddress,
+  login,
+  getUserByEmail,
 }

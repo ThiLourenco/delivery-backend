@@ -24,8 +24,16 @@ class CreateUserService {
     )
   }
 
+  public async login(email: string, password: string) {
+    return await this.UserRepository.login(email, password)
+  }
+
   public async findUserById(id: string): Promise<UserTypes | null> {
     return await this.UserRepository.getUser(id)
+  }
+
+  public async findUserByEmail(email: string): Promise<UserTypes | null> {
+    return await this.UserRepository.getByEmail(email)
   }
 
   public async findAllUsers() {

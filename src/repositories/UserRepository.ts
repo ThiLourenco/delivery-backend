@@ -1,7 +1,8 @@
 import { prisma } from '../database'
-import { AppError } from '../errors/AppError'
+import { AppError, BadRequestError } from '../errors/AppError'
 import { IUserRepository } from '../interfaces/IUserRepository'
 import { UserTypes } from '../dtos/UserTypes'
+import bcrypt from 'bcrypt'
 
 class UserRepository implements IUserRepository {
   public async createUser(
@@ -22,17 +23,18 @@ class UserRepository implements IUserRepository {
       if (userExist) {
         throw new AppError('User already exists!')
       }
-      const userData = {
-        id,
-        username,
-        name,
-        email,
-        phone,
-        password,
-      }
+
+      const hashPassword = await bcrypt.hash(password, 10)
 
       const user = await prisma.user.create({
-        data: userData,
+        data: {
+          id,
+          username,
+          name,
+          email,
+          phone,
+          password: hashPassword,
+        },
       })
 
       return user
@@ -63,6 +65,25 @@ class UserRepository implements IUserRepository {
     }
   }
 
+  public async getByEmail(email: string): Promise<UserTypes | null> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      })
+
+      if (!user) {
+        throw new AppError('User not exists!')
+      }
+
+      return user
+    } catch (error) {
+      console.error(error)
+      throw new AppError('Failed to retrieve user')
+    }
+  }
+
   public async getUsers(): Promise<UserTypes[]> {
     try {
       const users = await prisma.user.findMany({
@@ -79,6 +100,30 @@ class UserRepository implements IUserRepository {
     } catch (error) {
       console.error(error)
       throw new AppError('No users found.')
+    }
+  }
+
+  public async login(email: string, password: string): Promise<UserTypes> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      })
+
+      if (!user) {
+        throw new BadRequestError('E-mail or password invalid')
+      }
+
+      const verifyPassword = await bcrypt.compare(password, user.password)
+
+      if (!verifyPassword) {
+        throw new BadRequestError('E-mail or password invalid')
+      }
+
+      return user
+    } catch (erro) {
+      throw new AppError('Failed to login', 400)
     }
   }
 }

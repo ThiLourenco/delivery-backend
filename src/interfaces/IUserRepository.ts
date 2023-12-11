@@ -10,5 +10,7 @@ export interface IUserRepository {
     password: string,
   ): Promise<UserTypes>
   getUser(id: string): Promise<UserTypes | null>
+  getByEmail(email: string): Promise<UserTypes | null>
   getUsers(): Promise<UserTypes[]>
+  login(email: string, password: string): Promise<UserTypes>
 }
