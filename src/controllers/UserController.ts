@@ -57,26 +57,23 @@ const getUser = async (request: Request, response: Response) => {
 }
 
 const getUserByEmail = async (request: Request, response: Response) => {
-  try {
-    const { email } = request.body
-
-    const getEmail = new CreateUserService(UserRepository)
-    const user = await getEmail.findUserByEmail(email)
-
-    if (!user) {
-      throw new AppError('Email not exists!')
-    }
-
-    return response.status(200).json({
-      message: 'User retrieved successfully!',
-      user,
-    })
-  } catch (error) {
-    console.error(error)
-    return response.status(400).json({
-      message: 'Failed to retrieve user',
-    })
-  }
+  // try {
+  //   const { email } = request.body
+  //   const getEmail = new CreateUserService(UserRepository)
+  //   const user = await getEmail.findUserByEmail(email)
+  //   if (!user) {
+  //     throw new AppError('Email not exists!')
+  //   }
+  //   return response.status(200).json({
+  //     message: 'User retrieved successfully!',
+  //     user,
+  //   })
+  // } catch (error) {
+  //   console.error(error)
+  //   return response.status(400).json({
+  //     message: 'Failed to retrieve user',
+  //   })
+  // }
 }
 
 const getUsers = async (request: Request, response: Response) => {
