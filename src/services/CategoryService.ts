@@ -1,6 +1,6 @@
 import { ICategoryRepository } from '../interfaces/ICategoryRepository'
 
-class CreateCategoryService {
+class CategoryService {
   constructor(private CategoryRepository: ICategoryRepository) {
     this.CategoryRepository = CategoryRepository
   }
@@ -14,4 +14,4 @@ class CreateCategoryService {
   }
 }
 
-export { CreateCategoryService }
+export { CategoryService }

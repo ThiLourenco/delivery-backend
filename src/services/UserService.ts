@@ -1,7 +1,7 @@
 import { UserTypes } from '../dtos/UserTypes'
 import { IUserRepository } from '../interfaces/IUserRepository'
 
-class CreateUserService {
+class UserService {
   constructor(private UserRepository: IUserRepository) {
     this.UserRepository = UserRepository
   }
@@ -41,4 +41,4 @@ class CreateUserService {
   }
 }
 
-export { CreateUserService }
+export { UserService }

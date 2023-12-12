@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { ProductsTypes } from '../dtos/ProductsTypes'
-import { CreateProductService } from '../service/CreateProductService'
+import { ProductService } from '../services/ProductService'
 import ProductRepository from '../repositories/ProductRepository'
 
 const createProduct = async (request: Request, response: Response) => {
@@ -14,7 +14,7 @@ const createProduct = async (request: Request, response: Response) => {
       category,
     }: ProductsTypes = request.body
 
-    const createProduct = new CreateProductService(ProductRepository)
+    const createProduct = new ProductService(ProductRepository)
     const product = await createProduct.create(
       name,
       description,
@@ -46,7 +46,7 @@ const getProductByName = async (request: Request, response: Response) => {
       })
     }
 
-    const getProduct = new CreateProductService(ProductRepository)
+    const getProduct = new ProductService(ProductRepository)
     const product = await getProduct.findProductByName(name)
 
     if (product) {
@@ -71,7 +71,7 @@ const getProductById = async (request: Request, response: Response) => {
   try {
     const { id } = request.params
 
-    const getProduct = new CreateProductService(ProductRepository)
+    const getProduct = new ProductService(ProductRepository)
     const product = await getProduct.findProductById(id)
 
     if (product) {
@@ -94,7 +94,7 @@ const getProductById = async (request: Request, response: Response) => {
 
 const getAllProducts = async (request: Request, response: Response) => {
   try {
-    const getProducts = new CreateProductService(ProductRepository)
+    const getProducts = new ProductService(ProductRepository)
     const products = await getProducts.getAllProducts()
 
     if (!products || products.length === 0) {

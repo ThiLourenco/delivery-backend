@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { AppError, BadRequestError } from '../errors/AppError'
 import { UserTypes } from '../dtos/UserTypes'
-import { CreateUserService } from '../service/CreateUserService'
+import { UserService } from '../services/UserService'
 import UserRepository from '../repositories/UserRepository'
 import { prisma } from '../database'
 import bcrypt from 'bcrypt'
@@ -11,7 +11,7 @@ const createUser = async (request: Request, response: Response) => {
   try {
     const { id, username, name, email, phone, password } = request.body
 
-    const newUser = new CreateUserService(UserRepository)
+    const newUser = new UserService(UserRepository)
     const user = await newUser.execute(
       id,
       username,
@@ -37,7 +37,7 @@ const getUser = async (request: Request, response: Response) => {
   try {
     const { id } = request.params
 
-    const getUser = new CreateUserService(UserRepository)
+    const getUser = new UserService(UserRepository)
     const user = await getUser.findUserById(id)
 
     if (!user) {
@@ -59,7 +59,7 @@ const getUser = async (request: Request, response: Response) => {
 const getUserByEmail = async (request: Request, response: Response) => {
   // try {
   //   const { email } = request.body
-  //   const getEmail = new CreateUserService(UserRepository)
+  //   const getEmail = new UserService(UserRepository)
   //   const user = await getEmail.findUserByEmail(email)
   //   if (!user) {
   //     throw new AppError('Email not exists!')
@@ -78,7 +78,7 @@ const getUserByEmail = async (request: Request, response: Response) => {
 
 const getUsers = async (request: Request, response: Response) => {
   try {
-    const getUsers = new CreateUserService(UserRepository)
+    const getUsers = new UserService(UserRepository)
     const users = await getUsers.findAllUsers()
 
     if (!users || users.length === 0) {
@@ -142,7 +142,7 @@ const login = async (request: Request, response: Response) => {
   try {
     const { email, password } = request.body
 
-    const getUser = new CreateUserService(UserRepository)
+    const getUser = new UserService(UserRepository)
     const user = await getUser.login(email, password)
 
     if (!user) {

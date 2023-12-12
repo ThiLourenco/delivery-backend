@@ -1,6 +1,6 @@
 import { IProductRepository } from '../interfaces/IProductRepository'
 
-class CreateProductService {
+class ProductService {
   constructor(private ProductRepository: IProductRepository) {
     this.ProductRepository = ProductRepository
   }
@@ -44,4 +44,4 @@ class CreateProductService {
   }
 }
 
-export { CreateProductService }
+export { ProductService }

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import CategoryRepository from '../repositories/CategoryRepository'
-import { CreateCategoryService } from '../service/CreateCategoryService'
+import { CategoryService } from '../services/CategoryService'
 
 const createCategory = async (request: Request, response: Response) => {
   try {
     const { name } = request.body
 
-    const newCategory = new CreateCategoryService(CategoryRepository)
+    const newCategory = new CategoryService(CategoryRepository)
     const category = await newCategory.execute(name)
 
     return response.status(201).json({
@@ -23,7 +23,7 @@ const createCategory = async (request: Request, response: Response) => {
 
 const getCategories = async (request: Request, response: Response) => {
   try {
-    const getCategory = new CreateCategoryService(CategoryRepository)
+    const getCategory = new CategoryService(CategoryRepository)
     const categories = await getCategory.findAllCategory()
     if (!categories || categories.length === 0) {
       return response.status(404).json({
