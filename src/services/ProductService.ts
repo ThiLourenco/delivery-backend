@@ -42,6 +42,15 @@ class ProductService {
 
     return products
   }
+
+  public async updateCategory(categoryName: string, id: string) {
+    const product = await this.ProductRepository.updateProductCategory(
+      categoryName,
+      id,
+    )
+
+    return product
+  }
 }
 
 export { ProductService }

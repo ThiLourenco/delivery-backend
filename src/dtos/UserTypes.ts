@@ -14,3 +14,20 @@ export type UserTypes = {
     zipCode: string
   }
 }
+
+export type UserWithAddress = {
+  id?: string
+  username: string
+  name: string
+  email: string
+  phone: string
+  password: string
+  isAdmin: boolean
+  address: {
+    street: string
+    number?: string
+    city: string
+    state: string
+    zipCode: string
+  }
+}

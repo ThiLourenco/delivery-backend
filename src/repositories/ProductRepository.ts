@@ -10,21 +10,8 @@ class ProductRepository implements IProductRepository {
     image: string,
     price: number,
     situation: boolean,
-    category?: {
-      name: string
-    },
   ): Promise<ProductsTypes> {
     try {
-      if (
-        !name ||
-        !description ||
-        !image ||
-        !price ||
-        !situation ||
-        !category
-      ) {
-        throw new AppError('Incomplete product data provided', 400)
-      }
       const productExists = await prisma.product.findUnique({
         where: {
           name,
@@ -42,18 +29,13 @@ class ProductRepository implements IProductRepository {
           image,
           price,
           situation,
-          category: {
-            create: {
-              name,
-            },
-          },
         },
       })
 
       return product
     } catch (error) {
       throw new AppError(
-        'Error to create new product, verify all fields are valid 2!',
+        'Error to create new product, verify all fields are valid !',
         400,
       )
     }
@@ -111,6 +93,49 @@ class ProductRepository implements IProductRepository {
     } catch (error) {
       console.error(error)
       throw new AppError('No products found.')
+    }
+  }
+
+  public async updateProductCategory(
+    id: string,
+    categoryName: string,
+  ): Promise<ProductsTypes> {
+    try {
+      const productExists = await prisma.product.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!productExists) {
+        throw new AppError('Product not exists', 400)
+      }
+
+      const category = await prisma.category.findUnique({
+        where: {
+          name: categoryName,
+        },
+      })
+
+      if (!category) {
+        throw new AppError('Category not found', 404)
+      }
+
+      const updatedProduct = await prisma.product.update({
+        data: {
+          categoryId: category.id,
+        },
+        where: {
+          id: productExists.id,
+        },
+      })
+
+      return updatedProduct
+    } catch (error) {
+      throw new AppError(
+        'Error to create new product, verify all fields are valid !',
+        400,
+      )
     }
   }
 }

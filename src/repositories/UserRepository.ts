@@ -1,7 +1,7 @@
 import { prisma } from '../database'
 import { AppError, BadRequestError } from '../errors/AppError'
 import { IUserRepository } from '../interfaces/IUserRepository'
-import { UserTypes } from '../dtos/UserTypes'
+import { UserTypes, UserWithAddress } from '../dtos/UserTypes'
 import bcrypt from 'bcrypt'
 
 class UserRepository implements IUserRepository {
@@ -59,22 +59,37 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  public async getUser(id: string): Promise<UserTypes | null> {
+  public async getUser(id: string): Promise<UserWithAddress> {
     try {
       const user = await prisma.user.findUnique({
         where: {
           id,
         },
-        // include: {
-        //   address: true,
-        // },
+        include: {
+          address: true,
+        },
       })
 
       if (!user) {
         throw new AppError('User not exists!')
       }
 
-      return user
+      return {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        password: user.password,
+        email: user.email,
+        phone: user.phone,
+        isAdmin: user.isAdmin,
+        address: {
+          city: user.address?.city || '',
+          state: user.address?.state || '',
+          street: user.address?.street || '',
+          zipCode: user.address?.zipCode || '',
+          number: user.address?.number || '',
+        },
+      }
     } catch (error) {
       console.error(error)
       throw new AppError('Failed to retrieve user')
