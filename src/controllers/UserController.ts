@@ -11,15 +11,8 @@ const createUser = async (request: Request, response: Response) => {
   try {
     const { id, username, name, email, phone, password } = request.body
 
-    const newUser = new UserService(UserRepository)
-    const user = await newUser.execute(
-      id,
-      username,
-      name,
-      email,
-      password,
-      phone,
-    )
+    const data = new UserService(UserRepository)
+    const user = await data.execute(id, username, name, email, password, phone)
 
     return response.status(201).json({
       message: 'User created with success!',
