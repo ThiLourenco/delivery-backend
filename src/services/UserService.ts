@@ -13,6 +13,13 @@ class UserService {
     email: string,
     phone: string,
     password: string,
+    address: {
+      street: string
+      number: string
+      city: string
+      state: string
+      zipCode: string
+    },
   ) {
     return await this.UserRepository.createUser(
       id,
@@ -21,6 +28,7 @@ class UserService {
       email,
       password,
       phone,
+      address,
     )
   }
 

@@ -12,6 +12,5 @@ export type UserTypes = {
     city: string
     state: string
     zipCode: string
-    userId: string
   }
 }

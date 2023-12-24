@@ -12,6 +12,13 @@ class UserRepository implements IUserRepository {
     email: string,
     phone: string,
     password: string,
+    address?: {
+      street: string
+      number?: string
+      city: string
+      state: string
+      zipCode: string
+    },
   ): Promise<UserTypes> {
     try {
       const userExist = await prisma.user.findUnique({
@@ -34,6 +41,15 @@ class UserRepository implements IUserRepository {
           email,
           phone,
           password: hashPassword,
+          address: {
+            create: {
+              street: address?.street,
+              state: address?.state,
+              number: address?.number,
+              city: address?.city,
+              zipCode: address?.zipCode,
+            },
+          },
         },
       })
 

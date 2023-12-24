@@ -8,6 +8,13 @@ export interface IUserRepository {
     email: string,
     phone: string,
     password: string,
+    address?: {
+      street: string
+      number?: string
+      city: string
+      state: string
+      zipCode: string
+    },
   ): Promise<UserTypes>
   getUser(id: string): Promise<UserTypes | null>
   getByEmail(email: string): Promise<UserTypes | null>
