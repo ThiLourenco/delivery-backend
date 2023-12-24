@@ -12,6 +12,10 @@ class CategoryService {
   public async findAllCategory() {
     return await this.CategoryRepository.getCategories()
   }
+
+  public async findAllProductByCategoryId(categoryId: string) {
+    return await this.CategoryRepository.findCategoriesByProductId(categoryId)
+  }
 }
 
 export { CategoryService }

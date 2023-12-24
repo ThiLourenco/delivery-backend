@@ -2,6 +2,7 @@ import { prisma } from '../database'
 import { AppError } from '../errors/AppError'
 import { ICategoryRepository } from '../interfaces/ICategoryRepository'
 import { CategoryTypes } from '../dtos/CategoryTypes'
+import { ProductsTypes } from 'dtos/ProductsTypes'
 
 class CategoryRepository implements ICategoryRepository {
   public async createCategory(name: string): Promise<CategoryTypes> {
@@ -41,6 +42,10 @@ class CategoryRepository implements ICategoryRepository {
       console.error(error)
       throw new AppError('No categories found.')
     }
+  }
+
+  findCategoriesByProductId(id: string): Promise<ProductsTypes[]> {
+    throw new Error('Method not implemented.')
   }
 }
 

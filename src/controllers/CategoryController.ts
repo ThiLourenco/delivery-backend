@@ -42,7 +42,13 @@ const getCategories = async (request: Request, response: Response) => {
   }
 }
 
+const getCategoriesByProduct = async (
+  request: Request,
+  response: Response,
+) => {}
+
 export default {
   createCategory,
   getCategories,
+  getCategoriesByProduct,
 }

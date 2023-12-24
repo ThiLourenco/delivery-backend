@@ -5,5 +5,9 @@ const categoryRoutes = Router()
 
 categoryRoutes.post('/category', CategoryController.createCategory)
 categoryRoutes.get('/category', CategoryController.getCategories)
+categoryRoutes.get(
+  '/category/products',
+  CategoryController.getCategoriesByProduct,
+)
 
 export { categoryRoutes }
