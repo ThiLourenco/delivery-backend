@@ -16,7 +16,7 @@ class UserRepository implements IUserRepository {
       street: string
       number?: string
       city: string
-      state: string
+      country: string
       zipCode: string
     },
   ): Promise<UserTypes> {
@@ -44,7 +44,7 @@ class UserRepository implements IUserRepository {
           address: {
             create: {
               street: address?.street,
-              state: address?.state,
+              country: address?.country,
               number: address?.number,
               city: address?.city,
               zipCode: address?.zipCode,
@@ -84,7 +84,7 @@ class UserRepository implements IUserRepository {
         isAdmin: user.isAdmin,
         address: {
           city: user.address?.city || '',
-          state: user.address?.state || '',
+          country: user.address?.country || '',
           street: user.address?.street || '',
           zipCode: user.address?.zipCode || '',
           number: user.address?.number || '',

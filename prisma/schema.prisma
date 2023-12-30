@@ -27,7 +27,7 @@ model Address {
   street  String?
   number  String?
   city    String?
-  state   String?
+  country String?
   zipCode String?
   userId  String  @default(uuid()) @db.Uuid
   user    User    @relation(fields: [userId], references: [id])

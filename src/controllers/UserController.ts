@@ -128,7 +128,7 @@ const updateAddress = async (request: Request, response: Response) => {
         street: address?.street,
         number: address?.number,
         city: address?.city,
-        state: address?.state,
+        country: address?.country,
         zipCode: address?.zipCode,
       },
     })

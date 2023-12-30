@@ -10,7 +10,7 @@ export type UserTypes = {
     street: string
     number?: string
     city: string
-    state: string
+    country: string
     zipCode: string
   }
 }
@@ -27,7 +27,7 @@ export type UserWithAddress = {
     street: string
     number?: string
     city: string
-    state: string
+    country: string
     zipCode: string
   }
 }
