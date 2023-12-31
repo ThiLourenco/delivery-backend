@@ -118,24 +118,16 @@ const getAllProducts = async (request: Request, response: Response) => {
 const updateProductCategory = async (request: Request, response: Response) => {
   try {
     const { id } = request.params
-    const { name: newCategoryName } = request.body
+    const { name } = request.body
 
-    if (
-      !id ||
-      !newCategoryName ||
-      typeof id !== 'string' ||
-      typeof newCategoryName !== 'string'
-    ) {
+    if (!id || !name || typeof id !== 'string' || typeof name !== 'string') {
       return response.status(400).json({
-        message: 'Invalid or missing parameters: id, category',
+        message: 'Invalid or missing parameters: id, name',
       })
     }
 
     const updateProduct = new ProductService(ProductRepository)
-    const updatedProduct = await updateProduct.updateCategory(
-      id,
-      newCategoryName,
-    )
+    const updatedProduct = await updateProduct.updateCategory(id, name)
 
     return response.status(200).json({
       message: 'Product category updated with success!',
@@ -143,7 +135,7 @@ const updateProductCategory = async (request: Request, response: Response) => {
     })
   } catch (error) {
     console.error(error)
-    return response.status(500).json({
+    return response.status(400).json({
       message: 'Error updating product category',
     })
   }

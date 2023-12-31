@@ -14,10 +14,7 @@ export interface IProductRepository {
   findByName(name: string): Promise<ProductsTypes | null>
   findById(id: string): Promise<ProductsTypes | null>
   findAllProducts(): Promise<ProductsTypes[]>
-  updateProductCategory(
-    categoryName: string,
-    id: string,
-  ): Promise<ProductsTypes>
+  updateProductCategory(name: string, id: string): Promise<ProductsTypes>
 
   updateProduct(
     id: string,

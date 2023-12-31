@@ -98,7 +98,7 @@ class ProductRepository implements IProductRepository {
 
   public async updateProductCategory(
     id: string,
-    categoryName: string,
+    name: string,
   ): Promise<ProductsTypes> {
     try {
       const productExists = await prisma.product.findUnique({
@@ -113,12 +113,12 @@ class ProductRepository implements IProductRepository {
 
       const category = await prisma.category.findUnique({
         where: {
-          name: categoryName,
+          name,
         },
       })
 
       if (!category) {
-        throw new AppError('Category not found', 404)
+        throw new AppError('Category not exists', 400)
       }
 
       const updatedProduct = await prisma.product.update({
@@ -127,7 +127,7 @@ class ProductRepository implements IProductRepository {
           updatedAt: new Date(),
         },
         where: {
-          id: productExists.id,
+          id,
         },
       })
 
