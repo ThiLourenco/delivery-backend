@@ -5,7 +5,8 @@ const usersRoutes = Router()
 
 usersRoutes.post('/user/create', UserController.createUser)
 usersRoutes.post('/login', UserController.login)
-usersRoutes.put('/user/update', UserController.updateAddress)
+usersRoutes.put('/user/updateAddress', UserController.updateAddress)
+usersRoutes.put('/user/update/:id', UserController.updateUser)
 usersRoutes.get('/users', UserController.getUsers)
 usersRoutes.get('/user/:id', UserController.getUser)
 

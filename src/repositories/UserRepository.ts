@@ -138,6 +138,44 @@ class UserRepository implements IUserRepository {
       throw new AppError('Failed to login', 400)
     }
   }
+
+  public async updateUser(
+    id: string,
+    username: string,
+    name: string,
+    phone: string,
+  ): Promise<UserTypes> {
+    try {
+      const userExists = await prisma.user.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!userExists) {
+        throw new AppError('User not exists', 400)
+      }
+
+      const updatedUser = await prisma.user.update({
+        data: {
+          username,
+          name,
+          phone,
+          updatedAt: new Date(),
+        },
+        where: {
+          id,
+        },
+      })
+
+      return updatedUser
+    } catch (error) {
+      throw new AppError(
+        'Error to create new product, verify all fields are valid !',
+        400,
+      )
+    }
+  }
 }
 
 export default new UserRepository()

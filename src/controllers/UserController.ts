@@ -72,6 +72,46 @@ const getUsers = async (request: Request, response: Response) => {
   }
 }
 
+const updateUser = async (request: Request, response: Response) => {
+  try {
+    const { id } = request.params
+    const { username, name, phone } = request.body
+
+    if (
+      !id ||
+      !username ||
+      !name ||
+      !phone ||
+      typeof id !== 'string' ||
+      typeof username !== 'string' ||
+      typeof name !== 'string' ||
+      typeof phone !== 'string'
+    ) {
+      return response.status(400).json({
+        message: 'Invalid or missing parameters: id, username, name, phone',
+      })
+    }
+
+    const updateUserService = new UserService(UserRepository)
+    const updatedUser = await updateUserService.updateUserById(
+      id,
+      username,
+      name,
+      phone,
+    )
+
+    return response.status(200).json({
+      message: 'User updated successfully',
+      updatedUser,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(500).json({
+      message: 'Error updating product category',
+    })
+  }
+}
+
 const updateAddress = async (request: Request, response: Response) => {
   try {
     const { email, address }: UserTypes = request.body
@@ -152,4 +192,5 @@ export default {
   getUsers,
   updateAddress,
   login,
+  updateUser,
 }

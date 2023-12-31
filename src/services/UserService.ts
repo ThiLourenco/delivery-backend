@@ -30,6 +30,15 @@ class UserService {
   public async findAllUsers() {
     return await this.UserRepository.getUsers()
   }
+
+  public async updateUserById(
+    id: string,
+    username: string,
+    name: string,
+    phone: string,
+  ) {
+    return await this.UserRepository.updateUser(id, username, name, phone)
+  }
 }
 
 export { UserService }
