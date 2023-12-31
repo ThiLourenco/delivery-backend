@@ -107,7 +107,7 @@ const updateUser = async (request: Request, response: Response) => {
   } catch (error) {
     console.error(error)
     return response.status(500).json({
-      message: 'Error updating product category',
+      message: 'Error updating product user',
     })
   }
 }
