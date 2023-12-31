@@ -18,4 +18,12 @@ export interface IProductRepository {
     categoryName: string,
     id: string,
   ): Promise<ProductsTypes>
+
+  updateProduct(
+    id: string,
+    name: string,
+    description: string,
+    price: number,
+    situation: boolean,
+  ): Promise<ProductsTypes>
 }

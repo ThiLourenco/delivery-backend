@@ -124,6 +124,7 @@ class ProductRepository implements IProductRepository {
       const updatedProduct = await prisma.product.update({
         data: {
           categoryId: category.id,
+          updatedAt: new Date(),
         },
         where: {
           id: productExists.id,
@@ -133,7 +134,66 @@ class ProductRepository implements IProductRepository {
       return updatedProduct
     } catch (error) {
       throw new AppError(
-        'Error to create new product, verify all fields are valid !',
+        'Error to update product, verify all fields are valid !',
+        400,
+      )
+    }
+  }
+
+  public async updateProduct(
+    id: string,
+    name: string,
+    description: string,
+    price: number,
+    situation: boolean,
+  ): Promise<ProductsTypes> {
+    try {
+      const productExists = await prisma.product.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!productExists) {
+        throw new AppError('Product not exists', 400)
+      }
+
+      // validation in refactor
+      const updateData: { [key: string]: any } = {}
+
+      if (name !== undefined) {
+        updateData.name = name
+      }
+
+      if (description !== undefined) {
+        updateData.description = description
+      }
+
+      if (price !== undefined) {
+        if (typeof price !== 'number' || price < 0) {
+          throw new AppError('Price must be a positive number', 400)
+        }
+        updateData.price = price
+      }
+
+      if (situation !== undefined) {
+        updateData.situation = situation
+      }
+
+      const updatedProduct = await prisma.product.update({
+        data: {
+          ...updateData,
+          updatedAt: new Date(),
+        },
+        where: {
+          id: productExists.id,
+        },
+      })
+
+      return updatedProduct
+    } catch (error) {
+      throw new AppError(
+        'Error to update product, verify all fields are valid !',
         400,
       )
     }

@@ -171,7 +171,7 @@ class UserRepository implements IUserRepository {
       return updatedUser
     } catch (error) {
       throw new AppError(
-        'Error to create new product, verify all fields are valid !',
+        'Error to update user, verify all fields are valid !',
         400,
       )
     }

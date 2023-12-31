@@ -51,6 +51,22 @@ class ProductService {
 
     return product
   }
+
+  public async updateProduct(
+    id: string,
+    name: string,
+    description: string,
+    price: number,
+    situation: boolean,
+  ) {
+    return await this.ProductRepository.updateProduct(
+      id,
+      name,
+      description,
+      price,
+      situation,
+    )
+  }
 }
 
 export { ProductService }
