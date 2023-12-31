@@ -44,9 +44,7 @@ class ProductService {
   }
 
   public async updateCategory(id: string, name: string) {
-    const product = await this.ProductRepository.updateProductCategory(id, name)
-
-    return product
+    return await this.ProductRepository.updateProductCategory(id, name)
   }
 
   public async updateProduct(
