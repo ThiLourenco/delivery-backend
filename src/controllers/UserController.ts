@@ -34,7 +34,7 @@ const getUser = async (request: Request, response: Response) => {
     const user = await getUser.findUserById(id)
 
     if (!user) {
-      throw new AppError('User not exist!', 404)
+      throw new AppError('User not exist!', 400)
     }
 
     return response.status(200).json({
@@ -55,7 +55,7 @@ const getUsers = async (request: Request, response: Response) => {
     const users = await getUsers.findAllUsers()
 
     if (!users || users.length === 0) {
-      return response.status(404).json({
+      return response.status(400).json({
         message: 'No users found.',
       })
     }
@@ -106,7 +106,7 @@ const updateUser = async (request: Request, response: Response) => {
     })
   } catch (error) {
     console.error(error)
-    return response.status(500).json({
+    return response.status(400).json({
       message: 'Error updating product user',
     })
   }

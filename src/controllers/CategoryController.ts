@@ -87,7 +87,7 @@ const updateCategory = async (request: Request, response: Response) => {
     })
   } catch (error) {
     console.error(error)
-    return response.status(500).json({
+    return response.status(400).json({
       message: 'Error updating category',
     })
   }

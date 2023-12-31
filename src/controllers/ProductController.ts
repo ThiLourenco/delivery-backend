@@ -56,12 +56,12 @@ const getProductByName = async (request: Request, response: Response) => {
       })
     }
 
-    return response.status(404).json({
+    return response.status(400).json({
       message: 'Product not found!',
     })
   } catch (error) {
     console.error(error)
-    return response.status(500).json({
+    return response.status(400).json({
       message: 'Error finding products',
     })
   }
