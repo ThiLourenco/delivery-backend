@@ -1,26 +1,13 @@
-import { UserTypes } from '../dtos/UserTypes'
+import { CreateUserDTO, UserTypes } from '../dtos/UserTypes'
 import { IUserRepository } from '../interfaces/IUserRepository'
 
 class UserService {
-  constructor(private UserRepository: IUserRepository) {
-    this.UserRepository = UserRepository
-  }
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private UserRepository: IUserRepository) {}
 
-  public async execute(
-    id: string,
-    username: string,
-    name: string,
-    email: string,
-    phone: string,
-    password: string,
-    address: {
-      street: string
-      number: string
-      city: string
-      country: string
-      zipCode: string
-    },
-  ) {
+  public async execute(user: CreateUserDTO): Promise<UserTypes> {
+    const { id, username, name, email, phone, password, address } = user
+
     return await this.UserRepository.createUser(
       id,
       username,

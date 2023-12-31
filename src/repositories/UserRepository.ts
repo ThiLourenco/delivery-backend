@@ -10,8 +10,8 @@ class UserRepository implements IUserRepository {
     username: string,
     name: string,
     email: string,
-    phone: string,
     password: string,
+    phone: string,
     address?: {
       street: string
       number?: string

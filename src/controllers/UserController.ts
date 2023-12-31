@@ -9,23 +9,14 @@ import jwt from 'jsonwebtoken'
 
 const createUser = async (request: Request, response: Response) => {
   try {
-    const { id, username, name, email, phone, password, address } = request.body
+    const user = request.body
 
-    const data = new UserService(UserRepository)
-
-    const user = await data.execute(
-      id,
-      username,
-      name,
-      email,
-      password,
-      phone,
-      address,
-    )
+    const userService = new UserService(UserRepository)
+    const createdUser = await userService.execute(user)
 
     return response.status(201).json({
       message: 'User created with success!',
-      user,
+      user: createdUser,
     })
   } catch (error) {
     console.error(error)
