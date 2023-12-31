@@ -13,8 +13,8 @@ class CategoryService {
     return await this.CategoryRepository.getCategories()
   }
 
-  public async findAllProductByCategoryId(categoryId: string) {
-    return await this.CategoryRepository.findCategoriesByProductId(categoryId)
+  public async findAllProductByCategoryId(id: string) {
+    return await this.CategoryRepository.findCategoriesByProductId(id)
   }
 
   public async updateCategory(id: string, name: string) {

@@ -6,7 +6,7 @@ const categoryRoutes = Router()
 categoryRoutes.post('/category', CategoryController.createCategory)
 categoryRoutes.get('/category', CategoryController.getCategories)
 categoryRoutes.get(
-  '/category/products',
+  '/category/products/:id',
   CategoryController.getCategoriesByProduct,
 )
 categoryRoutes.put('/category/:id', CategoryController.updateCategory)

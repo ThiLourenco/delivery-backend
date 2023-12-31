@@ -42,10 +42,25 @@ const getCategories = async (request: Request, response: Response) => {
   }
 }
 
-const getCategoriesByProduct = async (
-  request: Request,
-  response: Response,
-) => {}
+const getCategoriesByProduct = async (request: Request, response: Response) => {
+  const { id } = request.params
+
+  try {
+    const categoryService = new CategoryService(CategoryRepository)
+    const allCategoryByProduct =
+      await categoryService.findAllProductByCategoryId(id)
+
+    return response.status(200).json({
+      message: 'Product by category retrieved successfully',
+      allCategoryByProduct,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to retrieved Product by category',
+    })
+  }
+}
 
 const updateCategory = async (request: Request, response: Response) => {
   try {

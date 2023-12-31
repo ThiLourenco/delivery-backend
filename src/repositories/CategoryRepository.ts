@@ -44,8 +44,19 @@ class CategoryRepository implements ICategoryRepository {
     }
   }
 
-  findCategoriesByProductId(id: string): Promise<ProductsTypes[]> {
-    throw new Error('Method not implemented.')
+  public async findCategoriesByProductId(id: string): Promise<ProductsTypes[]> {
+    try {
+      const categoriesByProduct = await prisma.product.findMany({
+        where: {
+          categoryId: id,
+        },
+      })
+
+      return categoriesByProduct
+    } catch (error) {
+      console.error(error)
+      throw new AppError('No categories with products found.')
+    }
   }
 
   public async updateCategory(
