@@ -47,6 +47,37 @@ class CategoryRepository implements ICategoryRepository {
   findCategoriesByProductId(id: string): Promise<ProductsTypes[]> {
     throw new Error('Method not implemented.')
   }
+
+  public async updateCategory(
+    id: string,
+    name: string,
+  ): Promise<CategoryTypes> {
+    try {
+      const categoryExists = await prisma.category.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!categoryExists) {
+        throw new AppError('Category not exists', 400)
+      }
+
+      const updateCategory = await prisma.category.update({
+        data: {
+          name,
+          updatedAt: new Date(),
+        },
+        where: {
+          id,
+        },
+      })
+
+      return updateCategory
+    } catch (error) {
+      throw new AppError('Error to update category')
+    }
+  }
 }
 
 export default new CategoryRepository()

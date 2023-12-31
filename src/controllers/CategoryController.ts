@@ -47,8 +47,40 @@ const getCategoriesByProduct = async (
   response: Response,
 ) => {}
 
+const updateCategory = async (request: Request, response: Response) => {
+  try {
+    const { id } = request.params
+    const { name } = request.body
+
+    if (
+      id === undefined ||
+      name === undefined ||
+      typeof id !== 'string' ||
+      typeof name !== 'string'
+    ) {
+      return response.status(400).json({
+        message: 'Invalid or missing parameter: id, name',
+      })
+    }
+
+    const updateCategoryService = new CategoryService(CategoryRepository)
+    const updateCategory = await updateCategoryService.updateCategory(id, name)
+
+    return response.status(200).json({
+      message: 'Category Updated successfully',
+      updateCategory,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(500).json({
+      message: 'Error updating category',
+    })
+  }
+}
+
 export default {
   createCategory,
   getCategories,
   getCategoriesByProduct,
+  updateCategory,
 }

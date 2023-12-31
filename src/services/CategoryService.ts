@@ -16,6 +16,10 @@ class CategoryService {
   public async findAllProductByCategoryId(categoryId: string) {
     return await this.CategoryRepository.findCategoriesByProductId(categoryId)
   }
+
+  public async updateCategory(id: string, name: string) {
+    return await this.CategoryRepository.updateCategory(id, name)
+  }
 }
 
 export { CategoryService }

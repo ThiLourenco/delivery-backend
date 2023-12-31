@@ -9,5 +9,6 @@ categoryRoutes.get(
   '/category/products',
   CategoryController.getCategoriesByProduct,
 )
+categoryRoutes.put('/category/:id', CategoryController.updateCategory)
 
 export { categoryRoutes }

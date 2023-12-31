@@ -7,4 +7,6 @@ export interface ICategoryRepository {
   getCategories(): Promise<CategoryTypes[]>
 
   findCategoriesByProductId(id: string): Promise<ProductsTypes[]>
+
+  updateCategory(id: string, name: string): Promise<CategoryTypes>
 }

@@ -37,13 +37,13 @@ model Address {
 }
 
 model Product {
-  id          String    @id @unique @default(uuid()) @db.Uuid
+  id          String    @id @unique @default(uuid())
   name        String    @unique
   description String    @db.VarChar(200)
   image       String
   price       Int
   situation   Boolean   @default(true)
-  categoryId  String?   @default(uuid()) @db.Uuid
+  categoryId  String?   @default(uuid())
   category    Category? @relation(fields: [categoryId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -52,9 +52,12 @@ model Product {
 }
 
 model Category {
-  id       String    @id @unique @default(uuid()) @db.Uuid
+  id       String    @id @unique @default(uuid())
   name     String    @unique
   products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("category")
 }
