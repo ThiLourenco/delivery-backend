@@ -40,10 +40,6 @@ class UserService {
     return await this.UserRepository.getUser(id)
   }
 
-  public async findUserByEmail(email: string): Promise<UserTypes | null> {
-    return await this.UserRepository.getByEmail(email)
-  }
-
   public async findAllUsers() {
     return await this.UserRepository.getUsers()
   }

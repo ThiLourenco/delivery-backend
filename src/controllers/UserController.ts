@@ -11,9 +11,8 @@ const createUser = async (request: Request, response: Response) => {
   try {
     const { id, username, name, email, phone, password, address } = request.body
 
-    console.log(id, username, name, email, phone, password, address)
-
     const data = new UserService(UserRepository)
+
     const user = await data.execute(
       id,
       username,
@@ -45,29 +44,6 @@ const getUser = async (request: Request, response: Response) => {
 
     if (!user) {
       throw new AppError('User not exist!', 404)
-    }
-
-    return response.status(200).json({
-      message: 'User retrieved successfully!',
-      user,
-    })
-  } catch (error) {
-    console.error(error)
-    return response.status(400).json({
-      message: 'Failed to retrieve user',
-    })
-  }
-}
-
-const getUserByEmail = async (request: Request, response: Response) => {
-  try {
-    const { email } = request.body
-
-    const getEmail = new UserService(UserRepository)
-    const user = await getEmail.findUserByEmail(email)
-
-    if (!user) {
-      throw new AppError('Email not exists!')
     }
 
     return response.status(200).json({
@@ -185,5 +161,4 @@ export default {
   getUsers,
   updateAddress,
   login,
-  getUserByEmail,
 }

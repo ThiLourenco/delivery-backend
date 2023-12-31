@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @unique @default(uuid()) @db.Uuid
+  id        String   @id @unique @default(uuid())
   username  String
   name      String
   email     String   @unique
@@ -23,13 +23,13 @@ model User {
 }
 
 model Address {
-  id      String  @id @unique @default(uuid()) @db.Uuid
+  id      String  @id @unique @default(uuid())
   street  String?
   number  String?
   city    String?
   country String?
   zipCode String?
-  userId  String  @default(uuid()) @db.Uuid
+  userId  String  @default(uuid())
   user    User    @relation(fields: [userId], references: [id])
 
   @@unique([userId])

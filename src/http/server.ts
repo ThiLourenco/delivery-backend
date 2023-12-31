@@ -1,11 +1,5 @@
 import { app } from './app'
 
-app.get('/', (request, response) => {
-  return response.send({
-    message: 'Hello World!',
-  })
-})
-
 const PORT = process.env.PORT
 const HOSTNAME = 'localhost'
 

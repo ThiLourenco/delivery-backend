@@ -96,25 +96,6 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  public async getByEmail(email: string): Promise<UserTypes | null> {
-    try {
-      const user = await prisma.user.findUnique({
-        where: {
-          email,
-        },
-      })
-
-      if (!user) {
-        throw new AppError('User not exists!')
-      }
-
-      return user
-    } catch (error) {
-      console.error(error)
-      throw new AppError('Failed to retrieve user')
-    }
-  }
-
   public async getUsers(): Promise<UserTypes[]> {
     try {
       const users = await prisma.user.findMany({

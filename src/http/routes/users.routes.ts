@@ -8,6 +8,5 @@ usersRoutes.post('/login', UserController.login)
 usersRoutes.put('/user/update', UserController.updateAddress)
 usersRoutes.get('/users', UserController.getUsers)
 usersRoutes.get('/user/:id', UserController.getUser)
-usersRoutes.get('/user/email', UserController.getUserByEmail)
 
 export { usersRoutes }
