@@ -198,6 +198,36 @@ class ProductRepository implements IProductRepository {
       )
     }
   }
+
+  public async updateProductImage(
+    productId: string,
+    imagePath: string,
+  ): Promise<ProductsTypes> {
+    try {
+      const productExists = await prisma.product.findUnique({
+        where: {
+          id: productId,
+        },
+      })
+
+      if (!productExists) {
+        throw new AppError('Product not exists', 400)
+      }
+
+      const updateImage = await prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          image: imagePath,
+        },
+      })
+
+      return updateImage
+    } catch (error) {
+      throw new AppError('Error to update image product!', 400)
+    }
+  }
 }
 
 export default new ProductRepository()

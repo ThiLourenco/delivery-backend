@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import ProductController from '../../controllers/ProductController'
+import { upload } from '../../middleware/upload'
 
 const productRoutes = Router()
 
@@ -12,5 +13,10 @@ productRoutes.put(
   ProductController.updateProductCategory,
 )
 productRoutes.put('/product/:id', ProductController.updateProduct)
+productRoutes.put(
+  '/product/image/:id',
+  upload.single('image'),
+  ProductController.updateProductImage,
+)
 
 export { productRoutes }

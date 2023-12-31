@@ -23,4 +23,9 @@ export interface IProductRepository {
     price: number,
     situation: boolean,
   ): Promise<ProductsTypes>
+
+  updateProductImage(
+    productId: string,
+    imagePath: string,
+  ): Promise<ProductsTypes>
 }

@@ -62,6 +62,10 @@ class ProductService {
       situation,
     )
   }
+
+  public async updateProductImage(productId: string, imagePath: string) {
+    return await this.ProductRepository.updateProductImage(productId, imagePath)
+  }
 }
 
 export { ProductService }

@@ -182,6 +182,24 @@ const updateProduct = async (request: Request, response: Response) => {
   }
 }
 
+const updateProductImage = async (request: Request, response: Response) => {
+  const { id: productId } = request.params
+  const imagePath = request.file!.path
+
+  try {
+    const updateImage = new ProductService(ProductRepository)
+    await updateImage.updateProductImage(productId, imagePath)
+
+    return response.status(200).json({
+      message: 'Product image updated successfully',
+    })
+  } catch (error) {
+    return response.status(500).json({
+      message: 'Error updating product image',
+    })
+  }
+}
+
 export default {
   createProduct,
   getProductByName,
@@ -189,4 +207,5 @@ export default {
   getAllProducts,
   updateProductCategory,
   updateProduct,
+  updateProductImage,
 }
