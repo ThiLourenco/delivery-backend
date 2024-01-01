@@ -1,5 +1,5 @@
 export type OrderTypes = {
-  id?: string
+  id: string
   productId: string
   userId: string
   totalAmount: number

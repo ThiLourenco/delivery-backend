@@ -19,16 +19,9 @@ class OrderRepository implements IOrderRepository {
           totalAmount,
           discount,
           status,
-          product: {
-            connect: {
-              id: productId,
-            },
-          },
         },
-        user: {
-          connect: {
-            id: userId,
-          },
+        include: {
+          product: true,
         },
       })
 

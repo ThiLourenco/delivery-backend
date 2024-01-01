@@ -4,8 +4,17 @@ import { OrderService } from './../services/OrderService'
 
 const createOrder = async (request: Request, response: Response) => {
   try {
+    console.log('createOrder controller triggered')
+    console.log('User ID from request:', request.userId)
+
     const { productId, totalAmount, discount, status } = request.body
-    const { userId } = request
+    const userId = request.userId
+
+    if (userId === undefined) {
+      return response.status(401).json({
+        message: 'User ID not found in request',
+      })
+    }
 
     console.log(userId, 'userID')
     console.log(productId, totalAmount, discount, status, 'Req.Body')

@@ -2,7 +2,9 @@ import { NextFunction, Response, Request } from 'express'
 import { verify } from 'jsonwebtoken'
 
 interface IPayload {
-  sub: string
+  id: string
+  iat: number
+  exp: number
 }
 
 export async function ensureAuthenticateClient(
@@ -23,17 +25,21 @@ export async function ensureAuthenticateClient(
   // verify token
   try {
     // return id for subject
-    const { sub } = verify(
+    const decodedToken = verify(
       token,
       process.env.CLIENT_SECRET || 'DEFAULT',
     ) as IPayload
 
-    request.userId = sub
+    console.log('Decoded Token:', decodedToken)
 
-    console.log(sub)
+    // adding userId in request
+    request.userId = decodedToken.id
+
+    console.log('UserID from Token:', request.userId)
 
     return next()
   } catch (err) {
+    console.error(err)
     return response.status(401).json({
       message: 'Invalid token!',
     })
