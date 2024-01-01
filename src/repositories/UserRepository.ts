@@ -2,7 +2,7 @@ import { prisma } from '../database'
 import { AppError, BadRequestError } from '../errors/AppError'
 import { IUserRepository } from '../interfaces/IUserRepository'
 import { UserTypes, UserWithAddress } from '../dtos/UserTypes'
-import bcrypt from 'bcrypt'
+import { compare, hash } from 'bcrypt'
 
 class UserRepository implements IUserRepository {
   public async createUser(
@@ -31,7 +31,7 @@ class UserRepository implements IUserRepository {
         throw new AppError('User already exists!')
       }
 
-      const hashPassword = await bcrypt.hash(password, 10)
+      const hashPassword = await hash(password, 10)
 
       const user = await prisma.user.create({
         data: {
@@ -127,9 +127,9 @@ class UserRepository implements IUserRepository {
         throw new BadRequestError('E-mail or password invalid')
       }
 
-      const verifyPassword = await bcrypt.compare(password, user.password)
+      const passwordMatch = await compare(password, user.password)
 
-      if (!verifyPassword) {
+      if (!passwordMatch) {
         throw new BadRequestError('E-mail or password invalid')
       }
 

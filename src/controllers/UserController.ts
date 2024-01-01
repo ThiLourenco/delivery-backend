@@ -168,8 +168,8 @@ const login = async (request: Request, response: Response) => {
       throw new BadRequestError('E-mail or password invalid')
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_PASS ?? '', {
-      expiresIn: '4h',
+    const token = jwt.sign({ id: user.id }, process.env.CLIENT_SECRET ?? '', {
+      expiresIn: '1d',
     })
 
     const { password: _, ...userLogin } = user

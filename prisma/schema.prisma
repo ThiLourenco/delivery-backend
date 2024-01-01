@@ -18,6 +18,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   address   Address?
+  order     Order[]
 
   @@map("user")
 }
@@ -47,6 +48,7 @@ model Product {
   category    Category? @relation(fields: [categoryId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  order       Order[]
 
   @@map("product")
 }
@@ -62,6 +64,22 @@ model Category {
   @@map("category")
 }
 
+model Order {
+  id          String    @id @unique @default(uuid())
+  productId   String
+  userId      String
+  totalAmount Int
+  discount    Int
+  status      String
+  createdAt   DateTime  @default(now())
+  endAt       DateTime?
+
+  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@map("order")
+}
+
 // model Establishment {
 //   id             String @id @unique @default(uuid()) @db.Uuid
 //   companyName    String
@@ -71,17 +89,4 @@ model Category {
 //   email          String
 
 //   @@map("establishment")
-// }
-
-// model Order {
-//   id          Int      @id @unique @default(autoincrement())
-//   user        User     @relation(fields: [userId], references: [id])
-//   product     Product  @relation(fields: [productId], references: [id])
-//   productId   Int
-//   userId      Int
-//   totalAmount Int
-//   discount    Int
-//   status      String
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
 // }
