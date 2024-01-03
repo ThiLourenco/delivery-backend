@@ -7,7 +7,7 @@ const createOrder = async (request: Request, response: Response) => {
     console.log('createOrder controller triggered')
     console.log('User ID from request:', request.userId)
 
-    const { productId, totalAmount, discount, status } = request.body
+    const { products, totalAmount, discount, status } = request.body
     const userId = request.userId
 
     if (userId === undefined) {
@@ -17,11 +17,11 @@ const createOrder = async (request: Request, response: Response) => {
     }
 
     console.log(userId, 'userID')
-    console.log(productId, totalAmount, discount, status, 'Req.Body')
+    console.log(products, totalAmount, discount, status, 'Req.Body')
 
     const createOrderService = new OrderService(OrderRepository)
     const order = await createOrderService.execute(
-      productId,
+      products,
       userId,
       totalAmount,
       discount,

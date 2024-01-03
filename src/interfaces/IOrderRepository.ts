@@ -2,7 +2,10 @@ import { OrderTypes } from 'dtos/OrderTypes'
 
 export interface IOrderRepository {
   createOrder(
-    productId: string,
+    products: {
+      productId: string
+      quantity: number
+    }[],
     userId: string,
     totalAmount: number,
     discount: number,

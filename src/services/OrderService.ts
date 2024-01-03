@@ -6,14 +6,17 @@ class OrderService {
   }
 
   public async execute(
-    productId: string,
+    products: {
+      productId: string
+      quantity: number
+    }[],
     userId: string,
     totalAmount: number,
     discount: number,
     status: string,
   ) {
     return await this.OrderRepository.createOrder(
-      productId,
+      products,
       userId,
       totalAmount,
       discount,

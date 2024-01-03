@@ -38,17 +38,17 @@ model Address {
 }
 
 model Product {
-  id          String    @id @unique @default(uuid())
-  name        String    @unique
-  description String    @db.VarChar(200)
+  id          String         @id @unique @default(uuid())
+  name        String         @unique
+  description String         @db.VarChar(200)
   image       String
   price       Int
-  situation   Boolean   @default(true)
-  categoryId  String?   @default(uuid())
-  category    Category? @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  order       Order[]
+  situation   Boolean        @default(true)
+  categoryId  String?        @default(uuid())
+  category    Category?      @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  orders      OrderProduct[]
 
   @@map("product")
 }
@@ -66,7 +66,6 @@ model Category {
 
 model Order {
   id          String    @id @unique @default(uuid())
-  productId   String
   userId      String
   totalAmount Int
   discount    Int
@@ -74,10 +73,21 @@ model Order {
   createdAt   DateTime  @default(now())
   endAt       DateTime?
 
-  product Product @relation(fields: [productId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
+  user     User           @relation(fields: [userId], references: [id])
+  products OrderProduct[]
 
   @@map("order")
+}
+
+model OrderProduct {
+  orderId   String
+  productId String
+  quantity  Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@id([orderId, productId])
+  @@map("orderProduct")
 }
 
 // model Establishment {

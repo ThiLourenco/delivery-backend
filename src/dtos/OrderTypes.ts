@@ -1,6 +1,9 @@
 export type OrderTypes = {
   id: string
-  productId: string
+  products: {
+    productId: string
+    quantity: number
+  }[]
   userId: string
   totalAmount: number
   discount?: number
