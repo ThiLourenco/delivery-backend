@@ -58,6 +58,27 @@ class OrderRepository implements IOrderRepository {
       throw new AppError('Failed to create order', 400)
     }
   }
+
+  public async findOrderByUser(userId: string): Promise<OrderTypes[]> {
+    try {
+      const orders = await prisma.order.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          products: true,
+        },
+      })
+
+      if (!orders || orders.length === 0) {
+        throw new AppError('Orders is empty')
+      }
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw new AppError('Orders not found')
+    }
+  }
 }
 
 export default new OrderRepository()

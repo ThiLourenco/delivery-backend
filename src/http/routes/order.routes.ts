@@ -10,4 +10,10 @@ orderRoutes.post(
   OrderController.createOrder,
 )
 
+orderRoutes.get(
+  '/user',
+  ensureAuthenticateClient,
+  OrderController.getOrderByUser,
+)
+
 export { orderRoutes }

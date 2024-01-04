@@ -23,6 +23,12 @@ class OrderService {
       status,
     )
   }
+
+  public async findOrder(userId: string) {
+    const orders = await this.OrderRepository.findOrderByUser(userId)
+
+    return orders
+  }
 }
 
 export { OrderService }

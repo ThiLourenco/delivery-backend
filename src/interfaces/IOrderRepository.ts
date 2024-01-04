@@ -11,4 +11,6 @@ export interface IOrderRepository {
     discount: number,
     status: string,
   ): Promise<OrderTypes>
+
+  findOrderByUser(userId: string): Promise<OrderTypes[]>
 }
