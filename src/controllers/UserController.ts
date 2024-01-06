@@ -9,10 +9,10 @@ import jwt from 'jsonwebtoken'
 
 const createUser = async (request: Request, response: Response) => {
   try {
-    const user = request.body
+    const userData = request.body
 
     const userService = new UserService(UserRepository)
-    const createdUser = await userService.execute(user)
+    const createdUser = await userService.execute(userData)
 
     return response.status(201).json({
       message: 'User created with success!',
@@ -34,7 +34,7 @@ const getUser = async (request: Request, response: Response) => {
     const user = await getUser.findUserById(id)
 
     if (!user) {
-      throw new AppError('User not exist!', 400)
+      throw new AppError('User not exists!', 400)
     }
 
     return response.status(200).json({
@@ -55,8 +55,8 @@ const getUsers = async (request: Request, response: Response) => {
     const users = await getUsers.findAllUsers()
 
     if (!users || users.length === 0) {
-      return response.status(400).json({
-        message: 'No users found.',
+      return response.status(404).json({
+        message: 'No user found.',
       })
     }
 

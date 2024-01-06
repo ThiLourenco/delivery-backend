@@ -56,12 +56,12 @@ const getProductByName = async (request: Request, response: Response) => {
       })
     }
 
-    return response.status(400).json({
+    return response.status(404).json({
       message: 'Product not found!',
     })
   } catch (error) {
     console.error(error)
-    return response.status(400).json({
+    return response.status(500).json({
       message: 'Error finding products',
     })
   }
@@ -135,7 +135,7 @@ const updateProductCategory = async (request: Request, response: Response) => {
     })
   } catch (error) {
     console.error(error)
-    return response.status(400).json({
+    return response.status(500).json({
       message: 'Error updating product category',
     })
   }
@@ -190,9 +190,7 @@ const updateProductImage = async (request: Request, response: Response) => {
     const updateImage = new ProductService(ProductRepository)
     await updateImage.updateProductImage(productId, imagePath)
 
-    return response.status(200).json({
-      message: 'Product image updated successfully',
-    })
+    return response.status(200).end()
   } catch (error) {
     return response.status(500).json({
       message: 'Error updating product image',

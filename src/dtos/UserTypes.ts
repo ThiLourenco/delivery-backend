@@ -1,5 +1,5 @@
 export type UserTypes = {
-  id?: string
+  id: string
   username: string
   name: string
   email: string
@@ -16,7 +16,7 @@ export type UserTypes = {
 }
 
 export type UserWithAddress = {
-  id?: string
+  id: string
   username: string
   name: string
   email: string

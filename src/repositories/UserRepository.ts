@@ -98,11 +98,7 @@ class UserRepository implements IUserRepository {
 
   public async getUsers(): Promise<UserTypes[]> {
     try {
-      const users = await prisma.user.findMany({
-        include: {
-          // address: true,
-        },
-      })
+      const users = await prisma.user.findMany()
 
       if (!users || users.length === 0) {
         throw new AppError('Failed to retrieve users.')
