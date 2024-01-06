@@ -3,6 +3,7 @@ import { AppError, BadRequestError } from '../errors/AppError'
 import { IUserRepository } from '../interfaces/IUserRepository'
 import { UserTypes, UserWithAddress } from '../dtos/UserTypes'
 import { compare, hash } from 'bcrypt'
+import { UserRole } from '@prisma/client'
 
 class UserRepository implements IUserRepository {
   public async createUser(
@@ -12,6 +13,7 @@ class UserRepository implements IUserRepository {
     email: string,
     password: string,
     phone: string,
+    role: UserRole,
     address?: {
       street: string
       number?: string
@@ -41,6 +43,7 @@ class UserRepository implements IUserRepository {
           email,
           phone,
           password: hashPassword,
+          role,
           address: {
             create: {
               street: address?.street,
@@ -82,6 +85,7 @@ class UserRepository implements IUserRepository {
         email: user.email,
         phone: user.phone,
         isAdmin: user.isAdmin,
+        role: user.role,
         address: {
           city: user.address?.city || '',
           country: user.address?.country || '',

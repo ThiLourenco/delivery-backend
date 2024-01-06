@@ -1,3 +1,4 @@
+import { UserRole } from '@prisma/client'
 import { UserTypes } from '../dtos/UserTypes'
 
 export interface IUserRepository {
@@ -8,6 +9,7 @@ export interface IUserRepository {
     email: string,
     phone: string,
     password: string,
+    role: UserRole,
     address?: {
       street: string
       number?: string

@@ -1,15 +1,18 @@
 import { Request, Response } from 'express'
-import { AppError, BadRequestError } from '../errors/AppError'
-import { UserTypes } from '../dtos/UserTypes'
-import { UserService } from '../services/UserService'
-import UserRepository from '../repositories/UserRepository'
-import { prisma } from '../database'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { prisma } from '../database'
+import { UserRole } from '@prisma/client'
+import { AppError, BadRequestError } from '../errors/AppError'
+import { CreateUserDTO, UserTypes } from '../dtos/UserTypes'
+import { UserService } from '../services/UserService'
+import UserRepository from '../repositories/UserRepository'
 
 const createUser = async (request: Request, response: Response) => {
   try {
-    const userData = request.body
+    const userData: CreateUserDTO = request.body
+
+    userData.role = userData.role || UserRole.CLIENT
 
     const userService = new UserService(UserRepository)
     const createdUser = await userService.execute(userData)

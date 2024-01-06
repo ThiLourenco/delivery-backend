@@ -1,3 +1,5 @@
+import { UserRole } from '@prisma/client'
+
 export type UserTypes = {
   id: string
   username: string
@@ -5,6 +7,7 @@ export type UserTypes = {
   email: string
   phone: string
   password: string
+  role: UserRole
   isAdmin: boolean
   address?: {
     street: string
@@ -22,6 +25,7 @@ export type UserWithAddress = {
   email: string
   phone: string
   password: string
+  role: UserRole
   isAdmin: boolean
   address: {
     street: string
@@ -38,6 +42,7 @@ export interface CreateUserDTO {
   name: string
   email: string
   password: string
+  role: UserRole
   phone: string
   address?: {
     street: string

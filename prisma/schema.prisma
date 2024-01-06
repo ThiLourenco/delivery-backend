@@ -14,6 +14,7 @@ model User {
   email     String   @unique
   phone     String
   password  String
+  role      UserRole @default(CLIENT)
   isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -21,6 +22,12 @@ model User {
   order     Order[]
 
   @@map("user")
+}
+
+enum UserRole {
+  CLIENT
+  DELIVERY_MAN
+  ADMIN
 }
 
 model Address {
@@ -89,14 +96,3 @@ model OrderProduct {
   @@id([orderId, productId])
   @@map("orderProduct")
 }
-
-// model Establishment {
-//   id             String @id @unique @default(uuid()) @db.Uuid
-//   companyName    String
-//   commercialName String
-//   cnpj           Int    @unique
-//   phone          String
-//   email          String
-
-//   @@map("establishment")
-// }

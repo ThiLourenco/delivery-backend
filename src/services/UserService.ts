@@ -6,7 +6,7 @@ class UserService {
   constructor(private UserRepository: IUserRepository) {}
 
   public async execute(user: CreateUserDTO): Promise<UserTypes> {
-    const { id, username, name, email, phone, password, address } = user
+    const { id, username, name, email, phone, password, address, role } = user
 
     return await this.UserRepository.createUser(
       id,
@@ -15,6 +15,7 @@ class UserService {
       email,
       password,
       phone,
+      role,
       address,
     )
   }
