@@ -7,6 +7,10 @@ import { ProductsTypes } from 'dtos/ProductsTypes'
 class CategoryRepository implements ICategoryRepository {
   public async createCategory(name: string): Promise<CategoryTypes> {
     try {
+      if (!name) {
+        throw new AppError('Category name is required.', 400)
+      }
+
       const categoryExist = await prisma.category.findUnique({
         where: {
           name,
@@ -14,7 +18,7 @@ class CategoryRepository implements ICategoryRepository {
       })
 
       if (categoryExist) {
-        throw new AppError('Category already exists!')
+        throw new AppError('Category already exists!', 400)
       }
 
       const category = await prisma.category.create({
@@ -25,7 +29,7 @@ class CategoryRepository implements ICategoryRepository {
 
       return category
     } catch (error) {
-      throw new AppError('Failed to create category', 500)
+      throw new AppError('Category already exists!', 400)
     }
   }
 
@@ -34,13 +38,13 @@ class CategoryRepository implements ICategoryRepository {
       const categories = await prisma.category.findMany()
 
       if (!categories || categories.length === 0) {
-        throw new AppError('Failed to retrieve categories.')
+        throw new AppError('No categories found.', 404)
       }
 
       return categories
     } catch (error) {
       console.error(error)
-      throw new AppError('No categories found.')
+      throw new AppError('Failed to retrieve categories.')
     }
   }
 
