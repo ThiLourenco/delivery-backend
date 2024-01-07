@@ -23,4 +23,6 @@ orderRoutes.get(
   OrderController.getOrderByUser,
 )
 
+orderRoutes.get('/ordersAvailable', OrderController.getAllOrdersAvailable)
+
 export { orderRoutes }
