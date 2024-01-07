@@ -103,4 +103,46 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
   }
 }
 
-export default { createDeliveryMan, updateDeliveryMan, loginDeliveryMan }
+const updateOrderDeliveryMan = async (request: Request, response: Response) => {
+  try {
+    const { id: orderId } = request.params
+    console.log('User ID from request: ' + request.deliveryManId)
+
+    const deliveryManId = request.deliveryManId
+
+    const deliveryManData: DeliveryManTypes = request.body
+    deliveryManData.role = UserRole.DELIVERY_MAN
+
+    if (deliveryManId === undefined) {
+      return response.status(401).json({
+        message: 'User ID not specified in request',
+      })
+    }
+    console.log(deliveryManId, 'userId')
+
+    const updateOrderDeliveryService = new DeliveryManService(
+      DeliveryManRepository,
+    )
+    const update = await updateOrderDeliveryService.updateDeliveryOrder(
+      deliveryManId,
+      orderId,
+    )
+
+    return response.status(200).json({
+      message: 'DeliveryMan Order updated successfully',
+      update,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Error updating order delivery man',
+    })
+  }
+}
+
+export default {
+  createDeliveryMan,
+  updateDeliveryMan,
+  loginDeliveryMan,
+  updateOrderDeliveryMan,
+}

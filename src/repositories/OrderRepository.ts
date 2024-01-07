@@ -79,6 +79,45 @@ class OrderRepository implements IOrderRepository {
       throw new AppError('Orders not found')
     }
   }
+
+  public async updateEndDate(
+    deliveryManId: string,
+    orderId: string,
+  ): Promise<OrderTypes> {
+    try {
+      const deliveryManExists = await prisma.user.findUnique({
+        where: {
+          id: deliveryManId,
+        },
+      })
+
+      if (!deliveryManExists) {
+        throw new AppError('DeliveryMan not exists', 400)
+      }
+
+      const updateDeliveryMan = await prisma.order.update({
+        where: {
+          link_delivery_deliveryman: {
+            deliveryManId,
+            id: orderId,
+          },
+        },
+        data: {
+          endAt: new Date(),
+        },
+        include: {
+          products: true,
+        },
+      })
+
+      return updateDeliveryMan
+    } catch (error) {
+      throw new AppError(
+        'Error to update user, verify all fields are valid !',
+        400,
+      )
+    }
+  }
 }
 
 export default new OrderRepository()

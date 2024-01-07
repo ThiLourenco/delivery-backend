@@ -1,4 +1,5 @@
 import { ensureAuthenticateClient } from './../../middlewares/ensureAuthenticateClient'
+import { ensureAuthenticateDeliveryMan } from './../../middlewares/ensureAuthenticateDeliveryMan'
 import OrderController from '../../controllers/OrderController'
 import { Router } from 'express'
 
@@ -8,6 +9,12 @@ orderRoutes.post(
   '/create',
   ensureAuthenticateClient,
   OrderController.createOrder,
+)
+
+orderRoutes.put(
+  '/updateEndDate/:id',
+  ensureAuthenticateDeliveryMan,
+  OrderController.updateEndDate,
 )
 
 orderRoutes.get(

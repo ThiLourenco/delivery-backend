@@ -68,6 +68,36 @@ const getOrderByUser = async (request: Request, response: Response) => {
   }
 }
 
-const updateEndDate = async (request: Request, response: Response) => {}
+const updateEndDate = async (request: Request, response: Response) => {
+  try {
+    console.log('User ID from request:', request.deliveryManId)
 
-export default { createOrder, getOrderByUser }
+    const deliveryManId = request.deliveryManId
+    const { id: orderId } = request.params
+
+    console.log('Order ID:', orderId)
+    if (deliveryManId === undefined) {
+      return response.status(401).json({
+        message: 'DeliveryMan ID not found in request',
+      })
+    }
+
+    const updateEndDateService = new OrderService(OrderRepository)
+    const order = await updateEndDateService.updateEndDate(
+      deliveryManId,
+      orderId,
+    )
+
+    return response.status(200).json({
+      message: 'Updated EndDate Order with successfully',
+      order,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to update orders',
+    })
+  }
+}
+
+export default { createOrder, getOrderByUser, updateEndDate }

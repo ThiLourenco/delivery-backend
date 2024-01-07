@@ -4,6 +4,7 @@ import { prisma } from './../database'
 import { DeliveryManTypes } from '../dtos/DeliveryManTypes'
 import { AppError, BadRequestError } from '../errors/AppError'
 import { IDeliveryManRepository } from '../interfaces/IDeliveryManRepository'
+import { OrderTypes } from 'dtos/OrderTypes'
 
 class DeliveryManRepository implements IDeliveryManRepository {
   public async createDeliveryMan(
@@ -122,6 +123,42 @@ class DeliveryManRepository implements IDeliveryManRepository {
       return deliveryManUser
     } catch (error) {
       throw new AppError('Failed to login', 400)
+    }
+  }
+
+  public async updateOrderDeliveryMan(
+    deliveryManId: string,
+    orderId: string,
+  ): Promise<DeliveryManTypes | OrderTypes> {
+    try {
+      const orderExists = await prisma.order.findUnique({
+        where: {
+          id: orderId,
+        },
+      })
+
+      if (!orderExists) {
+        throw new AppError('Order not exists', 400)
+      }
+
+      const updateOrderDeliveryMan = await prisma.order.update({
+        data: {
+          deliveryManId,
+        },
+        where: {
+          id: orderId,
+        },
+        include: {
+          products: true,
+        },
+      })
+
+      return updateOrderDeliveryMan
+    } catch (error) {
+      throw new AppError(
+        'Error to update order, verify all fields are valid !',
+        500,
+      )
     }
   }
 }

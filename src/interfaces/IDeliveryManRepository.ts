@@ -1,5 +1,6 @@
 import { UserRole } from '@prisma/client'
 import { DeliveryManTypes } from '../dtos/DeliveryManTypes'
+import { OrderTypes } from 'dtos/OrderTypes'
 
 export interface IDeliveryManRepository {
   createDeliveryMan(
@@ -25,4 +26,9 @@ export interface IDeliveryManRepository {
   ): Promise<DeliveryManTypes>
 
   loginDeliveryMan(email: string, password: string): Promise<DeliveryManTypes>
+
+  updateOrderDeliveryMan(
+    deliveryManId: string,
+    orderId: string,
+  ): Promise<DeliveryManTypes | OrderTypes>
 }

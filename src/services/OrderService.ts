@@ -29,6 +29,10 @@ class OrderService {
 
     return orders
   }
+
+  public async updateEndDate(deliveryManId: string, orderId: string) {
+    return await this.OrderRepository.updateEndDate(deliveryManId, orderId)
+  }
 }
 
 export { OrderService }

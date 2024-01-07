@@ -13,4 +13,6 @@ export interface IOrderRepository {
   ): Promise<OrderTypes>
 
   findOrderByUser(userId: string): Promise<OrderTypes[]>
+
+  updateEndDate(deliveryManId: string, id: string): Promise<OrderTypes>
 }
