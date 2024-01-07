@@ -13,4 +13,10 @@ deliveryManRoutes.put(
   DeliveryManController.updateOrderDeliveryMan,
 )
 
+deliveryManRoutes.get(
+  '/getOrders',
+  ensureAuthenticateDeliveryMan,
+  DeliveryManController.getOrderByDeliveryMan,
+)
+
 export { deliveryManRoutes }

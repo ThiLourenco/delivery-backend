@@ -31,4 +31,8 @@ export interface IDeliveryManRepository {
     deliveryManId: string,
     orderId: string,
   ): Promise<DeliveryManTypes | OrderTypes>
+
+  getOrdersDeliveryMan(
+    deliveryManId: string,
+  ): Promise<DeliveryManTypes | OrderTypes[]>
 }

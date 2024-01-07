@@ -34,7 +34,7 @@ class OrderRepository implements IOrderRepository {
           userId,
           totalAmount,
           discount,
-          status,
+          status: 'Em preparo',
           products: {
             create: products.map((product) => ({
               productId: product.productId,
@@ -103,6 +103,7 @@ class OrderRepository implements IOrderRepository {
           },
         },
         data: {
+          status: 'Pedido Entregue',
           endAt: new Date(),
         },
         include: {

@@ -36,6 +36,10 @@ class DeliveryManService {
       orderId,
     )
   }
+
+  public async getOrdersDelivery(deliveryManId: string) {
+    return await this.DeliveryManRepository.getOrdersDeliveryMan(deliveryManId)
+  }
 }
 
 export { DeliveryManService }

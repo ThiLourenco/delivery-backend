@@ -140,9 +140,37 @@ const updateOrderDeliveryMan = async (request: Request, response: Response) => {
   }
 }
 
+const getOrderByDeliveryMan = async (request: Request, response: Response) => {
+  try {
+    console.log('DeliveryManID from request:' + request.deliveryManId)
+
+    const deliveryManId = request.deliveryManId
+
+    if (deliveryManId === undefined) {
+      return response.status(401).json({
+        message: 'DeliveryManId not specified in request',
+      })
+    }
+
+    const getOrders = new DeliveryManService(DeliveryManRepository)
+    const orders = await getOrders.getOrdersDelivery(deliveryManId)
+
+    return response.status(200).json({
+      message: 'get Orders with success!',
+      orders,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to get order',
+    })
+  }
+}
+
 export default {
   createDeliveryMan,
   updateDeliveryMan,
   loginDeliveryMan,
   updateOrderDeliveryMan,
+  getOrderByDeliveryMan,
 }

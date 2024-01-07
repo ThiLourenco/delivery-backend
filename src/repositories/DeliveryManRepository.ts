@@ -144,6 +144,7 @@ class DeliveryManRepository implements IDeliveryManRepository {
       const updateOrderDeliveryMan = await prisma.order.update({
         data: {
           deliveryManId,
+          status: 'Em rota de entrega',
         },
         where: {
           id: orderId,
@@ -159,6 +160,31 @@ class DeliveryManRepository implements IDeliveryManRepository {
         'Error to update order, verify all fields are valid !',
         500,
       )
+    }
+  }
+
+  public async getOrdersDeliveryMan(
+    deliveryManId: string,
+  ): Promise<DeliveryManTypes | OrderTypes[]> {
+    try {
+      const orders = await prisma.order.findMany({
+        where: {
+          deliveryManId,
+        },
+        include: {
+          _count: true,
+          products: true,
+        },
+      })
+
+      if (!orders || orders.length === 0) {
+        throw new AppError('Orders is empty')
+      }
+
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw new AppError('Not found orders for deliveryManId: ')
     }
   }
 }
