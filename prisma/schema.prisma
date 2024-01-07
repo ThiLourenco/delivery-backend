@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-  id        String   @id @unique @default(uuid())
-  username  String
-  name      String
-  email     String   @unique
-  phone     String
-  password  String
-  role      UserRole @default(CLIENT)
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  address   Address?
-  order     Order[]
+  id             String   @id @unique @default(uuid())
+  username       String
+  name           String
+  email          String   @unique
+  phone          String
+  password       String
+  role           UserRole @default(CLIENT)
+  isAdmin        Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  address        Address?
+  order          Order[]
+  deliveryOrders Order[]  @relation("DeliveryMan")
 
   @@map("user")
 }
@@ -72,16 +73,19 @@ model Category {
 }
 
 model Order {
-  id          String    @id @unique @default(uuid())
-  userId      String
-  totalAmount Int
-  discount    Int
-  status      String
-  createdAt   DateTime  @default(now())
-  endAt       DateTime?
+  id            String    @id @unique @default(uuid())
+  userId        String
+  deliveryManId String?
+  totalAmount   Int
+  discount      Int
+  status        String
+  createdAt     DateTime  @default(now())
+  endAt         DateTime?
 
   user     User           @relation(fields: [userId], references: [id])
   products OrderProduct[]
+
+  deliveryMan User? @relation("DeliveryMan", fields: [deliveryManId], references: [id])
 
   @@map("order")
 }

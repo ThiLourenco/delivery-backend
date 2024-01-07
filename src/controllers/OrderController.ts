@@ -68,4 +68,6 @@ const getOrderByUser = async (request: Request, response: Response) => {
   }
 }
 
+const updateEndDate = async (request: Request, response: Response) => {}
+
 export default { createOrder, getOrderByUser }
