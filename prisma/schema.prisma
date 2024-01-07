@@ -87,6 +87,7 @@ model Order {
 
   deliveryMan User? @relation("DeliveryMan", fields: [deliveryManId], references: [id])
 
+  @@unique([id, deliveryManId], name: "link_delivery_deliveryman")
   @@map("order")
 }
 

@@ -17,4 +17,12 @@ export interface IDeliveryManRepository {
       zipCode: string
     },
   ): Promise<DeliveryManTypes>
+
+  updateDeliveryMan(
+    id: string,
+    name: string,
+    phone: string,
+  ): Promise<DeliveryManTypes>
+
+  loginDeliveryMan(email: string, password: string): Promise<DeliveryManTypes>
 }

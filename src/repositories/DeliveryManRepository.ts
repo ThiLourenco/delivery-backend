@@ -1,8 +1,8 @@
-import { hash } from 'bcrypt'
+import { hash, compare } from 'bcrypt'
 import { UserRole } from '@prisma/client'
 import { prisma } from './../database'
 import { DeliveryManTypes } from '../dtos/DeliveryManTypes'
-import { AppError } from '../errors/AppError'
+import { AppError, BadRequestError } from '../errors/AppError'
 import { IDeliveryManRepository } from '../interfaces/IDeliveryManRepository'
 
 class DeliveryManRepository implements IDeliveryManRepository {
@@ -58,6 +58,70 @@ class DeliveryManRepository implements IDeliveryManRepository {
     } catch (error) {
       console.error(error)
       throw new AppError('Failed to create deliveryMan', 500)
+    }
+  }
+
+  public async updateDeliveryMan(
+    id: string,
+    name: string,
+    phone: string,
+  ): Promise<DeliveryManTypes> {
+    try {
+      const deliveryManExists = await prisma.user.findUnique({
+        where: {
+          id,
+          role: 'DELIVERY_MAN',
+        },
+      })
+
+      if (!deliveryManExists) {
+        throw new AppError('DeliveryMan not exists', 400)
+      }
+
+      const updateDeliveryMan = await prisma.user.update({
+        data: {
+          name,
+          phone,
+          updatedAt: new Date(),
+        },
+        where: {
+          id: deliveryManExists.id,
+          role: (deliveryManExists.role = 'DELIVERY_MAN'),
+        },
+      })
+      return updateDeliveryMan
+    } catch (error) {
+      throw new AppError(
+        'Error to update user, verify all fields are valid !',
+        400,
+      )
+    }
+  }
+
+  public async loginDeliveryMan(
+    email: string,
+    password: string,
+  ): Promise<DeliveryManTypes> {
+    try {
+      const deliveryManUser = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      })
+
+      if (!deliveryManUser) {
+        throw new BadRequestError('E-mail or password invalid')
+      }
+
+      const passwordMatch = await compare(password, deliveryManUser.password)
+
+      if (!passwordMatch) {
+        throw new BadRequestError('E-mail or password incorrect')
+      }
+
+      return deliveryManUser
+    } catch (error) {
+      throw new AppError('Failed to login', 400)
     }
   }
 }

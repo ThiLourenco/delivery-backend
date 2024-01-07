@@ -21,6 +21,14 @@ class DeliveryManService {
       address,
     )
   }
+
+  public async update(id: string, name: string, phone: string) {
+    return await this.DeliveryManRepository.updateDeliveryMan(id, name, phone)
+  }
+
+  public async login(email: string, password: string) {
+    return await this.DeliveryManRepository.loginDeliveryMan(email, password)
+  }
 }
 
 export { DeliveryManService }
