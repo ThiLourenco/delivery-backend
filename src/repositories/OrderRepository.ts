@@ -145,6 +145,66 @@ class OrderRepository implements IOrderRepository {
       throw new AppError('Orders not found')
     }
   }
+
+  public async getAllOrdersUnavailable(): Promise<OrderTypes[]> {
+    try {
+      const orders = await prisma.order.findMany({
+        where: {
+          NOT: {
+            deliveryManId: null,
+          },
+          AND: {
+            status: 'Em rota de entrega',
+          },
+        },
+        include: {
+          products: true,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      })
+
+      if (!orders || orders.length === 0) {
+        throw new AppError('Orders is empty')
+      }
+
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw new AppError('Orders not found')
+    }
+  }
+
+  public async getAllOrdersCompleted(): Promise<OrderTypes[]> {
+    try {
+      const orders = await prisma.order.findMany({
+        where: {
+          NOT: {
+            deliveryManId: null,
+          },
+          AND: {
+            status: 'Pedido Entregue',
+          },
+        },
+        include: {
+          products: true,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      })
+
+      if (!orders || orders.length === 0) {
+        throw new AppError('Orders is empty')
+      }
+
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw new AppError('Orders not found')
+    }
+  }
 }
 
 export default new OrderRepository()

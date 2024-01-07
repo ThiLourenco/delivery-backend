@@ -17,4 +17,8 @@ export interface IOrderRepository {
   updateEndDate(deliveryManId: string, id: string): Promise<OrderTypes>
 
   getAllOrdersAvailable(): Promise<OrderTypes[]>
+
+  getAllOrdersUnavailable(): Promise<OrderTypes[]>
+
+  getAllOrdersCompleted(): Promise<OrderTypes[]>
 }

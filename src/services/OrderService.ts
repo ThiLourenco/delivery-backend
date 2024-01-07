@@ -37,6 +37,14 @@ class OrderService {
   public async getAllOrders() {
     return await this.OrderRepository.getAllOrdersAvailable()
   }
+
+  public async getAllOrdersUnavailable() {
+    return await this.OrderRepository.getAllOrdersUnavailable()
+  }
+
+  public async getAllOrdersCompleted() {
+    return await this.OrderRepository.getAllOrdersCompleted()
+  }
 }
 
 export { OrderService }

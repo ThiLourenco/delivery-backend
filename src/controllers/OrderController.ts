@@ -85,6 +85,43 @@ const getAllOrdersAvailable = async (request: Request, response: Response) => {
   }
 }
 
+const getAllOrdersUnavailable = async (
+  request: Request,
+  response: Response,
+) => {
+  try {
+    const getAllOrders = new OrderService(OrderRepository)
+    const ordersUnavailable = await getAllOrders.getAllOrdersUnavailable()
+
+    return response.status(200).json({
+      message: 'get Orders with success!',
+      ordersUnavailable,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to create orders',
+    })
+  }
+}
+
+const getAllOrdersCompleted = async (request: Request, response: Response) => {
+  try {
+    const getAllOrders = new OrderService(OrderRepository)
+    const ordersUnavailable = await getAllOrders.getAllOrdersCompleted()
+
+    return response.status(200).json({
+      message: 'get Orders with success!',
+      ordersUnavailable,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to create orders',
+    })
+  }
+}
+
 const updateEndDate = async (request: Request, response: Response) => {
   try {
     console.log('User ID from request:', request.deliveryManId)
@@ -122,4 +159,6 @@ export default {
   getOrderByUser,
   updateEndDate,
   getAllOrdersAvailable,
+  getAllOrdersUnavailable,
+  getAllOrdersCompleted,
 }

@@ -177,10 +177,6 @@ class DeliveryManRepository implements IDeliveryManRepository {
         },
       })
 
-      if (!orders || orders.length === 0) {
-        throw new AppError('Orders is empty')
-      }
-
       return orders
     } catch (error) {
       console.log(error)

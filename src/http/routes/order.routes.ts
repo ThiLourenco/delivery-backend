@@ -25,4 +25,8 @@ orderRoutes.get(
 
 orderRoutes.get('/ordersAvailable', OrderController.getAllOrdersAvailable)
 
+orderRoutes.get('/ordersUnavailable', OrderController.getAllOrdersUnavailable)
+
+orderRoutes.get('/ordersCompleted', OrderController.getAllOrdersCompleted)
+
 export { orderRoutes }
