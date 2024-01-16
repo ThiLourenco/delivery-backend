@@ -3,7 +3,7 @@ import { ProductService } from '../../services/ProductService'
 import productRepository from '../../repositories/ProductRepository'
 import { ProductsTypes } from '../../dtos/ProductsTypes'
 
-// Mock do ProductRepository
+// Mock ProductRepository
 jest.mock('../../repositories/ProductRepository', () => {
   return {
     create: jest
@@ -28,7 +28,6 @@ jest.mock('../../repositories/ProductRepository', () => {
           })
         },
       ),
-    // Adicione outros métodos conforme necessário
     findByName: jest
       .fn()
       .mockImplementation((name: string): Promise<ProductsTypes | null> => {
@@ -55,8 +54,8 @@ describe('ProductService', () => {
   let productService: ProductService
 
   beforeEach(() => {
-    // Crie uma nova instância do ProductService com o mock do ProductRepository
-    productService = new ProductService(productRepository as any) // Cast para any para evitar erros de tipo
+    // Create a new instance of ProductService with mock ProductRepository
+    productService = new ProductService(productRepository as any) // Cast for any for prevent erros
   })
 
   it('should create a product successfully', async () => {
@@ -116,6 +115,4 @@ describe('ProductService', () => {
     expect(productRepository.findByName).toHaveBeenCalledWith(productName)
     expect(product).toBeNull()
   })
-
-  // Adicione outros testes conforme necessário
 })
