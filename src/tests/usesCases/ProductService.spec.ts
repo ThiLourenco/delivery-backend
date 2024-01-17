@@ -3,6 +3,31 @@ import { ProductService } from '../../services/ProductService'
 import productRepository from '../../repositories/ProductRepository'
 import { ProductsTypes } from '../../dtos/ProductsTypes'
 
+const mockProducts: ProductsTypes[] = [
+  {
+    id: '1',
+    name: 'Existing Product',
+    description: 'Description',
+    image: 'image.png',
+    price: 100,
+    situation: true,
+    category: {
+      name: 'Category Name',
+    },
+  },
+  {
+    id: '2',
+    name: 'Existing Product2',
+    description: 'Description2',
+    image: 'image2.png',
+    price: 100,
+    situation: true,
+    category: {
+      name: 'Category Name2',
+    },
+  },
+]
+
 // Mock ProductRepository
 jest.mock('../../repositories/ProductRepository', () => {
   return {
@@ -30,8 +55,29 @@ jest.mock('../../repositories/ProductRepository', () => {
       ),
     findByName: jest
       .fn()
-      .mockImplementation((name: string): Promise<ProductsTypes | null> => {
-        if (name === 'Existing Product') {
+      .mockImplementation(
+        (name: string, id: string): Promise<ProductsTypes | null> => {
+          if (name === 'Existing Product' || id === '1') {
+            return Promise.resolve({
+              id: '1',
+              name: 'Existing Product',
+              description: 'Description',
+              image: 'image.png',
+              price: 100,
+              situation: true,
+              category: {
+                name: 'Category Name',
+              },
+            })
+          } else {
+            return Promise.resolve(null)
+          }
+        },
+      ),
+    findById: jest
+      .fn()
+      .mockImplementation((id: string): Promise<ProductsTypes | null> => {
+        if (id === '1') {
           return Promise.resolve({
             id: '1',
             name: 'Existing Product',
@@ -47,6 +93,7 @@ jest.mock('../../repositories/ProductRepository', () => {
           return Promise.resolve(null)
         }
       }),
+    findAllProducts: jest.fn(() => Promise.resolve(mockProducts)),
   }
 })
 
@@ -55,7 +102,7 @@ describe('ProductService', () => {
 
   beforeEach(() => {
     // Create a new instance of ProductService with mock ProductRepository
-    productService = new ProductService(productRepository as any) // Cast for any for prevent erros
+    productService = new ProductService(productRepository)
   })
 
   it('should create a product successfully', async () => {
@@ -71,7 +118,6 @@ describe('ProductService', () => {
       },
     }
 
-    // Passe os argumentos separadamente conforme a definição do método create
     const product = await productService.create(
       productData.name,
       productData.description,
@@ -81,7 +127,6 @@ describe('ProductService', () => {
       productData.category,
     )
 
-    // Expectativas do teste
     expect(productRepository.create).toHaveBeenCalledWith(
       productData.name,
       productData.description,
@@ -114,5 +159,28 @@ describe('ProductService', () => {
 
     expect(productRepository.findByName).toHaveBeenCalledWith(productName)
     expect(product).toBeNull()
+  })
+
+  it('should return a product when it exists by Id', async () => {
+    const productId = '1'
+    const product = await productService.findProductById(productId)
+
+    expect(productRepository.findById).toHaveBeenCalledWith(productId)
+    expect(product?.id).toBe(productId)
+  })
+
+  it('should return null when the product is not found by id', async () => {
+    const productId = 'No-Exists-Product'
+    const product = await productService.findProductById(productId)
+
+    expect(productRepository.findById).toHaveBeenCalledWith(productId)
+    expect(product).toBeNull()
+  })
+
+  it('should return all products', async () => {
+    const products = await productService.getAllProducts()
+
+    expect(productRepository.findAllProducts).toHaveBeenCalled()
+    expect(products).toEqual(mockProducts)
   })
 })
