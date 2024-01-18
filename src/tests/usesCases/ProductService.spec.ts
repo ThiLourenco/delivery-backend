@@ -122,7 +122,7 @@ jest.mock('../../repositories/ProductRepository', () => {
         ): Promise<ProductsTypes> => {
           return Promise.resolve({
             id,
-            name: 'update name',
+            name: 'Coca-Cola',
             description: 'Updated description',
             image: 'image.png',
             price: 100,
@@ -238,11 +238,11 @@ describe('ProductService', () => {
   })
 
   it('should update products data', async () => {
-    const name = 'New name product'
-    const description = 'New description product'
-    const price = 200
-    const image = 'New image.jpg'
-    const situation = false
+    const name = 'Coca-Cola'
+    const description = 'Updated description'
+    const price = 100
+    const image = 'image.png'
+    const situation = true
 
     const data = await productService.updateProduct(
       name,
