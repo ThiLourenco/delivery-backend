@@ -94,15 +94,56 @@ jest.mock('../../repositories/ProductRepository', () => {
         }
       }),
     findAllProducts: jest.fn(() => Promise.resolve(mockProducts)),
+    updateProductCategory: jest
+      .fn()
+      .mockImplementation(
+        (id: string, name: string): Promise<ProductsTypes> => {
+          return Promise.resolve({
+            id,
+            name,
+            description: 'Updated Description',
+            image: 'updated-image.png',
+            price: 200,
+            situation: true,
+            category: { name },
+          })
+        },
+      ),
+    updateProduct: jest
+      .fn()
+      .mockImplementation(
+        (
+          id: string,
+          name: string,
+          description: string,
+          price: number,
+          situation: boolean,
+          category,
+        ): Promise<ProductsTypes> => {
+          return Promise.resolve({
+            id,
+            name: 'update name',
+            description: 'Updated description',
+            image: 'image.png',
+            price: 100,
+            situation: true,
+            category: {
+              name,
+            },
+          })
+        },
+      ),
   }
 })
+
+const mockedProductRepository = jest.mocked(productRepository)
 
 describe('ProductService', () => {
   let productService: ProductService
 
   beforeEach(() => {
     // Create a new instance of ProductService with mock ProductRepository
-    productService = new ProductService(productRepository)
+    productService = new ProductService(mockedProductRepository)
   })
 
   it('should create a product successfully', async () => {
@@ -127,7 +168,7 @@ describe('ProductService', () => {
       productData.category,
     )
 
-    expect(productRepository.create).toHaveBeenCalledWith(
+    expect(mockedProductRepository.create).toHaveBeenCalledWith(
       productData.name,
       productData.description,
       productData.image,
@@ -148,7 +189,7 @@ describe('ProductService', () => {
     const productName = 'Existing Product'
     const product = await productService.findProductByName(productName)
 
-    expect(productRepository.findByName).toHaveBeenCalledWith(productName)
+    expect(mockedProductRepository.findByName).toHaveBeenCalledWith(productName)
     expect(product).toHaveProperty('id', '1')
     expect(product?.name).toBe(productName)
   })
@@ -157,7 +198,7 @@ describe('ProductService', () => {
     const productName = 'Non-Existing Product'
     const product = await productService.findProductByName(productName)
 
-    expect(productRepository.findByName).toHaveBeenCalledWith(productName)
+    expect(mockedProductRepository.findByName).toHaveBeenCalledWith(productName)
     expect(product).toBeNull()
   })
 
@@ -165,7 +206,7 @@ describe('ProductService', () => {
     const productId = '1'
     const product = await productService.findProductById(productId)
 
-    expect(productRepository.findById).toHaveBeenCalledWith(productId)
+    expect(mockedProductRepository.findById).toHaveBeenCalledWith(productId)
     expect(product?.id).toBe(productId)
   })
 
@@ -173,14 +214,56 @@ describe('ProductService', () => {
     const productId = 'No-Exists-Product'
     const product = await productService.findProductById(productId)
 
-    expect(productRepository.findById).toHaveBeenCalledWith(productId)
+    expect(mockedProductRepository.findById).toHaveBeenCalledWith(productId)
     expect(product).toBeNull()
   })
 
   it('should return all products', async () => {
     const products = await productService.getAllProducts()
 
-    expect(productRepository.findAllProducts).toHaveBeenCalled()
+    expect(mockedProductRepository.findAllProducts).toHaveBeenCalled()
     expect(products).toEqual(mockProducts)
+  })
+
+  it('should update product category', async () => {
+    const id = '1'
+    const name = 'New category Name'
+    const updatedProduct = await productService.updateCategory(id, name)
+
+    expect(mockedProductRepository.updateProductCategory).toHaveBeenCalledWith(
+      id,
+      name,
+    )
+    expect(updatedProduct.category?.name).toBe(name)
+  })
+
+  it('should update products data', async () => {
+    const name = 'New name product'
+    const description = 'New description product'
+    const price = 200
+    const image = 'New image.jpg'
+    const situation = false
+
+    const data = await productService.updateProduct(
+      name,
+      description,
+      image,
+      price,
+      situation,
+    )
+
+    expect(mockedProductRepository.updateProduct).toHaveBeenCalledWith(
+      name,
+      description,
+      image,
+      price,
+      situation,
+    )
+
+    expect(data.name).toEqual(name)
+    expect(data.description).toEqual(description)
+    expect(data.image).toEqual(image)
+    expect(data.price).toEqual(price)
+    expect(data.situation).toEqual(situation)
   })
 })

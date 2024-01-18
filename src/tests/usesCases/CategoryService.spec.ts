@@ -18,7 +18,7 @@ jest.mock('../../repositories/CategoryRepository', () => {
       .mockImplementation(
         (id: string, name: string): Promise<CategoryTypes> => {
           return Promise.resolve({
-            id: '123',
+            id: '1',
             name,
           })
         },
@@ -35,7 +35,7 @@ describe('CategoryRepository', () => {
 
   it('should create a new category', async () => {
     const categoryData: CategoryTypes = {
-      id: '12',
+      id: '1',
       name: 'Category name',
     }
 
