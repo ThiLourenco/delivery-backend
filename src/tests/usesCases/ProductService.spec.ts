@@ -133,6 +133,20 @@ jest.mock('../../repositories/ProductRepository', () => {
           })
         },
       ),
+    updateProductImage: jest
+      .fn()
+      .mockImplementation(
+        (productId: string, imagePath: string): Promise<ProductsTypes> => {
+          return Promise.resolve({
+            id: productId,
+            image: imagePath,
+            name: 'Coca-Cola',
+            description: 'Updated description',
+            price: 100,
+            situation: true,
+          })
+        },
+      ),
   }
 })
 
@@ -265,5 +279,21 @@ describe('ProductService', () => {
     expect(data.image).toEqual(image)
     expect(data.price).toEqual(price)
     expect(data.situation).toEqual(situation)
+  })
+
+  it('should can be updated product image', async () => {
+    const image =
+      '/www/Projects/Developer/Backend/delivery-backend/tmp/45ee1999b375360a55656f3684ab953e-natal.jpg'
+    const id = '1'
+
+    const updateImage = await productService.updateProductImage(id, image)
+
+    expect(mockedProductRepository.updateProductImage).toHaveBeenCalledWith(
+      id,
+      image,
+    )
+
+    expect(updateImage.id).toEqual(id)
+    expect(updateImage.image).toEqual(image)
   })
 })
