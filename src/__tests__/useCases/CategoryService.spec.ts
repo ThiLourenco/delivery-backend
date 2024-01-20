@@ -3,6 +3,17 @@ import { CategoryService } from '../../services/CategoryService'
 import categoryRepository from '../../repositories/CategoryRepository'
 import { CategoryTypes } from '../../dtos/CategoryTypes'
 
+const mockCategory: CategoryTypes[] = [
+  {
+    id: '1',
+    name: 'Cerveja',
+  },
+  {
+    id: '2',
+    name: 'Refrigerante',
+  },
+]
+
 jest.mock('../../repositories/CategoryRepository', () => {
   return {
     create: jest
@@ -13,6 +24,7 @@ jest.mock('../../repositories/CategoryRepository', () => {
           name,
         })
       }),
+    findAllCategory: jest.fn(() => Promise.resolve(mockCategory)),
     update: jest
       .fn()
       .mockImplementation(
@@ -46,6 +58,14 @@ describe('CategoryRepository', () => {
     )
 
     expect(category.name).toBe(categoryData.name)
+  })
+
+  it('should get all categories', async () => {
+    const categories = await categoryService.findAllCategory()
+
+    expect(categoryRepository.getCategories).toHaveBeenCalled()
+
+    expect(categories).toEqual(mockCategory)
   })
 
   it('should update category name', async () => {
