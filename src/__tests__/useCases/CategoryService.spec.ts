@@ -6,17 +6,17 @@ import { CategoryTypes } from '../../dtos/CategoryTypes'
 const mockCategory: CategoryTypes[] = [
   {
     id: '1',
-    name: 'Cerveja',
+    name: 'Refrigerante',
   },
   {
     id: '2',
-    name: 'Refrigerante',
+    name: 'Cerveja',
   },
 ]
 
 jest.mock('../../repositories/CategoryRepository', () => {
   return {
-    create: jest
+    createCategory: jest
       .fn()
       .mockImplementation((name: string): Promise<CategoryTypes> => {
         return Promise.resolve({
@@ -24,13 +24,25 @@ jest.mock('../../repositories/CategoryRepository', () => {
           name,
         })
       }),
-    findAllCategory: jest.fn(() => Promise.resolve(mockCategory)),
-    update: jest
+    getCategories: jest.fn(() => Promise.resolve(mockCategory)),
+    findCategoriesByProductId: jest
+      .fn()
+      .mockImplementation((id: string): Promise<CategoryTypes | null> => {
+        if (id === '1') {
+          return Promise.resolve({
+            id: '1',
+            name: 'Refrigerante',
+          })
+        } else {
+          return Promise.resolve(null)
+        }
+      }),
+    updateCategory: jest
       .fn()
       .mockImplementation(
         (id: string, name: string): Promise<CategoryTypes> => {
           return Promise.resolve({
-            id: '1',
+            id: '123',
             name,
           })
         },
@@ -38,11 +50,13 @@ jest.mock('../../repositories/CategoryRepository', () => {
   }
 })
 
+const mockedCategoryRepository = jest.mocked(categoryRepository)
+
 describe('CategoryRepository', () => {
   let categoryService: CategoryService
 
   beforeEach(() => {
-    categoryService = new CategoryService(categoryRepository as any)
+    categoryService = new CategoryService(mockedCategoryRepository)
   })
 
   it('should create a new category', async () => {
@@ -66,6 +80,31 @@ describe('CategoryRepository', () => {
     expect(categoryRepository.getCategories).toHaveBeenCalled()
 
     expect(categories).toEqual(mockCategory)
+  })
+
+  it('should return a category by Id', async () => {
+    const categoryId = '1'
+    const category = await categoryService.findAllProductByCategoryId(
+      categoryId,
+    )
+
+    expect(
+      mockedCategoryRepository.findCategoriesByProductId,
+    ).toHaveBeenCalledWith(categoryId)
+    expect(category).toStrictEqual(mockCategory[0])
+  })
+
+  it('should return null when no category is found', async () => {
+    const categoryId = 'xpto'
+    const category = await categoryService.findAllProductByCategoryId(
+      categoryId,
+    )
+
+    expect(
+      mockedCategoryRepository.findCategoriesByProductId,
+    ).toHaveBeenCalledWith(categoryId)
+
+    expect(category).toBeNull()
   })
 
   it('should update category name', async () => {
