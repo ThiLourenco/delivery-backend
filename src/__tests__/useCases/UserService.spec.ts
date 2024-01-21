@@ -97,6 +97,14 @@ jest.mock('../../repositories/UserRepository', () => {
         })
       },
     ),
+    login: jest.fn(
+      (email: string, password: string): Promise<UserTypes | null> => {
+        const user = mockUser.find(
+          (u) => u.email === email && u.password === password,
+        )
+        return Promise.resolve(user || null)
+      },
+    ),
   }
 })
 
@@ -132,4 +140,30 @@ describe('UserRepository', () => {
     expect(user.isAdmin).toBe(userData.isAdmin)
     expect(user.role).toBe(userData.role)
   })
+
+  it('should allow you to login', async () => {
+    const userData: UserTypes = {
+      id: '123',
+      name: 'John',
+      username: 'John',
+      email: 'john@example.com',
+      phone: '123',
+      password: '123',
+      isAdmin: false,
+      role: 'ADMIN',
+    }
+
+    mockedUserRepository.login.mockResolvedValue(userData)
+
+    const user = await userService.login(userData.email, userData.password)
+
+    expect(user?.email).toBe(userData.email)
+    expect(user?.password).toBe(userData.password)
+  })
+
+  it('should return a user by Id', () => {})
+
+  it('should return all Users', () => {})
+
+  it('should allow update user by Id', () => {})
 })
