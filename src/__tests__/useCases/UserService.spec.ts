@@ -60,7 +60,7 @@ const mockUser: UserTypes[] = [
 
 jest.mock('../../repositories/UserRepository', () => {
   return {
-    createUser: jest.fn().mockImplementation(
+    createUser: jest.fn(
       (
         id: string,
         name: string,
@@ -68,9 +68,9 @@ jest.mock('../../repositories/UserRepository', () => {
         email: string,
         phone: string,
         password: string,
-        isAdmin: boolean,
-        role: UserRole,
-        address: {
+        _isAdmin: boolean,
+        _role: UserRole,
+        _address: {
           city: string
           country: string
           street: string
