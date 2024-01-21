@@ -16,18 +16,15 @@ const mockCategory: CategoryTypes[] = [
 
 jest.mock('../../repositories/CategoryRepository', () => {
   return {
-    createCategory: jest
-      .fn()
-      .mockImplementation((name: string): Promise<CategoryTypes> => {
-        return Promise.resolve({
-          id: '1',
-          name,
-        })
-      }),
+    createCategory: jest.fn((name: string): Promise<CategoryTypes> => {
+      return Promise.resolve({
+        id: '1',
+        name,
+      })
+    }),
     getCategories: jest.fn(() => Promise.resolve(mockCategory)),
-    findCategoriesByProductId: jest
-      .fn()
-      .mockImplementation((id: string): Promise<CategoryTypes | null> => {
+    findCategoriesByProductId: jest.fn(
+      (id: string): Promise<CategoryTypes | null> => {
         if (id === '1') {
           return Promise.resolve({
             id: '1',
@@ -36,17 +33,16 @@ jest.mock('../../repositories/CategoryRepository', () => {
         } else {
           return Promise.resolve(null)
         }
-      }),
-    updateCategory: jest
-      .fn()
-      .mockImplementation(
-        (id: string, name: string): Promise<CategoryTypes> => {
-          return Promise.resolve({
-            id: '123',
-            name,
-          })
-        },
-      ),
+      },
+    ),
+    updateCategory: jest.fn(
+      (id: string, name: string): Promise<CategoryTypes> => {
+        return Promise.resolve({
+          id: '123',
+          name,
+        })
+      },
+    ),
   }
 })
 

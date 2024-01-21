@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { UserService } from '../../services/UserService'
 import UserRepository from '../../repositories/UserRepository'
-import { UserTypes, CreateUserDTO, UserWithAddress } from '../../dtos/UserTypes'
+import { UserTypes } from '../../dtos/UserTypes'
 import { UserRole } from '@prisma/client'
 
 const mockUser: UserTypes[] = [

@@ -31,53 +31,29 @@ const mockProducts: ProductsTypes[] = [
 // Mock ProductRepository
 jest.mock('../../repositories/ProductRepository', () => {
   return {
-    create: jest
-      .fn()
-      .mockImplementation(
-        (
-          name: string,
-          description: string,
-          image: string,
-          price: number,
-          situation: boolean,
-          category?: { name: string },
-        ): Promise<ProductsTypes> => {
-          return Promise.resolve({
-            id: '1',
-            name,
-            description,
-            image,
-            price,
-            situation,
-            category,
-          })
-        },
-      ),
-    findByName: jest
-      .fn()
-      .mockImplementation(
-        (name: string, id: string): Promise<ProductsTypes | null> => {
-          if (name === 'Existing Product' || id === '1') {
-            return Promise.resolve({
-              id: '1',
-              name: 'Existing Product',
-              description: 'Description',
-              image: 'image.png',
-              price: 100,
-              situation: true,
-              category: {
-                name: 'Category Name',
-              },
-            })
-          } else {
-            return Promise.resolve(null)
-          }
-        },
-      ),
-    findById: jest
-      .fn()
-      .mockImplementation((id: string): Promise<ProductsTypes | null> => {
-        if (id === '1') {
+    create: jest.fn(
+      (
+        name: string,
+        description: string,
+        image: string,
+        price: number,
+        situation: boolean,
+        category?: { name: string },
+      ): Promise<ProductsTypes> => {
+        return Promise.resolve({
+          id: '1',
+          name,
+          description,
+          image,
+          price,
+          situation,
+          category,
+        })
+      },
+    ),
+    findByName: jest.fn(
+      (name: string, id: string): Promise<ProductsTypes | null> => {
+        if (name === 'Existing Product' || id === '1') {
           return Promise.resolve({
             id: '1',
             name: 'Existing Product',
@@ -92,61 +68,73 @@ jest.mock('../../repositories/ProductRepository', () => {
         } else {
           return Promise.resolve(null)
         }
-      }),
+      },
+    ),
+    findById: jest.fn((id: string): Promise<ProductsTypes | null> => {
+      if (id === '1') {
+        return Promise.resolve({
+          id: '1',
+          name: 'Existing Product',
+          description: 'Description',
+          image: 'image.png',
+          price: 100,
+          situation: true,
+          category: {
+            name: 'Category Name',
+          },
+        })
+      } else {
+        return Promise.resolve(null)
+      }
+    }),
     findAllProducts: jest.fn(() => Promise.resolve(mockProducts)),
-    updateProductCategory: jest
-      .fn()
-      .mockImplementation(
-        (id: string, name: string): Promise<ProductsTypes> => {
-          return Promise.resolve({
-            id,
+    updateProductCategory: jest.fn(
+      (id: string, name: string): Promise<ProductsTypes> => {
+        return Promise.resolve({
+          id,
+          name,
+          description: 'Updated Description',
+          image: 'updated-image.png',
+          price: 200,
+          situation: true,
+          category: { name },
+        })
+      },
+    ),
+    updateProduct: jest.fn(
+      (
+        id: string,
+        name: string,
+        description: string,
+        price: number,
+        situation: boolean,
+        category,
+      ): Promise<ProductsTypes> => {
+        return Promise.resolve({
+          id,
+          name: 'Coca-Cola',
+          description: 'Updated description',
+          image: 'image.png',
+          price: 100,
+          situation: true,
+          category: {
             name,
-            description: 'Updated Description',
-            image: 'updated-image.png',
-            price: 200,
-            situation: true,
-            category: { name },
-          })
-        },
-      ),
-    updateProduct: jest
-      .fn()
-      .mockImplementation(
-        (
-          id: string,
-          name: string,
-          description: string,
-          price: number,
-          situation: boolean,
-          category,
-        ): Promise<ProductsTypes> => {
-          return Promise.resolve({
-            id,
-            name: 'Coca-Cola',
-            description: 'Updated description',
-            image: 'image.png',
-            price: 100,
-            situation: true,
-            category: {
-              name,
-            },
-          })
-        },
-      ),
-    updateProductImage: jest
-      .fn()
-      .mockImplementation(
-        (productId: string, imagePath: string): Promise<ProductsTypes> => {
-          return Promise.resolve({
-            id: productId,
-            image: imagePath,
-            name: 'Coca-Cola',
-            description: 'Updated description',
-            price: 100,
-            situation: true,
-          })
-        },
-      ),
+          },
+        })
+      },
+    ),
+    updateProductImage: jest.fn(
+      (productId: string, imagePath: string): Promise<ProductsTypes> => {
+        return Promise.resolve({
+          id: productId,
+          image: imagePath,
+          name: 'Coca-Cola',
+          description: 'Updated description',
+          price: 100,
+          situation: true,
+        })
+      },
+    ),
   }
 })
 
