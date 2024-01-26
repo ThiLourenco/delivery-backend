@@ -33,8 +33,8 @@ jest.mock('../../repositories/DeliveryManRepository', () => {
         email: string,
         password: string,
         phone: string,
-        _role: UserRole,
-        _address?: {
+        role: UserRole,
+        address?: {
           street: string
           number?: string
           city: string
@@ -43,21 +43,29 @@ jest.mock('../../repositories/DeliveryManRepository', () => {
         },
       ): Promise<DeliveryManTypes> => {
         return Promise.resolve({
-          id,
-          name,
-          username,
-          email,
-          password,
-          phone,
+          id: '123',
+          name: 'John Smith',
+          username: 'John',
+          email: 'jhon@example.com',
+          password: '123',
+          phone: '552299999999',
           role: 'DELIVERY_MAN',
           address: {
+            street: 'Street view',
+            number: 'S/N',
             city: 'San Francisco',
             country: 'US',
-            street: 'San Francisco',
-            zipCode: '123',
-            number: '123',
+            zipCode: '12345678',
           },
         })
+      },
+    ),
+    loginDeliveryMan: jest.fn(
+      (email: string, password: string): Promise<DeliveryManTypes | null> => {
+        const delivery = mockDeliveryMan.find(
+          (u) => u.email === email && u.password === password,
+        )
+        return Promise.resolve(delivery || null)
       },
     ),
   }
@@ -68,42 +76,29 @@ const mockedDeliveryRepository = jest.mocked(DeliveryManRepository)
 describe('DeliveryManRepository', () => {
   let deliveryManService: DeliveryManService
 
-  beforeEach(() => {
+  beforeAll(() => {
     deliveryManService = new DeliveryManService(mockedDeliveryRepository)
   })
 
   it('should create a deliveryMan', async () => {
-    const userData: DeliveryManTypes = {
-      id: '123',
-      name: 'John Smith',
-      username: 'John',
-      email: 'jhon@example.com',
-      password: '123',
-      phone: '552299999999',
-      role: 'DELIVERY_MAN',
-      address: {
-        street: 'Street view',
-        number: 'S/N',
-        city: 'San Francisco',
-        country: 'US',
-        zipCode: '12345678',
-      },
-    }
+    const deliveryMan = await deliveryManService.execute(mockDeliveryMan[0])
 
-    const deliveryMan = await deliveryManService.execute(userData)
-
-    expect(deliveryMan.id).toBe(userData.id)
-    expect(deliveryMan.name).toBe(userData.name)
-    expect(deliveryMan.email).toBe(userData.email)
-    expect(deliveryMan.password).toBe(userData.password)
-    expect(deliveryMan.phone).toBe(userData.phone)
-    expect(deliveryMan.role).toBe(userData.role)
-    expect(deliveryMan.address).toBe(userData.address)
-    expect(deliveryMan.address?.street).toBe(userData.address?.street)
-    expect(deliveryMan.address?.number).toBe(userData.address?.number)
-    expect(deliveryMan.address?.city).toBe(userData.address?.city)
-    expect(deliveryMan.address?.country).toBe(userData.address?.country)
-    expect(deliveryMan.address?.zipCode).toBe(userData.address?.zipCode)
+    expect(deliveryMan.name).toBe(mockDeliveryMan[0].name)
+    expect(deliveryMan.username).toBe(mockDeliveryMan[0].username)
+    expect(deliveryMan.id).toBe(mockDeliveryMan[0].id)
+    expect(deliveryMan.email).toBe(mockDeliveryMan[0].email)
+    expect(deliveryMan.password).toBe(mockDeliveryMan[0].password)
+    expect(deliveryMan.phone).toBe(mockDeliveryMan[0].phone)
+    expect(deliveryMan.role).toBe(mockDeliveryMan[0].role)
+    expect(deliveryMan.address?.street).toBe(mockDeliveryMan[0].address?.street)
+    expect(deliveryMan.address?.number).toBe(mockDeliveryMan[0].address?.number)
+    expect(deliveryMan.address?.city).toBe(mockDeliveryMan[0].address?.city)
+    expect(deliveryMan.address?.country).toBe(
+      mockDeliveryMan[0].address?.country,
+    )
+    expect(deliveryMan.address?.zipCode).toBe(
+      mockDeliveryMan[0].address?.zipCode,
+    )
   })
 
   it('should be able to do login DeliveryMan', async () => {})

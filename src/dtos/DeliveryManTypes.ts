@@ -1,7 +1,7 @@
 import { UserRole } from '@prisma/client'
 
 export type DeliveryManTypes = {
-  id: string
+  id?: string
   name: string
   username: string
   email: string
