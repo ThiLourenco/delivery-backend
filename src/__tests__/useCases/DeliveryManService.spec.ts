@@ -101,7 +101,27 @@ describe('DeliveryManRepository', () => {
     )
   })
 
-  it('should be able to do login DeliveryMan', async () => {})
+  it('should be able to do login DeliveryMan', async () => {
+    const deliveryData: DeliveryManTypes = {
+      id: '123',
+      name: 'John Smith',
+      username: 'John',
+      email: 'jhon@example.com',
+      password: '123',
+      phone: '552299999999',
+      role: 'DELIVERY_MAN',
+    }
+
+    mockedDeliveryRepository.loginDeliveryMan.mockResolvedValue(deliveryData)
+
+    const delivery = await deliveryManService.login(
+      deliveryData.email,
+      deliveryData.password,
+    )
+
+    expect(delivery?.email).toEqual(deliveryData.email)
+    expect(delivery?.password).toEqual(deliveryData.password)
+  })
 
   it('should be able to update deliveryMan', async () => {})
 
