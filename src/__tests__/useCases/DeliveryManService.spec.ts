@@ -68,6 +68,41 @@ jest.mock('../../repositories/DeliveryManRepository', () => {
         return Promise.resolve(delivery || null)
       },
     ),
+    updateDeliveryMan: jest.fn(
+      (
+        id: string,
+        name: string,
+        username: string,
+        email: string,
+        password: string,
+        phone: string,
+        role: UserRole,
+        address?: {
+          street: string
+          number?: string
+          city: string
+          country: string
+          zipCode: string
+        },
+      ): Promise<DeliveryManTypes> => {
+        return Promise.resolve({
+          id: '123',
+          name: 'John Smith',
+          username: 'John',
+          email: 'jhon@example.com',
+          password: '123',
+          phone: '552299999999',
+          role: 'DELIVERY_MAN',
+          address: {
+            street: 'Street view',
+            number: 'S/N',
+            city: 'San Francisco',
+            country: 'US',
+            zipCode: '12345678',
+          },
+        })
+      },
+    ),
   }
 })
 
@@ -123,7 +158,23 @@ describe('DeliveryManRepository', () => {
     expect(delivery?.password).toEqual(deliveryData.password)
   })
 
-  it('should be able to update deliveryMan', async () => {})
+  it('should be able to update deliveryMan', async () => {
+    const id = '123'
+    const name = 'John Smith'
+    const phone = '552299999999'
+
+    const updateDeliveryMan = await deliveryManService.update(id, name, phone)
+
+    expect(mockedDeliveryRepository.updateDeliveryMan).toHaveBeenCalledWith(
+      id,
+      name,
+      phone,
+    )
+
+    expect(updateDeliveryMan.id).toBe(id)
+    expect(updateDeliveryMan.name).toBe(name)
+    expect(updateDeliveryMan.phone).toBe(phone)
+  })
 
   it('should be able to update orders DeliveryMan', async () => {})
 
