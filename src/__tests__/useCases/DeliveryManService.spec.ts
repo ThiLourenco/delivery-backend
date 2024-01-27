@@ -1,182 +1,191 @@
 /* eslint-disable no-undef */
-import DeliveryManRepository from '../../repositories/DeliveryManRepository'
-import { DeliveryManTypes } from '../../dtos/DeliveryManTypes'
 import { DeliveryManService } from '../../services/DeliveryManService'
-import { UserRole } from '@prisma/client'
+import { DeliveryManTypes } from '../../dtos/DeliveryManTypes'
+import DeliveryManRepository from '../../repositories/DeliveryManRepository'
+import { OrderTypes } from '../../dtos/OrderTypes'
 
-const mockDeliveryMan: DeliveryManTypes[] = [
-  {
-    id: '123',
-    name: 'John Smith',
-    username: 'John',
-    email: 'jhon@example.com',
-    password: '123',
-    phone: '552299999999',
-    role: 'DELIVERY_MAN',
-    address: {
-      street: 'Street view',
-      number: 'S/N',
-      city: 'San Francisco',
-      country: 'US',
-      zipCode: '12345678',
-    },
-  },
-]
+jest.mock('../../repositories/DeliveryManRepository')
 
-jest.mock('../../repositories/DeliveryManRepository', () => {
-  return {
-    createDeliveryMan: jest.fn(
-      (
-        id: string,
-        name: string,
-        username: string,
-        email: string,
-        password: string,
-        phone: string,
-        role: UserRole,
-        address?: {
-          street: string
-          number?: string
-          city: string
-          country: string
-          zipCode: string
-        },
-      ): Promise<DeliveryManTypes> => {
-        return Promise.resolve({
-          id: '123',
-          name: 'John Smith',
-          username: 'John',
-          email: 'jhon@example.com',
-          password: '123',
-          phone: '552299999999',
-          role: 'DELIVERY_MAN',
-          address: {
-            street: 'Street view',
-            number: 'S/N',
-            city: 'San Francisco',
-            country: 'US',
-            zipCode: '12345678',
-          },
-        })
-      },
-    ),
-    loginDeliveryMan: jest.fn(
-      (email: string, password: string): Promise<DeliveryManTypes | null> => {
-        const delivery = mockDeliveryMan.find(
-          (u) => u.email === email && u.password === password,
-        )
-        return Promise.resolve(delivery || null)
-      },
-    ),
-    updateDeliveryMan: jest.fn(
-      (
-        id: string,
-        name: string,
-        username: string,
-        email: string,
-        password: string,
-        phone: string,
-        role: UserRole,
-        address?: {
-          street: string
-          number?: string
-          city: string
-          country: string
-          zipCode: string
-        },
-      ): Promise<DeliveryManTypes> => {
-        return Promise.resolve({
-          id: '123',
-          name: 'John Smith',
-          username: 'John',
-          email: 'jhon@example.com',
-          password: '123',
-          phone: '552299999999',
-          role: 'DELIVERY_MAN',
-          address: {
-            street: 'Street view',
-            number: 'S/N',
-            city: 'San Francisco',
-            country: 'US',
-            zipCode: '12345678',
-          },
-        })
-      },
-    ),
-  }
-})
-
-const mockedDeliveryRepository = jest.mocked(DeliveryManRepository)
-
-describe('DeliveryManRepository', () => {
+describe('DeliveryManService', () => {
   let deliveryManService: DeliveryManService
 
-  beforeAll(() => {
-    deliveryManService = new DeliveryManService(mockedDeliveryRepository)
+  beforeEach(() => {
+    deliveryManService = new DeliveryManService(DeliveryManRepository)
   })
 
   it('should create a deliveryMan', async () => {
-    const deliveryMan = await deliveryManService.execute(mockDeliveryMan[0])
-
-    expect(deliveryMan.name).toBe(mockDeliveryMan[0].name)
-    expect(deliveryMan.username).toBe(mockDeliveryMan[0].username)
-    expect(deliveryMan.id).toBe(mockDeliveryMan[0].id)
-    expect(deliveryMan.email).toBe(mockDeliveryMan[0].email)
-    expect(deliveryMan.password).toBe(mockDeliveryMan[0].password)
-    expect(deliveryMan.phone).toBe(mockDeliveryMan[0].phone)
-    expect(deliveryMan.role).toBe(mockDeliveryMan[0].role)
-    expect(deliveryMan.address?.street).toBe(mockDeliveryMan[0].address?.street)
-    expect(deliveryMan.address?.number).toBe(mockDeliveryMan[0].address?.number)
-    expect(deliveryMan.address?.city).toBe(mockDeliveryMan[0].address?.city)
-    expect(deliveryMan.address?.country).toBe(
-      mockDeliveryMan[0].address?.country,
-    )
-    expect(deliveryMan.address?.zipCode).toBe(
-      mockDeliveryMan[0].address?.zipCode,
-    )
-  })
-
-  it('should be able to do login DeliveryMan', async () => {
-    const deliveryData: DeliveryManTypes = {
+    const mockDeliveryMan: DeliveryManTypes = {
       id: '123',
       name: 'John Smith',
       username: 'John',
-      email: 'jhon@example.com',
+      email: 'john@example.com',
       password: '123',
       phone: '552299999999',
       role: 'DELIVERY_MAN',
+      address: {
+        street: 'Street view',
+        number: 'S/N',
+        city: 'San Francisco',
+        country: 'US',
+        zipCode: '12345678',
+      },
     }
 
-    mockedDeliveryRepository.loginDeliveryMan.mockResolvedValue(deliveryData)
-
-    const delivery = await deliveryManService.login(
-      deliveryData.email,
-      deliveryData.password,
+    const createDeliveryManSpy = jest.spyOn(
+      DeliveryManRepository,
+      'createDeliveryMan',
     )
+    createDeliveryManSpy.mockResolvedValue(mockDeliveryMan)
 
-    expect(delivery?.email).toEqual(deliveryData.email)
-    expect(delivery?.password).toEqual(deliveryData.password)
+    const deliveryMan = await deliveryManService.execute(mockDeliveryMan)
+
+    expect(createDeliveryManSpy).toHaveBeenCalledWith(
+      mockDeliveryMan.name,
+      mockDeliveryMan.email,
+      mockDeliveryMan.username,
+      mockDeliveryMan.password,
+      mockDeliveryMan.phone,
+      mockDeliveryMan.role,
+      mockDeliveryMan.address,
+    )
+    expect(deliveryMan).toEqual(mockDeliveryMan)
   })
 
-  it('should be able to update deliveryMan', async () => {
-    const id = '123'
-    const name = 'John Smith'
-    const phone = '552299999999'
+  it('should update a deliveryMan', async () => {
+    const mockDeliveryMan: DeliveryManTypes = {
+      id: '123',
+      name: 'John Smith',
+      username: 'John',
+      email: 'john@example.com',
+      password: '123',
+      phone: '552299999999',
+      role: 'DELIVERY_MAN',
+      address: {
+        street: 'Street view',
+        number: 'S/N',
+        city: 'San Francisco',
+        country: 'US',
+        zipCode: '12345678',
+      },
+    }
 
-    const updateDeliveryMan = await deliveryManService.update(id, name, phone)
+    const updateDeliveryManSpy = jest.spyOn(
+      DeliveryManRepository,
+      'updateDeliveryMan',
+    )
+    updateDeliveryManSpy.mockResolvedValue(mockDeliveryMan)
 
-    expect(mockedDeliveryRepository.updateDeliveryMan).toHaveBeenCalledWith(
-      id,
-      name,
-      phone,
+    const deliveryMan = await deliveryManService.update(
+      mockDeliveryMan.id!,
+      mockDeliveryMan.name,
+      mockDeliveryMan.phone,
     )
 
-    expect(updateDeliveryMan.id).toBe(id)
-    expect(updateDeliveryMan.name).toBe(name)
-    expect(updateDeliveryMan.phone).toBe(phone)
+    expect(updateDeliveryManSpy).toHaveBeenCalledWith(
+      mockDeliveryMan.id,
+      mockDeliveryMan.name,
+      mockDeliveryMan.phone,
+    )
+    expect(deliveryMan).toEqual(mockDeliveryMan)
   })
 
-  it('should be able to update orders DeliveryMan', async () => {})
+  it('should login a deliveryMan', async () => {
+    const mockDeliveryMan: DeliveryManTypes = {
+      id: '123',
+      name: 'John Smith',
+      username: 'John',
+      email: 'john@example.com',
+      password: '123',
+      phone: '552299999999',
+      role: 'DELIVERY_MAN',
+      address: {
+        street: 'Street view',
+        number: 'S/N',
+        city: 'San Francisco',
+        country: 'US',
+        zipCode: '12345678',
+      },
+    }
 
-  it('should be able to get orders DeliveryMan', async () => {})
+    const loginDeliveryManSpy = jest.spyOn(
+      DeliveryManRepository,
+      'loginDeliveryMan',
+    )
+    loginDeliveryManSpy.mockResolvedValue(mockDeliveryMan)
+
+    const deliveryMan = await deliveryManService.login(
+      mockDeliveryMan.email,
+      mockDeliveryMan.password,
+    )
+
+    expect(loginDeliveryManSpy).toHaveBeenCalledWith(
+      mockDeliveryMan.email,
+      mockDeliveryMan.password,
+    )
+    expect(deliveryMan).toEqual(mockDeliveryMan)
+  })
+
+  it('should update an order for a deliveryMan', async () => {
+    const mockOrder: OrderTypes = {
+      id: '1234',
+      products: [
+        {
+          productId: '123456',
+          quantity: 1,
+        },
+      ],
+      userId: '123',
+      totalAmount: 100,
+      discount: 0,
+      status: 'Em rota de entrega',
+    }
+
+    const updateOrderDeliveryManSpy = jest.spyOn(
+      DeliveryManRepository,
+      'updateOrderDeliveryMan',
+    )
+    updateOrderDeliveryManSpy.mockResolvedValue(mockOrder)
+
+    const order = await deliveryManService.updateDeliveryOrder(
+      mockOrder.userId,
+      mockOrder.id,
+    )
+
+    expect(updateOrderDeliveryManSpy).toHaveBeenCalledWith(
+      mockOrder.userId,
+      mockOrder.id,
+    )
+    expect(order).toEqual(mockOrder)
+  })
+
+  it('should get orders for a deliveryMan', async () => {
+    const mockOrders: OrderTypes[] = [
+      {
+        id: '1234',
+        products: [
+          {
+            productId: '123456',
+            quantity: 1,
+          },
+        ],
+        userId: '123',
+        totalAmount: 100,
+        discount: 0,
+        status: 'Em rota de entrega',
+      },
+    ]
+
+    const getOrdersDeliveryManSpy = jest.spyOn(
+      DeliveryManRepository,
+      'getOrdersDeliveryMan',
+    )
+    getOrdersDeliveryManSpy.mockResolvedValue(mockOrders)
+
+    const orders = await deliveryManService.getOrdersDelivery(
+      mockOrders[0].userId,
+    )
+
+    expect(getOrdersDeliveryManSpy).toHaveBeenCalledWith(mockOrders[0].userId)
+    expect(orders).toEqual(mockOrders)
+  })
 })
