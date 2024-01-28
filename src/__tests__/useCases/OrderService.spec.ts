@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-
 import { OrderService } from '../../services/OrderService'
 import { OrderTypes } from '../../dtos/OrderTypes'
 import OrderRepository from '../../repositories/OrderRepository'
@@ -75,6 +74,7 @@ describe('OrderService', () => {
 
     expect(getOrderByUserSpy).toHaveBeenCalledWith(mockOrders[0].userId)
     expect(orders).toEqual(mockOrders)
+    expect(orders[0].userId).toBe(mockOrders[0].userId)
   })
 
   it('should update order end date', async () => {

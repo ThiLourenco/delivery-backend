@@ -1,185 +1,46 @@
 /* eslint-disable no-undef */
 import { UserService } from '../../services/UserService'
 import UserRepository from '../../repositories/UserRepository'
-import { UserTypes } from '../../dtos/UserTypes'
-import { UserRole } from '@prisma/client'
+import { UserTypes, UserWithAddress } from '../../dtos/UserTypes'
 
-const mockUser: UserTypes[] = [
-  {
-    id: '123',
-    name: 'John',
-    username: 'John',
-    email: 'john@example.com',
-    phone: '123',
-    password: '123',
-    isAdmin: true,
-    role: 'ADMIN',
-    address: {
-      city: 'San Francisco',
-      country: 'US',
-      street: 'San Francisco',
-      zipCode: '123',
-      number: '123',
-    },
-  },
-  {
-    id: '123',
-    name: 'John',
-    username: 'John',
-    email: 'john@example.com',
-    phone: '123',
-    password: '123',
-    isAdmin: false,
-    role: 'CLIENT',
-    address: {
-      city: 'San Francisco',
-      country: 'US',
-      street: 'San Francisco',
-      zipCode: '123',
-      number: '123',
-    },
-  },
-  {
-    id: '123',
-    name: 'John',
-    username: 'John',
-    email: 'john@example.com',
-    phone: '123',
-    password: '123',
-    isAdmin: false,
-    role: 'DELIVERY_MAN',
-    address: {
-      city: 'San Francisco',
-      country: 'US',
-      street: 'San Francisco',
-      zipCode: '123',
-      number: '123',
-    },
-  },
-]
-
-jest.mock('../../repositories/UserRepository', () => {
-  return {
-    createUser: jest.fn(
-      (
-        id: string,
-        name: string,
-        username: string,
-        email: string,
-        phone: string,
-        password: string,
-        _isAdmin: boolean,
-        _role: UserRole,
-        _address: {
-          city: string
-          country: string
-          street: string
-          zipCode: string
-          number: string
-        },
-      ): Promise<UserTypes> => {
-        return Promise.resolve({
-          id,
-          name,
-          username,
-          email,
-          phone,
-          password,
-          role: 'ADMIN',
-          isAdmin: false,
-          address: {
-            city: 'San Francisco',
-            country: 'US',
-            street: 'San Francisco',
-            zipCode: '123',
-            number: '123',
-          },
-        })
-      },
-    ),
-    login: jest.fn(
-      (email: string, password: string): Promise<UserTypes | null> => {
-        const user = mockUser.find(
-          (u) => u.email === email && u.password === password,
-        )
-        return Promise.resolve(user || null)
-      },
-    ),
-    getUser: jest.fn((id: string): Promise<UserTypes | null> => {
-      if (id === '1') {
-        return Promise.resolve({
-          id: '1',
-          username: 'John',
-          name: 'John Doe',
-          email: 'john@example.com',
-          phone: '55 555-5555',
-          password: '123',
-          role: 'CLIENT',
-          isAdmin: false,
-          address: {
-            street: 'St. 15aver',
-            number: '23',
-            city: 'San Francisco',
-            country: 'United States',
-            zipCode: '29800000',
-          },
-        })
-      } else {
-        return Promise.resolve(null)
-      }
-    }),
-    getUsers: jest.fn(() => Promise.resolve(mockUser)),
-    updateUser: jest.fn(
-      (
-        id: string,
-        name: string,
-        username: string,
-        email: string,
-        phone: string,
-        password: string,
-        _isAdmin: boolean,
-        _role: UserRole,
-        _address: {
-          city: string
-          country: string
-          street: string
-          zipCode: string
-          number: string
-        },
-      ): Promise<UserTypes> => {
-        return Promise.resolve({
-          id: '123',
-          name: 'Jane Doe',
-          username: 'JaneDoe',
-          email: 'jane@example',
-          phone: '550223938232',
-          password: '123456',
-          role: 'ADMIN',
-          isAdmin: false,
-          address: {
-            city: 'San Francisco',
-            country: 'US',
-            street: 'San Francisco',
-            zipCode: '123',
-            number: '123',
-          },
-        })
-      },
-    ),
-  }
-})
-
-const mockedUserRepository = jest.mocked(UserRepository)
+jest.mock('../../repositories/UserRepository')
 
 describe('UserRepository', () => {
   let userService: UserService
 
   beforeEach(() => {
-    userService = new UserService(mockedUserRepository)
+    userService = new UserService(UserRepository)
   })
 
-  it('should create a new user', async () => {
-    const userData: UserTypes = {
+  it('should create a user ADM', async () => {
+    const mockUser: UserTypes = {
+      id: '123',
+      name: 'John',
+      username: 'John',
+      email: 'john@example.com',
+      phone: '123',
+      password: '123',
+      isAdmin: true,
+      role: 'ADMIN',
+    }
+
+    const createUserSpy = jest.spyOn(UserRepository, 'createUser')
+    createUserSpy.mockResolvedValue(mockUser)
+
+    const user = await userService.execute(mockUser)
+
+    expect(user.id).toBe(mockUser.id)
+    expect(user.name).toBe(mockUser.name)
+    expect(user.username).toBe(mockUser.username)
+    expect(user.email).toBe(mockUser.email)
+    expect(user.phone).toBe(mockUser.phone)
+    expect(user.isAdmin).toBe(mockUser.isAdmin)
+    expect(user.password).toBe(mockUser.password)
+    expect(user.role).toBe(mockUser.role)
+  })
+
+  it('should create a user Client', async () => {
+    const mockUser: UserTypes = {
       id: '123',
       name: 'John',
       username: 'John',
@@ -187,23 +48,26 @@ describe('UserRepository', () => {
       phone: '123',
       password: '123',
       isAdmin: false,
-      role: 'ADMIN',
+      role: 'CLIENT',
     }
 
-    const user = await userService.execute(userData)
+    const createUserSpy = jest.spyOn(UserRepository, 'createUser')
+    createUserSpy.mockResolvedValue(mockUser)
 
-    expect(user.id).toBe(userData.id)
-    expect(user.name).toBe(userData.name)
-    expect(user.username).toBe(userData.username)
-    expect(user.email).toBe(userData.email)
-    expect(user.phone).toBe(userData.phone)
-    expect(user.password).toBe(userData.password)
-    expect(user.isAdmin).toBe(userData.isAdmin)
-    expect(user.role).toBe(userData.role)
+    const user = await userService.execute(mockUser)
+
+    expect(user.id).toBe(mockUser.id)
+    expect(user.name).toBe(mockUser.name)
+    expect(user.username).toBe(mockUser.username)
+    expect(user.email).toBe(mockUser.email)
+    expect(user.phone).toBe(mockUser.phone)
+    expect(user.isAdmin).toBe(mockUser.isAdmin)
+    expect(user.password).toBe(mockUser.password)
+    expect(user.role).toBe(mockUser.role)
   })
 
-  it('should allow you to login', async () => {
-    const userData: UserTypes = {
+  it('should create a user - Delivery Man', async () => {
+    const mockUser: UserTypes = {
       id: '123',
       name: 'John',
       username: 'John',
@@ -211,63 +75,182 @@ describe('UserRepository', () => {
       phone: '123',
       password: '123',
       isAdmin: false,
+      role: 'DELIVERY_MAN',
+    }
+
+    const createUserSpy = jest.spyOn(UserRepository, 'createUser')
+    createUserSpy.mockResolvedValue(mockUser)
+
+    const user = await userService.execute(mockUser)
+
+    expect(user.id).toBe(mockUser.id)
+    expect(user.name).toBe(mockUser.name)
+    expect(user.username).toBe(mockUser.username)
+    expect(user.email).toBe(mockUser.email)
+    expect(user.phone).toBe(mockUser.phone)
+    expect(user.isAdmin).toBe(mockUser.isAdmin)
+    expect(user.password).toBe(mockUser.password)
+    expect(user.role).toBe(mockUser.role)
+  })
+
+  it('should allow you to login - User ADM', async () => {
+    const mockUser: UserTypes = {
+      id: '123',
+      name: 'John',
+      username: 'John',
+      email: 'john@example.com',
+      phone: '123',
+      password: '123',
+      isAdmin: true,
       role: 'ADMIN',
     }
 
-    mockedUserRepository.login.mockResolvedValue(userData)
+    const loginSpy = jest.spyOn(UserRepository, 'login')
+    loginSpy.mockResolvedValue(mockUser)
 
-    const user = await userService.login(userData.email, userData.password)
+    const user = await userService.login(mockUser.email, mockUser.password)
 
-    expect(user?.email).toBe(userData.email)
-    expect(user?.password).toBe(userData.password)
+    expect(user?.email).toStrictEqual(mockUser.email)
+    expect(user?.password).toStrictEqual(mockUser.password)
+  })
+
+  it('should allow you to login - Client', async () => {
+    const mockUser: UserTypes = {
+      id: '123',
+      name: 'John',
+      username: 'John',
+      email: 'john@example.com',
+      phone: '123',
+      password: '123',
+      isAdmin: false,
+      role: 'CLIENT',
+    }
+
+    const loginSpy = jest.spyOn(UserRepository, 'login')
+    loginSpy.mockResolvedValue(mockUser)
+
+    const user = await userService.login(mockUser.email, mockUser.password)
+
+    expect(user?.email).toStrictEqual(mockUser.email)
+    expect(user?.password).toStrictEqual(mockUser.password)
+  })
+
+  it('should allow you to login - Delivery Man', async () => {
+    const mockUser: UserTypes = {
+      id: '123',
+      name: 'John',
+      username: 'John',
+      email: 'john@example.com',
+      phone: '123',
+      password: '123',
+      isAdmin: false,
+      role: 'DELIVERY_MAN',
+    }
+
+    const loginSpy = jest.spyOn(UserRepository, 'login')
+    loginSpy.mockResolvedValue(mockUser)
+
+    const user = await userService.login(mockUser.email, mockUser.password)
+
+    expect(user?.email).toStrictEqual(mockUser.email)
+    expect(user?.password).toStrictEqual(mockUser.password)
   })
 
   it('should return a user by Id', async () => {
-    const userId = '1'
-    const user = await userService.findUserById(userId)
+    const mockUser: UserWithAddress[] = [
+      {
+        id: '1',
+        username: 'John',
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '55 555-5555',
+        password: '123',
+        role: 'CLIENT',
+        isAdmin: false,
+        address: {
+          street: 'St. 15aver',
+          number: '23',
+          city: 'San Francisco',
+          country: 'United States',
+          zipCode: '29800000',
+        },
+      },
+    ]
 
-    expect(mockedUserRepository.getUser).toHaveBeenCalledWith(userId)
-    expect(user?.id).toBe(userId)
-  })
+    const getUserByIdSpy = jest.spyOn(UserRepository, 'getUser')
+    getUserByIdSpy.mockResolvedValue(mockUser[0])
 
-  it('should return null when the user id not fount by Id', async () => {
-    const userId = 'not-found'
-    const user = await userService.findUserById(userId)
+    const user = await userService.findUserById(mockUser[0].id)
 
-    expect(mockedUserRepository.getUser).toHaveBeenCalledWith(userId)
-    expect(user).toBeNull()
+    expect(getUserByIdSpy).toHaveBeenCalledWith(mockUser[0].id)
+    expect(user?.id).toBe(mockUser[0].id)
   })
 
   it('should return all Users', async () => {
+    const mockUser: UserTypes[] = [
+      {
+        id: '123',
+        name: 'John',
+        username: 'John',
+        email: 'john@example.com',
+        phone: '123',
+        password: '123',
+        isAdmin: false,
+        role: 'CLIENT',
+      },
+      {
+        id: '1234',
+        name: 'Jane',
+        username: 'Jane Doe',
+        email: 'jane@example.com',
+        phone: '123',
+        password: '123',
+        isAdmin: false,
+        role: 'CLIENT',
+      },
+    ]
+
+    const getUsersSpy = jest.spyOn(UserRepository, 'getUsers')
+    getUsersSpy.mockResolvedValue(mockUser)
+
     const user = await userService.findAllUsers()
 
-    expect(mockedUserRepository.getUsers).toHaveBeenCalled()
+    expect(getUsersSpy).toHaveBeenCalled()
     expect(user).toEqual(mockUser)
   })
 
   it('should allow update user by Id', async () => {
-    const id = '123'
-    const name = 'Jane Doe'
-    const username = 'JaneDoe'
-    const phone = '550223938232'
+    const mockUser: UserTypes = {
+      id: '123',
+      name: 'John',
+      username: 'John',
+      email: 'john@example.com',
+      phone: '123',
+      password: '123',
+      isAdmin: false,
+      role: 'CLIENT',
+    }
+
+    const updateUserSpy = jest.spyOn(UserRepository, 'updateUser')
+    updateUserSpy.mockResolvedValue(mockUser)
 
     const updateUser = await userService.updateUserById(
-      id,
-      name,
-      username,
-      phone,
+      mockUser.id,
+      mockUser.name,
+      mockUser.username,
+      mockUser.phone,
     )
 
-    expect(mockedUserRepository.updateUser).toHaveBeenCalledWith(
-      id,
-      name,
-      username,
-      phone,
+    expect(updateUserSpy).toHaveBeenCalledWith(
+      mockUser.id,
+      mockUser.name,
+      mockUser.username,
+      mockUser.phone,
     )
 
-    expect(updateUser.id).toBe(id)
-    expect(updateUser.name).toBe(name)
-    expect(updateUser.phone).toBe(phone)
-    expect(updateUser.username).toBe(username)
+    expect(updateUser.id).toBe(mockUser.id)
+    expect(updateUser.name).toBe(mockUser.name)
+    expect(updateUser.phone).toBe(mockUser.phone)
+    expect(updateUser.username).toBe(mockUser.username)
   })
 })

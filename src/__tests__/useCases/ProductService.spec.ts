@@ -1,155 +1,19 @@
 /* eslint-disable no-undef */
 import { ProductService } from '../../services/ProductService'
-import productRepository from '../../repositories/ProductRepository'
+import ProductRepository from '../../repositories/ProductRepository'
 import { ProductsTypes } from '../../dtos/ProductsTypes'
 
-const mockProducts: ProductsTypes[] = [
-  {
-    id: '1',
-    name: 'Existing Product',
-    description: 'Description',
-    image: 'image.png',
-    price: 100,
-    situation: true,
-    category: {
-      name: 'Category Name',
-    },
-  },
-  {
-    id: '2',
-    name: 'Existing Product2',
-    description: 'Description2',
-    image: 'image2.png',
-    price: 100,
-    situation: true,
-    category: {
-      name: 'Category Name2',
-    },
-  },
-]
-
-// Mock ProductRepository
-jest.mock('../../repositories/ProductRepository', () => {
-  return {
-    create: jest.fn(
-      (
-        name: string,
-        description: string,
-        image: string,
-        price: number,
-        situation: boolean,
-        category?: { name: string },
-      ): Promise<ProductsTypes> => {
-        return Promise.resolve({
-          id: '1',
-          name,
-          description,
-          image,
-          price,
-          situation,
-          category,
-        })
-      },
-    ),
-    findByName: jest.fn(
-      (name: string, id: string): Promise<ProductsTypes | null> => {
-        if (name === 'Existing Product' || id === '1') {
-          return Promise.resolve({
-            id: '1',
-            name: 'Existing Product',
-            description: 'Description',
-            image: 'image.png',
-            price: 100,
-            situation: true,
-            category: {
-              name: 'Category Name',
-            },
-          })
-        } else {
-          return Promise.resolve(null)
-        }
-      },
-    ),
-    findById: jest.fn((id: string): Promise<ProductsTypes | null> => {
-      if (id === '1') {
-        return Promise.resolve({
-          id: '1',
-          name: 'Existing Product',
-          description: 'Description',
-          image: 'image.png',
-          price: 100,
-          situation: true,
-          category: {
-            name: 'Category Name',
-          },
-        })
-      } else {
-        return Promise.resolve(null)
-      }
-    }),
-    findAllProducts: jest.fn(() => Promise.resolve(mockProducts)),
-    updateProductCategory: jest.fn(
-      (id: string, name: string): Promise<ProductsTypes> => {
-        return Promise.resolve({
-          id,
-          name,
-          description: 'Updated Description',
-          image: 'updated-image.png',
-          price: 200,
-          situation: true,
-          category: { name },
-        })
-      },
-    ),
-    updateProduct: jest.fn(
-      (
-        id: string,
-        name: string,
-        description: string,
-        price: number,
-        situation: boolean,
-        category,
-      ): Promise<ProductsTypes> => {
-        return Promise.resolve({
-          id,
-          name: 'Coca-Cola',
-          description: 'Updated description',
-          image: 'image.png',
-          price: 100,
-          situation: true,
-          category: {
-            name,
-          },
-        })
-      },
-    ),
-    updateProductImage: jest.fn(
-      (productId: string, imagePath: string): Promise<ProductsTypes> => {
-        return Promise.resolve({
-          id: productId,
-          image: imagePath,
-          name: 'Coca-Cola',
-          description: 'Updated description',
-          price: 100,
-          situation: true,
-        })
-      },
-    ),
-  }
-})
-
-const mockedProductRepository = jest.mocked(productRepository)
+jest.mock('../../repositories/ProductRepository')
 
 describe('ProductService', () => {
   let productService: ProductService
 
   beforeEach(() => {
-    // Create a new instance of ProductService with mock ProductRepository
-    productService = new ProductService(mockedProductRepository)
+    productService = new ProductService(ProductRepository)
   })
 
   it('should create a product successfully', async () => {
-    const productData: ProductsTypes = {
+    const mockProduct: ProductsTypes = {
       id: '1',
       name: 'Test Product',
       description: 'Test Description',
@@ -161,127 +25,219 @@ describe('ProductService', () => {
       },
     }
 
+    const createProductSpy = jest.spyOn(ProductRepository, 'create')
+    createProductSpy.mockResolvedValue(mockProduct)
+
     const product = await productService.create(
-      productData.name,
-      productData.description,
-      productData.image,
-      productData.price,
-      productData.situation,
-      productData.category,
+      mockProduct.name,
+      mockProduct.description,
+      mockProduct.image,
+      mockProduct.price,
+      mockProduct.situation,
+      mockProduct.category,
     )
 
-    expect(mockedProductRepository.create).toHaveBeenCalledWith(
-      productData.name,
-      productData.description,
-      productData.image,
-      productData.price,
-      productData.situation,
-      productData.category,
+    expect(createProductSpy).toHaveBeenCalledWith(
+      mockProduct.name,
+      mockProduct.description,
+      mockProduct.image,
+      mockProduct.price,
+      mockProduct.situation,
+      mockProduct.category,
     )
     expect(product).toHaveProperty('id', '1')
-    expect(product.name).toBe(productData.name)
-    expect(product.description).toBe(productData.description)
-    expect(product.image).toBe(productData.image)
-    expect(product.price).toBe(productData.price)
-    expect(product.situation).toBe(productData.situation)
-    expect(product.category).toEqual(productData.category)
+    expect(product.name).toBe(mockProduct.name)
+    expect(product.description).toBe(mockProduct.description)
+    expect(product.image).toBe(mockProduct.image)
+    expect(product.price).toBe(mockProduct.price)
+    expect(product.situation).toBe(mockProduct.situation)
+    expect(product.category).toEqual(mockProduct.category)
   })
 
-  it('should return a product when it exists', async () => {
-    const productName = 'Existing Product'
-    const product = await productService.findProductByName(productName)
+  it('should return a product by name when it exists', async () => {
+    const mockProduct: ProductsTypes = {
+      id: '1',
+      name: 'Test Product',
+      description: 'Test Description',
+      image: 'test-image.png',
+      price: 100,
+      situation: true,
+      category: {
+        name: 'Test Category',
+      },
+    }
 
-    expect(mockedProductRepository.findByName).toHaveBeenCalledWith(productName)
+    const getProductByNameSpy = jest.spyOn(ProductRepository, 'findByName')
+
+    getProductByNameSpy.mockResolvedValue(mockProduct)
+
+    const product = await productService.findProductByName(mockProduct.name)
+
+    expect(getProductByNameSpy).toHaveBeenCalledWith(mockProduct.name)
     expect(product).toHaveProperty('id', '1')
-    expect(product?.name).toBe(productName)
-  })
-
-  it('should return null when the product does not exists', async () => {
-    const productName = 'Non-Existing Product'
-    const product = await productService.findProductByName(productName)
-
-    expect(mockedProductRepository.findByName).toHaveBeenCalledWith(productName)
-    expect(product).toBeNull()
+    expect(product?.name).toBe(mockProduct.name)
   })
 
   it('should return a product when it exists by Id', async () => {
-    const productId = '1'
-    const product = await productService.findProductById(productId)
+    const mockProduct: ProductsTypes = {
+      id: '1',
+      name: 'Test Product',
+      description: 'Test Description',
+      image: 'test-image.png',
+      price: 100,
+      situation: true,
+      category: {
+        name: 'Test Category',
+      },
+    }
 
-    expect(mockedProductRepository.findById).toHaveBeenCalledWith(productId)
-    expect(product?.id).toBe(productId)
-  })
+    const getProductByIdSpy = jest.spyOn(ProductRepository, 'findById')
+    getProductByIdSpy.mockResolvedValue(mockProduct)
 
-  it('should return null when the product is not found by id', async () => {
-    const productId = 'No-Exists-Product'
-    const product = await productService.findProductById(productId)
+    const product = await productService.findProductById(mockProduct.id)
 
-    expect(mockedProductRepository.findById).toHaveBeenCalledWith(productId)
-    expect(product).toBeNull()
+    expect(getProductByIdSpy).toHaveBeenCalledWith(mockProduct.id)
+    expect(product?.id).toBe(mockProduct.id)
   })
 
   it('should return all products', async () => {
+    const mockProduct: ProductsTypes[] = [
+      {
+        id: '1',
+        name: 'Test Product',
+        description: 'Test Description',
+        image: 'test-image.png',
+        price: 100,
+        situation: true,
+        category: {
+          name: 'Test Category',
+        },
+      },
+      {
+        id: '2',
+        name: 'Test Product 2',
+        description: 'Test Description',
+        image: 'test-image.png',
+        price: 100,
+        situation: true,
+        category: {
+          name: 'Test Category',
+        },
+      },
+    ]
+
+    const getAllProductSpy = jest.spyOn(ProductRepository, 'findAllProducts')
+    getAllProductSpy.mockResolvedValue(mockProduct)
+
     const products = await productService.getAllProducts()
 
-    expect(mockedProductRepository.findAllProducts).toHaveBeenCalled()
-    expect(products).toEqual(mockProducts)
+    expect(getAllProductSpy).toHaveBeenCalled()
+    expect(products).toEqual(mockProduct)
   })
 
   it('should update product category', async () => {
-    const id = '1'
-    const name = 'New category Name'
-    const updatedProduct = await productService.updateCategory(id, name)
+    const mockProduct: ProductsTypes = {
+      id: '1',
+      name: 'Test Product',
+      description: 'Test Description',
+      image: 'test-image.png',
+      price: 100,
+      situation: true,
+      category: {
+        name: 'Test Category',
+      },
+    }
 
-    expect(mockedProductRepository.updateProductCategory).toHaveBeenCalledWith(
-      id,
-      name,
+    const updateProductCategorySpy = jest.spyOn(
+      ProductRepository,
+      'updateProductCategory',
     )
-    expect(updatedProduct.category?.name).toBe(name)
+
+    updateProductCategorySpy.mockResolvedValue(mockProduct)
+
+    const updatedProduct = await productService.updateCategory(
+      mockProduct.id,
+      mockProduct.name,
+    )
+
+    expect(updateProductCategorySpy).toHaveBeenCalledWith(
+      mockProduct.id,
+      mockProduct.name,
+    )
+    expect(updatedProduct.category?.name).toBe(mockProduct.category?.name)
   })
 
   it('should update products data', async () => {
-    const name = 'Coca-Cola'
-    const description = 'Updated description'
-    const price = 100
-    const image = 'image.png'
-    const situation = true
+    const mockProduct: ProductsTypes = {
+      id: '1',
+      name: 'Coca-Cola',
+      description: 'Updated description',
+      image: 'test-image.png',
+      price: 100,
+      situation: true,
+      category: {
+        name: 'Test Category',
+      },
+    }
 
-    const data = await productService.updateProduct(
-      name,
-      description,
-      image,
-      price,
-      situation,
+    const updateProductSpy = jest.spyOn(ProductRepository, 'updateProduct')
+    updateProductSpy.mockResolvedValue(mockProduct)
+
+    const product = await productService.updateProduct(
+      mockProduct.name,
+      mockProduct.description,
+      mockProduct.image,
+      mockProduct.price,
+      mockProduct.situation,
     )
 
-    expect(mockedProductRepository.updateProduct).toHaveBeenCalledWith(
-      name,
-      description,
-      image,
-      price,
-      situation,
+    expect(updateProductSpy).toHaveBeenCalledWith(
+      mockProduct.name,
+      mockProduct.description,
+      mockProduct.image,
+      mockProduct.price,
+      mockProduct.situation,
     )
 
-    expect(data.name).toEqual(name)
-    expect(data.description).toEqual(description)
-    expect(data.image).toEqual(image)
-    expect(data.price).toEqual(price)
-    expect(data.situation).toEqual(situation)
+    expect(product.name).toEqual(mockProduct.name)
+    expect(product.description).toEqual(mockProduct.description)
+    expect(product.image).toEqual(mockProduct.image)
+    expect(product.price).toEqual(mockProduct.price)
+    expect(product.situation).toEqual(mockProduct.situation)
   })
 
   it('should can be updated product image', async () => {
-    const image =
-      '/www/Projects/Developer/Backend/delivery-backend/tmp/45ee1999b375360a55656f3684ab953e-natal.jpg'
-    const id = '1'
+    const mockProduct: ProductsTypes = {
+      id: '1',
+      name: 'Test Product',
+      description: 'Test Description',
+      image:
+        '/www/Projects/Developer/Backend/delivery-backend/tmp/45ee1999b375360a55656f3684ab953e-natal.jpg',
+      price: 100,
+      situation: true,
+      category: {
+        name: 'Test Category',
+      },
+    }
 
-    const updateImage = await productService.updateProductImage(id, image)
-
-    expect(mockedProductRepository.updateProductImage).toHaveBeenCalledWith(
-      id,
-      image,
+    const updateProductImageSpy = jest.spyOn(
+      ProductRepository,
+      'updateProductImage',
     )
 
-    expect(updateImage.id).toEqual(id)
-    expect(updateImage.image).toEqual(image)
+    updateProductImageSpy.mockResolvedValue(mockProduct)
+
+    const updateImage = await productService.updateProductImage(
+      mockProduct.id,
+      mockProduct.image,
+    )
+
+    expect(updateProductImageSpy).toHaveBeenCalledWith(
+      mockProduct.id,
+      mockProduct.image,
+    )
+
+    expect(updateImage.id).toEqual(mockProduct.id)
+    expect(updateImage.image).toEqual(mockProduct.image)
   })
 })

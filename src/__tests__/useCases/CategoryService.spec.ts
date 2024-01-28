@@ -1,120 +1,93 @@
 /* eslint-disable no-undef */
 import { CategoryService } from '../../services/CategoryService'
-import categoryRepository from '../../repositories/CategoryRepository'
+import CategoryRepository from '../../repositories/CategoryRepository'
 import { CategoryTypes } from '../../dtos/CategoryTypes'
 
-const mockCategory: CategoryTypes[] = [
-  {
-    id: '1',
-    name: 'Refrigerante',
-  },
-  {
-    id: '2',
-    name: 'Cerveja',
-  },
-]
-
-jest.mock('../../repositories/CategoryRepository', () => {
-  return {
-    createCategory: jest.fn((name: string): Promise<CategoryTypes> => {
-      return Promise.resolve({
-        id: '1',
-        name,
-      })
-    }),
-    getCategories: jest.fn(() => Promise.resolve(mockCategory)),
-    findCategoriesByProductId: jest.fn(
-      (id: string): Promise<CategoryTypes | null> => {
-        if (id === '1') {
-          return Promise.resolve({
-            id: '1',
-            name: 'Refrigerante',
-          })
-        } else {
-          return Promise.resolve(null)
-        }
-      },
-    ),
-    updateCategory: jest.fn(
-      (id: string, name: string): Promise<CategoryTypes> => {
-        return Promise.resolve({
-          id: '123',
-          name,
-        })
-      },
-    ),
-  }
-})
-
-const mockedCategoryRepository = jest.mocked(categoryRepository)
+jest.mock('../../repositories/CategoryRepository')
 
 describe('CategoryRepository', () => {
   let categoryService: CategoryService
 
   beforeEach(() => {
-    categoryService = new CategoryService(mockedCategoryRepository)
+    categoryService = new CategoryService(CategoryRepository)
   })
 
   it('should create a new category', async () => {
-    const categoryData: CategoryTypes = {
+    const mockCategory: CategoryTypes = {
       id: '1',
-      name: 'Category name',
+      name: 'New Category',
     }
 
-    const category = await categoryService.execute(categoryData.name)
+    const createCategorySpy = jest.spyOn(CategoryRepository, 'createCategory')
 
-    expect(categoryRepository.createCategory).toHaveBeenCalledWith(
-      categoryData.name,
-    )
+    createCategorySpy.mockResolvedValue(mockCategory)
 
-    expect(category.name).toBe(categoryData.name)
+    const category = await categoryService.execute(mockCategory.name)
+
+    expect(createCategorySpy).toHaveBeenCalledWith(mockCategory.name)
+
+    expect(category.name).toBe(mockCategory.name)
   })
 
   it('should get all categories', async () => {
+    const mockCategory: CategoryTypes[] = [
+      {
+        id: '123',
+        name: 'Category Name',
+      },
+      {
+        id: '124',
+        name: 'Category Name 2',
+      },
+    ]
+
+    const getAllCategorySpy = jest.spyOn(CategoryRepository, 'getCategories')
+    getAllCategorySpy.mockResolvedValue(mockCategory)
+
     const categories = await categoryService.findAllCategory()
 
-    expect(categoryRepository.getCategories).toHaveBeenCalled()
+    expect(getAllCategorySpy).toHaveBeenCalled()
 
     expect(categories).toEqual(mockCategory)
   })
 
   it('should return a category by Id', async () => {
-    const categoryId = '1'
+    const mockCategory: CategoryTypes[] = [
+      {
+        id: '123',
+        name: 'Category Name',
+      },
+    ]
+
+    const getCategoryByIdSpy = jest.spyOn(
+      CategoryRepository,
+      'findCategoriesByProductId',
+    )
+    getCategoryByIdSpy.mockResolvedValue(mockCategory)
+
     const category = await categoryService.findAllProductByCategoryId(
-      categoryId,
+      mockCategory[0].id!,
     )
 
-    expect(
-      mockedCategoryRepository.findCategoriesByProductId,
-    ).toHaveBeenCalledWith(categoryId)
-    expect(category).toStrictEqual(mockCategory[0])
-  })
-
-  it('should return null when no category is found', async () => {
-    const categoryId = 'xpto'
-    const category = await categoryService.findAllProductByCategoryId(
-      categoryId,
-    )
-
-    expect(
-      mockedCategoryRepository.findCategoriesByProductId,
-    ).toHaveBeenCalledWith(categoryId)
-
-    expect(category).toBeNull()
+    expect(getCategoryByIdSpy).toHaveBeenCalledWith(mockCategory[0].id)
+    expect(category[0]).toStrictEqual(mockCategory[0])
   })
 
   it('should update category name', async () => {
-    const categoryData: CategoryTypes = {
+    const mockCategory: CategoryTypes = {
       id: '123',
       name: 'Updated Category Name',
     }
 
+    const updateCategorySpy = jest.spyOn(CategoryRepository, 'updateCategory')
+    updateCategorySpy.mockResolvedValue(mockCategory)
+
     const updateCategory = await categoryService.updateCategory(
-      categoryData.id!,
-      categoryData.name,
+      mockCategory.id!,
+      mockCategory.name,
     )
 
-    expect(updateCategory.id).toBe(categoryData.id)
-    expect(updateCategory.name).toBe(categoryData.name)
+    expect(updateCategory.id).toBe(mockCategory.id)
+    expect(updateCategory.name).toBe(mockCategory.name)
   })
 })

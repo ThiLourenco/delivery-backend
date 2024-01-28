@@ -1,4 +1,4 @@
-import { ProductsTypes } from 'dtos/ProductsTypes'
+// import { ProductsTypes } from 'dtos/ProductsTypes'
 import { CategoryTypes } from '../dtos/CategoryTypes'
 
 export interface ICategoryRepository {
@@ -6,7 +6,7 @@ export interface ICategoryRepository {
 
   getCategories(): Promise<CategoryTypes[]>
 
-  findCategoriesByProductId(id: string): Promise<ProductsTypes[]>
+  findCategoriesByProductId(id: string): Promise<CategoryTypes[]>
 
   updateCategory(id: string, name: string): Promise<CategoryTypes>
 }
