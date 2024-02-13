@@ -11,7 +11,7 @@ app.use(router)
 app.use(cors())
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // (https://your-client-app.com)
+  origin: 'http://localhost:3000',
   optionsSuccessStatus: 200,
 }
 
