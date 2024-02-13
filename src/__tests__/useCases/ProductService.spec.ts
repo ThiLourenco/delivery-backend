@@ -211,8 +211,7 @@ describe('ProductService', () => {
       id: '1',
       name: 'Test Product',
       description: 'Test Description',
-      image:
-        '/www/Projects/Developer/Backend/delivery-backend/tmp/45ee1999b375360a55656f3684ab953e-natal.jpg',
+      image: '/images/008aa273cf8201b4fc427715641b0787-image.png',
       price: 100,
       situation: true,
       category: {
