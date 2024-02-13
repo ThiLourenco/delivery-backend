@@ -3,6 +3,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import { router } from './routes'
 import { AppError } from '../errors/AppError'
+import { tmpFolder } from '../middlewares/upload'
 
 const app = express()
 app.use(helmet())
@@ -16,6 +17,10 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
+
+app.use('/images', express.static(tmpFolder))
+
+app.use(router)
 
 app.use((req, res, next) => {
   return res.status(404).json({ message: 'Not Found' })

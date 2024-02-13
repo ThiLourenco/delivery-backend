@@ -4,6 +4,6 @@ coverage
 .env
 migrations
 .requisito.md
-tmp/*
+images/*
 
 assets/*

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
+import path from 'path'
 import { ProductsTypes } from '../dtos/ProductsTypes'
 import { ProductService } from '../services/ProductService'
 import ProductRepository from '../repositories/ProductRepository'
+import { tmpFolder } from './../middlewares/upload'
 
 const createProduct = async (request: Request, response: Response) => {
   try {
@@ -188,9 +190,17 @@ const updateProductImage = async (request: Request, response: Response) => {
 
   try {
     const updateImage = new ProductService(ProductRepository)
-    await updateImage.updateProductImage(productId, imagePath)
+    // Save the relative path to the database
+    const relativeImagePath = path.relative(tmpFolder, imagePath)
+    await updateImage.updateProductImage(productId, relativeImagePath)
 
-    return response.status(200).end()
+    // Construct the URL for the updated image
+    const imageUrl = `${request.protocol}://${request.get(
+      'host',
+    )}/images/${path.basename(relativeImagePath)}`
+
+    // Return the URL of the updated image
+    return response.status(200).json({ imageUrl })
   } catch (error) {
     return response.status(500).json({
       message: 'Error updating product image',

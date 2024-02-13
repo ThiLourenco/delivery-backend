@@ -3,7 +3,7 @@ import multer, { Multer } from 'multer'
 import crypto from 'crypto'
 import { join } from 'path'
 
-const tmpFolder = join(__dirname, '..', '..', 'tmp')
+const tmpFolder = join(__dirname, '..', '..', 'images')
 
 const storage: multer.StorageEngine = multer.diskStorage({
   destination: tmpFolder,

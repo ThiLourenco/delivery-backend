@@ -1,3 +1,4 @@
+import path from 'path'
 import { IProductRepository } from '../interfaces/IProductRepository'
 
 class ProductService {
@@ -63,8 +64,12 @@ class ProductService {
     )
   }
 
-  public async updateProductImage(productId: string, imagePath: string) {
-    return await this.ProductRepository.updateProductImage(productId, imagePath)
+  public async updateProductImage(
+    productId: string,
+    relativeImagePath: string,
+  ) {
+    const imageUrl = path.join('/images', relativeImagePath)
+    return await this.ProductRepository.updateProductImage(productId, imageUrl)
   }
 }
 
