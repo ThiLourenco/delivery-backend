@@ -1,22 +1,17 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express, { NextFunction, Request, Response, Express } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import { router } from './routes'
 import { AppError } from '../errors/AppError'
 import { tmpFolder } from '../middlewares/upload'
 
-const app = express()
+const app: Express = express()
+
 app.use(helmet())
+app.use(cors())
+app.options('*', cors())
 app.use(express.json())
 app.use(router)
-app.use(cors())
-
-const corsOptions = {
-  origin: 'http://localhost:3000',
-  optionsSuccessStatus: 200,
-}
-
-app.use(cors(corsOptions))
 
 app.use('/images', express.static(tmpFolder))
 
