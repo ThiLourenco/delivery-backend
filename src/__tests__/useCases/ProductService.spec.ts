@@ -12,7 +12,7 @@ describe('ProductService', () => {
     productService = new ProductService(ProductRepository)
   })
 
-  it('should create a product successfully', async () => {
+  it('should create a product', async () => {
     const mockProduct: ProductsTypes = {
       id: '1',
       name: 'Test Product',
@@ -20,9 +20,10 @@ describe('ProductService', () => {
       image: 'test-image.png',
       price: 100,
       situation: true,
-      category: {
-        name: 'Test Category',
-      },
+      // retornar o código da categoria refactor
+      // category: {
+      //   name: 'Test Category',
+      // },
     }
 
     const createProductSpy = jest.spyOn(ProductRepository, 'create')

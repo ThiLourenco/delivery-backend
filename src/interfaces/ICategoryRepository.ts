@@ -1,4 +1,3 @@
-// import { ProductsTypes } from 'dtos/ProductsTypes'
 import { CategoryTypes } from '../dtos/CategoryTypes'
 
 export interface ICategoryRepository {
