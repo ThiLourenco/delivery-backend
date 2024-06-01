@@ -16,9 +16,12 @@ const createDeliveryMan = async (request: Request, response: Response) => {
     const deliveryMan = new DeliveryManService(DeliveryManRepository)
     const createDeliveryMan = await deliveryMan.execute(deliveryManData)
 
+    const { password, role, isAdmin, phone, email, ...userWithPassword } =
+      createDeliveryMan
+
     return response.status(201).json({
       message: 'User created with success!',
-      user: createDeliveryMan,
+      user: userWithPassword,
     })
   } catch (error) {
     console.log(error)
@@ -89,7 +92,13 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
       },
     )
 
-    const { password: _, ...deliveryManUserLogin } = deliveryManUser
+    const {
+      password: _,
+      isAdmin,
+      role,
+      phone,
+      ...deliveryManUserLogin
+    } = deliveryManUser
 
     return response.status(200).json({
       user: deliveryManUserLogin,
@@ -113,7 +122,7 @@ const updateOrderDeliveryMan = async (request: Request, response: Response) => {
     const deliveryManData: DeliveryManTypes = request.body
     deliveryManData.role = UserRole.DELIVERY_MAN
 
-    if (deliveryManId === undefined) {
+    if (!deliveryManId || deliveryManId === undefined) {
       return response.status(401).json({
         message: 'User ID not specified in request',
       })
@@ -123,14 +132,10 @@ const updateOrderDeliveryMan = async (request: Request, response: Response) => {
     const updateOrderDeliveryService = new DeliveryManService(
       DeliveryManRepository,
     )
-    const update = await updateOrderDeliveryService.updateDeliveryOrder(
-      deliveryManId,
-      orderId,
-    )
+    await updateOrderDeliveryService.updateDeliveryOrder(deliveryManId, orderId)
 
     return response.status(200).json({
-      message: 'DeliveryMan Order updated successfully',
-      update,
+      message: 'DeliveryMan Order accepted with successfully',
     })
   } catch (error) {
     console.error(error)

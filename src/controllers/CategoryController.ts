@@ -79,11 +79,10 @@ const updateCategory = async (request: Request, response: Response) => {
     }
 
     const updateCategoryService = new CategoryService(CategoryRepository)
-    const updateCategory = await updateCategoryService.updateCategory(id, name)
+    await updateCategoryService.updateCategory(id, name)
 
     return response.status(200).json({
       message: 'Category Updated successfully',
-      updateCategory,
     })
   } catch (error) {
     console.error(error)

@@ -20,7 +20,7 @@ const createOrder = async (request: Request, response: Response) => {
     console.log(products, totalAmount, discount, status, 'Req.Body')
 
     const createOrderService = new OrderService(OrderRepository)
-    const order = await createOrderService.execute(
+    await createOrderService.execute(
       products,
       userId,
       totalAmount,
@@ -30,7 +30,6 @@ const createOrder = async (request: Request, response: Response) => {
 
     return response.status(201).json({
       message: 'Orders created with success!',
-      order,
     })
   } catch (error) {
     console.error(error)

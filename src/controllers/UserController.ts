@@ -17,9 +17,12 @@ const createUser = async (request: Request, response: Response) => {
     const userService = new UserService(UserRepository)
     const createdUser = await userService.execute(userData)
 
+    const { password, isAdmin, phone, role, ...createdUserWithSucessed } =
+      createdUser
+
     return response.status(201).json({
       message: 'User created with success!',
-      user: createdUser,
+      user: createdUserWithSucessed,
     })
   } catch (error) {
     console.error(error)
@@ -40,9 +43,11 @@ const getUser = async (request: Request, response: Response) => {
       throw new AppError('User not exists!', 400)
     }
 
+    const { password, isAdmin, ...userWithPassword } = user
+
     return response.status(200).json({
       message: 'User retrieved successfully!',
-      user,
+      user: userWithPassword,
     })
   } catch (error) {
     console.error(error)
@@ -63,9 +68,14 @@ const getUsers = async (request: Request, response: Response) => {
       })
     }
 
+    const userWithoutPasswords = users.map((user) => {
+      const { password, isAdmin, ...userWithoutPassword } = user
+      return userWithoutPassword
+    })
+
     return response.status(200).json({
       message: 'Users retrieved successfully!',
-      users,
+      users: userWithoutPasswords,
     })
   } catch (error) {
     console.error(error)
@@ -96,16 +106,10 @@ const updateUser = async (request: Request, response: Response) => {
     }
 
     const updateUserService = new UserService(UserRepository)
-    const updatedUser = await updateUserService.updateUserById(
-      id,
-      username,
-      name,
-      phone,
-    )
+    await updateUserService.updateUserById(id, username, name, phone)
 
     return response.status(200).json({
       message: 'User updated successfully',
-      updatedUser,
     })
   } catch (error) {
     console.error(error)
@@ -130,7 +134,7 @@ const updateAddress = async (request: Request, response: Response) => {
     }
 
     // Update address data
-    const updateUser = await prisma.address.update({
+    await prisma.address.update({
       where: {
         userId: userExists.id,
       },
@@ -145,7 +149,6 @@ const updateAddress = async (request: Request, response: Response) => {
 
     return response.status(200).json({
       message: 'Address updated with success!',
-      updateUser,
     })
   } catch (error) {
     return response.status(400).json({
@@ -175,7 +178,7 @@ const login = async (request: Request, response: Response) => {
       expiresIn: '1d',
     })
 
-    const { password: _, ...userLogin } = user
+    const { password: _, isAdmin, role, phone, ...userLogin } = user
 
     return response.status(200).json({
       user: userLogin,
@@ -193,7 +196,7 @@ export default {
   createUser,
   getUser,
   getUsers,
-  updateAddress,
   login,
+  updateAddress,
   updateUser,
 }

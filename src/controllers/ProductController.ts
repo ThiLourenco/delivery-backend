@@ -17,7 +17,8 @@ const createProduct = async (request: Request, response: Response) => {
     }: ProductsTypes = request.body
 
     const createProduct = new ProductService(ProductRepository)
-    const product = await createProduct.create(
+
+    await createProduct.create(
       name,
       description,
       image,
@@ -28,7 +29,6 @@ const createProduct = async (request: Request, response: Response) => {
 
     return response.status(201).json({
       message: 'Product created with success!',
-      product,
     })
   } catch (error) {
     console.error(error)
@@ -164,17 +164,10 @@ const updateProduct = async (request: Request, response: Response) => {
     }
 
     const product = new ProductService(ProductRepository)
-    const updatedProduct = await product.updateProduct(
-      id,
-      name,
-      description,
-      price,
-      situation,
-    )
+    await product.updateProduct(id, name, description, price, situation)
 
     return response.status(200).json({
       message: 'Product updated with success!',
-      updatedProduct,
     })
   } catch (error) {
     console.error(error)
