@@ -16,7 +16,7 @@ const createDeliveryMan = async (request: Request, response: Response) => {
     const deliveryMan = new DeliveryManService(DeliveryManRepository)
     const createDeliveryMan = await deliveryMan.execute(deliveryManData)
 
-    const { password, role, isAdmin, phone, email, ...userWithPassword } =
+    const { password, role, phone, email, ...userWithPassword } =
       createDeliveryMan
 
     return response.status(201).json({
@@ -94,7 +94,6 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
 
     const {
       password: _,
-      isAdmin,
       role,
       phone,
       ...deliveryManUserLogin

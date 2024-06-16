@@ -88,7 +88,7 @@ describe('UserRepository', () => {
     expect(user.username).toBe(mockUser.username)
     expect(user.email).toBe(mockUser.email)
     expect(user.phone).toBe(mockUser.phone)
-    expect(user.isAdmin).toBe(mockUser.isAdmin)
+    expect(user.isAdmin).toBeFalsy()
     expect(user.password).toBe(mockUser.password)
     expect(user.role).toBe(mockUser.role)
   })

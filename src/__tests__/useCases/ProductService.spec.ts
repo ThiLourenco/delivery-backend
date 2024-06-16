@@ -200,7 +200,7 @@ describe('ProductService', () => {
       mockProduct.situation,
     )
 
-    expect(product.name).toEqual(mockProduct.name)
+    expect(product.name).toStrictEqual(mockProduct.name)
     expect(product.description).toEqual(mockProduct.description)
     expect(product.image).toEqual(mockProduct.image)
     expect(product.price).toEqual(mockProduct.price)

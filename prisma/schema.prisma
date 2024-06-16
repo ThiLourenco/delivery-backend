@@ -14,21 +14,15 @@ model User {
   email          String   @unique
   phone          String
   password       String
-  role           UserRole @default(CLIENT)
   isAdmin        Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  role           UserRole @default(CLIENT)
   address        Address?
-  order          Order[]
   deliveryOrders Order[]  @relation("DeliveryMan")
+  order          Order[]
 
   @@map("user")
-}
-
-enum UserRole {
-  CLIENT
-  DELIVERY_MAN
-  ADMIN
 }
 
 model Address {
@@ -36,12 +30,11 @@ model Address {
   street  String?
   number  String?
   city    String?
-  country String?
   zipCode String?
-  userId  String  @default(uuid())
+  userId  String  @unique @default(uuid())
+  country String?
   user    User    @relation(fields: [userId], references: [id])
 
-  @@unique([userId])
   @@map("address")
 }
 
@@ -50,42 +43,39 @@ model Product {
   name        String         @unique
   description String         @db.VarChar(200)
   image       String
-  price       Int
+  price       Float
   situation   Boolean        @default(true)
   categoryId  String?        @default(uuid())
-  category    Category?      @relation(fields: [categoryId], references: [id])
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   orders      OrderProduct[]
+  category    Category?      @relation(fields: [categoryId], references: [id])
 
   @@map("product")
 }
 
 model Category {
-  id       String    @id @unique @default(uuid())
-  name     String    @unique
-  products Product[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @unique @default(uuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
 
   @@map("category")
 }
 
 model Order {
-  id            String    @id @unique @default(uuid())
+  id            String         @id @unique @default(uuid())
   userId        String
-  deliveryManId String?
   totalAmount   Int
   discount      Int
   status        String
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime       @default(now())
   endAt         DateTime?
-
-  user     User           @relation(fields: [userId], references: [id])
-  products OrderProduct[]
-
-  deliveryMan User? @relation("DeliveryMan", fields: [deliveryManId], references: [id])
+  deliveryManId String?
+  deliveryMan   User?          @relation("DeliveryMan", fields: [deliveryManId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
+  products      OrderProduct[]
 
   @@unique([id, deliveryManId], name: "link_delivery_deliveryman")
   @@map("order")
@@ -100,4 +90,10 @@ model OrderProduct {
 
   @@id([orderId, productId])
   @@map("orderProduct")
+}
+
+enum UserRole {
+  CLIENT
+  DELIVERY_MAN
+  ADMIN
 }
