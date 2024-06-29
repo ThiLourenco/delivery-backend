@@ -14,7 +14,7 @@ const createDeliveryMan = async (request: Request, response: Response) => {
     deliveryManData.role = UserRole.DELIVERY_MAN
 
     const deliveryMan = new DeliveryManService(DeliveryManRepository)
-    const createDeliveryMan = await deliveryMan.execute(deliveryManData)
+    const createDeliveryMan = await deliveryMan.create(deliveryManData)
 
     const { password, role, phone, email, ...userWithPassword } =
       createDeliveryMan

@@ -5,7 +5,7 @@ class DeliveryManService {
   // eslint-disable-next-line no-useless-constructor
   constructor(private DeliveryManRepository: IDeliveryManRepository) {}
 
-  public async execute(
+  public async create(
     deliveryMan: DeliveryManTypes,
   ): Promise<DeliveryManTypes> {
     const { name, username, email, password, role, phone, address } =

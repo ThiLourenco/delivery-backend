@@ -22,7 +22,7 @@ describe('CategoryRepository', () => {
 
     createCategorySpy.mockResolvedValue(mockCategory)
 
-    const category = await categoryService.execute(mockCategory.name)
+    const category = await categoryService.create(mockCategory.name)
 
     expect(createCategorySpy).toHaveBeenCalledWith(mockCategory.name)
 
@@ -89,5 +89,22 @@ describe('CategoryRepository', () => {
 
     expect(updateCategory.id).toBe(mockCategory.id)
     expect(updateCategory.name).toBe(mockCategory.name)
+  })
+
+  it('should delete a category', async () => {
+    const mockCategory: CategoryTypes = {
+      id: '1dae449e-141f-4131-83a1-328704f1e9bd',
+      name: 'teste',
+    }
+
+    const deleteCategorySpy = jest.spyOn(CategoryRepository, 'deleteCategory')
+    deleteCategorySpy.mockResolvedValue()
+
+    const deleteCategory = await categoryService.deleteCategory(
+      mockCategory.id!,
+    )
+
+    expect(deleteCategory).toBeTruthy()
+    expect(deleteCategory).toBe(mockCategory.id)
   })
 })

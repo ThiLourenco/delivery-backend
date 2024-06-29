@@ -5,7 +5,7 @@ class UserService {
   // eslint-disable-next-line no-useless-constructor
   constructor(private UserRepository: IUserRepository) {}
 
-  public async execute(user: CreateUserDTO): Promise<UserTypes> {
+  public async create(user: CreateUserDTO): Promise<UserTypes> {
     const { id, username, name, email, phone, password, address, role } = user
 
     return await this.UserRepository.createUser(

@@ -15,10 +15,9 @@ const createUser = async (request: Request, response: Response) => {
     userData.role = userData.role || UserRole.CLIENT
 
     const userService = new UserService(UserRepository)
-    const createdUser = await userService.execute(userData)
+    const user = await userService.create(userData)
 
-    const { password, isAdmin, phone, role, ...createdUserWithSucessed } =
-      createdUser
+    const { password, isAdmin, phone, role, ...createdUserWithSucessed } = user
 
     return response.status(201).json({
       message: 'User created with success!',

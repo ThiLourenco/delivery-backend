@@ -8,4 +8,6 @@ export interface ICategoryRepository {
   findCategoriesByProductId(id: string): Promise<CategoryTypes[]>
 
   updateCategory(id: string, name: string): Promise<CategoryTypes>
+
+  deleteCategory(id: string): Promise<void>
 }

@@ -10,5 +10,6 @@ categoryRoutes.get(
   CategoryController.getCategoriesByProduct,
 )
 categoryRoutes.put('/category/:id', CategoryController.updateCategory)
+categoryRoutes.delete('/category/:id', CategoryController.deleteCategory)
 
 export { categoryRoutes }

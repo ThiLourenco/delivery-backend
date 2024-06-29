@@ -7,7 +7,7 @@ const createCategory = async (request: Request, response: Response) => {
     const { name } = request.body
 
     const newCategory = new CategoryService(CategoryRepository)
-    const category = await newCategory.execute(name)
+    const category = await newCategory.create(name)
 
     return response.status(201).json({
       message: 'Category created with success!',
@@ -92,9 +92,34 @@ const updateCategory = async (request: Request, response: Response) => {
   }
 }
 
+const deleteCategory = async (request: Request, response: Response) => {
+  try {
+    const { id } = request.params
+
+    if (id === undefined || typeof id !== 'string') {
+      return response.status(400).json({
+        message: 'Invalid or missing parameter: id',
+      })
+    }
+
+    const deleteCategoryService = new CategoryService(CategoryRepository)
+    await deleteCategoryService.deleteCategory(id)
+
+    return response.status(200).json({
+      message: 'Category deleted successfully',
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Error deleting category',
+    })
+  }
+}
+
 export default {
   createCategory,
   getCategories,
   getCategoriesByProduct,
   updateCategory,
+  deleteCategory,
 }

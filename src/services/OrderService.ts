@@ -5,7 +5,7 @@ class OrderService {
     this.OrderRepository = OrderRepository
   }
 
-  public async execute(
+  public async create(
     products: {
       productId: string
       quantity: number

@@ -5,7 +5,7 @@ class CategoryService {
     this.CategoryRepository = CategoryRepository
   }
 
-  public async execute(name: string) {
+  public async create(name: string) {
     return await this.CategoryRepository.createCategory(name)
   }
 
@@ -19,6 +19,10 @@ class CategoryService {
 
   public async updateCategory(id: string, name: string) {
     return await this.CategoryRepository.updateCategory(id, name)
+  }
+
+  public async deleteCategory(id: string) {
+    return await this.CategoryRepository.deleteCategory(id)
   }
 }
 

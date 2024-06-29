@@ -92,6 +92,28 @@ class CategoryRepository implements ICategoryRepository {
       throw new AppError('Error to update category')
     }
   }
+
+  public async deleteCategory(id: string): Promise<void> {
+    try {
+      const categoryExists = await prisma.category.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!categoryExists) {
+        throw new AppError('Category not exists', 400)
+      }
+
+      await prisma.category.delete({
+        where: {
+          id,
+        },
+      })
+    } catch (error) {
+      throw new AppError('Error deleting category')
+    }
+  }
 }
 
 export default new CategoryRepository()

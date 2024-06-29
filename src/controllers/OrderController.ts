@@ -20,7 +20,7 @@ const createOrder = async (request: Request, response: Response) => {
     console.log(products, totalAmount, discount, status, 'Req.Body')
 
     const createOrderService = new OrderService(OrderRepository)
-    await createOrderService.execute(
+    await createOrderService.create(
       products,
       userId,
       totalAmount,
