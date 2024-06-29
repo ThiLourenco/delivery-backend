@@ -13,11 +13,10 @@ const createDeliveryMan = async (request: Request, response: Response) => {
 
     deliveryManData.role = UserRole.DELIVERY_MAN
 
-    const deliveryMan = new DeliveryManService(DeliveryManRepository)
-    const createDeliveryMan = await deliveryMan.create(deliveryManData)
+    const data = new DeliveryManService(DeliveryManRepository)
+    const deliveryMan = await data.create(deliveryManData)
 
-    const { password, role, phone, email, ...userWithPassword } =
-      createDeliveryMan
+    const { password, role, phone, email, ...userWithPassword } = deliveryMan
 
     return response.status(201).json({
       message: 'User created with success!',
@@ -32,32 +31,39 @@ const createDeliveryMan = async (request: Request, response: Response) => {
 }
 
 const updateDeliveryMan = async (request: Request, response: Response) => {
+  const validateRequestParams = (
+    id: string,
+    name: string,
+    phone: string,
+  ): boolean => {
+    return (
+      typeof id === 'string' &&
+      typeof name === 'string' &&
+      typeof phone === 'string' &&
+      id.trim() !== '' &&
+      name.trim() !== '' &&
+      phone.trim() !== ''
+    )
+  }
+
   try {
     const { id } = request.params
     const { name, phone } = request.body
 
-    const deliveryManData: DeliveryManTypes = request.body
-    deliveryManData.role = UserRole.DELIVERY_MAN
-
-    if (
-      !id ||
-      !name ||
-      !phone ||
-      typeof id !== 'string' ||
-      typeof name !== 'string' ||
-      typeof phone !== 'string'
-    ) {
+    if (!validateRequestParams) {
       return response.status(400).json({
         message: 'Invalid or missing parameters: id, name, phone',
       })
     }
 
+    const deliveryManData: DeliveryManTypes = request.body
+    deliveryManData.role = UserRole.DELIVERY_MAN
+
     const deliveryMan = new DeliveryManService(DeliveryManRepository)
-    const updateDeliveryMan = await deliveryMan.update(id, name, phone)
+    await deliveryMan.update(id, name, phone)
 
     return response.status(200).json({
       message: 'DeliveryMan updated successfully',
-      updateDeliveryMan,
     })
   } catch (error) {
     console.log(error)
@@ -71,8 +77,8 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
   try {
     const { email, password } = request.body
 
-    const getUser = new DeliveryManService(DeliveryManRepository)
-    const deliveryManUser = await getUser.login(email, password)
+    const data = new DeliveryManService(DeliveryManRepository)
+    const deliveryManUser = await data.login(email, password)
 
     if (!deliveryManUser) {
       throw new BadRequestError('E-mail or password invalid')
@@ -105,8 +111,8 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
     })
   } catch (error) {
     console.error(error)
-    return response.status(400).json({
-      message: 'Failed to login',
+    return response.status(401).json({
+      message: 'E-mail or password invalid',
     })
   }
 }
@@ -150,14 +156,14 @@ const getOrderByDeliveryMan = async (request: Request, response: Response) => {
 
     const deliveryManId = request.deliveryManId
 
-    if (deliveryManId === undefined) {
+    if (!deliveryManId || deliveryManId === undefined) {
       return response.status(401).json({
         message: 'DeliveryManId not specified in request',
       })
     }
 
-    const getOrders = new DeliveryManService(DeliveryManRepository)
-    const orders = await getOrders.getOrdersDelivery(deliveryManId)
+    const data = new DeliveryManService(DeliveryManRepository)
+    const orders = await data.getOrdersDelivery(deliveryManId)
 
     return response.status(200).json({
       message: 'get Orders with success!',

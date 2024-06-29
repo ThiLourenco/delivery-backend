@@ -2,7 +2,11 @@ import { hash, compare } from 'bcrypt'
 import { UserRole } from '@prisma/client'
 import { prisma } from './../database'
 import { DeliveryManTypes } from '../dtos/DeliveryManTypes'
-import { AppError, BadRequestError } from '../errors/AppError'
+import {
+  AppError,
+  BadRequestError,
+  UnauthorizedError,
+} from '../errors/AppError'
 import { IDeliveryManRepository } from '../interfaces/IDeliveryManRepository'
 import { OrderTypes } from 'dtos/OrderTypes'
 
@@ -117,12 +121,12 @@ class DeliveryManRepository implements IDeliveryManRepository {
       const passwordMatch = await compare(password, deliveryManUser.password)
 
       if (!passwordMatch) {
-        throw new BadRequestError('E-mail or password incorrect')
+        throw new BadRequestError('E-mail or password invalid')
       }
 
       return deliveryManUser
     } catch (error) {
-      throw new AppError('Failed to login', 400)
+      throw new UnauthorizedError('Failed to login')
     }
   }
 
@@ -138,7 +142,7 @@ class DeliveryManRepository implements IDeliveryManRepository {
       })
 
       if (!orderExists) {
-        throw new AppError('Order not exists', 400)
+        throw new BadRequestError('Order not exists')
       }
 
       const updateOrderDeliveryMan = await prisma.order.update({
@@ -148,6 +152,7 @@ class DeliveryManRepository implements IDeliveryManRepository {
         },
         where: {
           id: orderId,
+          endAt: null,
         },
         include: {
           products: true,

@@ -37,7 +37,7 @@ describe('DeliveryManService', () => {
     )
     createDeliveryManSpy.mockResolvedValue(mockDeliveryMan)
 
-    const deliveryMan = await deliveryManService.execute(mockDeliveryMan)
+    const deliveryMan = await deliveryManService.create(mockDeliveryMan)
 
     expect(createDeliveryManSpy).toHaveBeenCalledWith(
       mockDeliveryMan.name,
