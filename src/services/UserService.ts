@@ -8,7 +8,7 @@ class UserService {
   public async create(user: CreateUserDTO): Promise<UserTypes> {
     const { id, username, name, email, phone, password, address, role } = user
 
-    return await this.UserRepository.createUser(
+    return await this.UserRepository.create(
       id,
       username,
       name,
@@ -29,7 +29,7 @@ class UserService {
   }
 
   public async findAllUsers() {
-    return await this.UserRepository.getUsers()
+    return await this.UserRepository.getAllUsers()
   }
 
   public async updateUserById(
@@ -38,7 +38,11 @@ class UserService {
     name: string,
     phone: string,
   ) {
-    return await this.UserRepository.updateUser(id, username, name, phone)
+    return await this.UserRepository.update(id, username, name, phone)
+  }
+
+  public async deleteUser(id: string): Promise<void> {
+    return await this.UserRepository.delete(id)
   }
 }
 

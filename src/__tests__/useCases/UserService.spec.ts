@@ -24,10 +24,10 @@ describe('UserRepository', () => {
       role: 'ADMIN',
     }
 
-    const createUserSpy = jest.spyOn(UserRepository, 'createUser')
+    const createUserSpy = jest.spyOn(UserRepository, 'create')
     createUserSpy.mockResolvedValue(mockUser)
 
-    const user = await userService.execute(mockUser)
+    const user = await userService.create(mockUser)
 
     expect(user.id).toBe(mockUser.id)
     expect(user.name).toBe(mockUser.name)
@@ -51,10 +51,10 @@ describe('UserRepository', () => {
       role: 'CLIENT',
     }
 
-    const createUserSpy = jest.spyOn(UserRepository, 'createUser')
+    const createUserSpy = jest.spyOn(UserRepository, 'create')
     createUserSpy.mockResolvedValue(mockUser)
 
-    const user = await userService.execute(mockUser)
+    const user = await userService.create(mockUser)
 
     expect(user.id).toBe(mockUser.id)
     expect(user.name).toBe(mockUser.name)
@@ -78,10 +78,10 @@ describe('UserRepository', () => {
       role: 'DELIVERY_MAN',
     }
 
-    const createUserSpy = jest.spyOn(UserRepository, 'createUser')
+    const createUserSpy = jest.spyOn(UserRepository, 'create')
     createUserSpy.mockResolvedValue(mockUser)
 
-    const user = await userService.execute(mockUser)
+    const user = await userService.create(mockUser)
 
     expect(user.id).toBe(mockUser.id)
     expect(user.name).toBe(mockUser.name)
@@ -210,7 +210,7 @@ describe('UserRepository', () => {
       },
     ]
 
-    const getUsersSpy = jest.spyOn(UserRepository, 'getUsers')
+    const getUsersSpy = jest.spyOn(UserRepository, 'getAllUsers')
     getUsersSpy.mockResolvedValue(mockUser)
 
     const user = await userService.findAllUsers()
@@ -231,7 +231,7 @@ describe('UserRepository', () => {
       role: 'CLIENT',
     }
 
-    const updateUserSpy = jest.spyOn(UserRepository, 'updateUser')
+    const updateUserSpy = jest.spyOn(UserRepository, 'update')
     updateUserSpy.mockResolvedValue(mockUser)
 
     const updateUser = await userService.updateUserById(
@@ -252,5 +252,26 @@ describe('UserRepository', () => {
     expect(updateUser.name).toBe(mockUser.name)
     expect(updateUser.phone).toBe(mockUser.phone)
     expect(updateUser.username).toBe(mockUser.username)
+  })
+
+  it('should allow deleting user if not is admin', async () => {
+    const mockUser: UserTypes = {
+      id: '123',
+      name: 'John',
+      username: 'John',
+      email: 'john@example.com',
+      phone: '123',
+      password: '123',
+      isAdmin: false,
+      role: 'CLIENT',
+    }
+
+    const deletUserSpy = jest.spyOn(UserRepository, 'delete')
+    deletUserSpy.mockResolvedValue()
+
+    const deleteUser = await userService.deleteUser(mockUser.id)
+
+    expect(deleteUser).toHaveBeenCalled()
+    expect(deleteUser).toBe(mockUser.id)
   })
 })

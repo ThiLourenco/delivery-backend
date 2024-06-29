@@ -9,5 +9,6 @@ usersRoutes.put('/user/updateAddress', UserController.updateAddress)
 usersRoutes.put('/user/update/:id', UserController.updateUser)
 usersRoutes.get('/users', UserController.getUsers)
 usersRoutes.get('/user/:id', UserController.getUser)
+usersRoutes.delete('/user/:id', UserController.deleteUser)
 
 export { usersRoutes }

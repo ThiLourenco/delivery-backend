@@ -111,7 +111,7 @@ class CategoryRepository implements ICategoryRepository {
         },
       })
     } catch (error) {
-      throw new AppError('Error deleting category')
+      throw new AppError('Failed deleting category')
     }
   }
 }

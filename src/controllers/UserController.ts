@@ -14,8 +14,8 @@ const createUser = async (request: Request, response: Response) => {
 
     userData.role = userData.role || UserRole.CLIENT
 
-    const userService = new UserService(UserRepository)
-    const user = await userService.create(userData)
+    const data = new UserService(UserRepository)
+    const user = await data.create(userData)
 
     const { password, isAdmin, phone, role, ...createdUserWithSucessed } = user
 
@@ -113,7 +113,7 @@ const updateUser = async (request: Request, response: Response) => {
   } catch (error) {
     console.error(error)
     return response.status(400).json({
-      message: 'Error updating product user',
+      message: 'Error updating user',
     })
   }
 }
@@ -132,7 +132,6 @@ const updateAddress = async (request: Request, response: Response) => {
       throw new AppError('User not found', 404)
     }
 
-    // Update address data
     await prisma.address.update({
       where: {
         userId: userExists.id,
@@ -186,7 +185,31 @@ const login = async (request: Request, response: Response) => {
   } catch (error) {
     console.error(error)
     return response.status(400).json({
-      message: 'Failed to login',
+      message: 'E-mail or password invalid',
+    })
+  }
+}
+
+const deleteUser = async (request: Request, response: Response) => {
+  try {
+    const { id } = request.params
+
+    if (id === undefined || typeof id !== 'string') {
+      return response.status(400).json({
+        message: 'Invalid or missing parameter: id',
+      })
+    }
+
+    const userService = new UserService(UserRepository)
+    await userService.deleteUser(id)
+
+    return response.status(200).json({
+      message: 'User deleted successfully',
+    })
+  } catch (error) {
+    console.error(`Failed to delete user with id ${request.params.id}: `, error)
+    return response.status(400).json({
+      message: 'Failed to delete user',
     })
   }
 }
@@ -198,4 +221,5 @@ export default {
   login,
   updateAddress,
   updateUser,
+  deleteUser,
 }

@@ -6,7 +6,7 @@ import { compare, hash } from 'bcrypt'
 import { UserRole } from '@prisma/client'
 
 class UserRepository implements IUserRepository {
-  public async createUser(
+  public async create(
     id: string,
     username: string,
     name: string,
@@ -100,7 +100,7 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  public async getUsers(): Promise<UserTypes[]> {
+  public async getAllUsers(): Promise<UserTypes[]> {
     try {
       const users = await prisma.user.findMany()
 
@@ -135,11 +135,11 @@ class UserRepository implements IUserRepository {
 
       return user
     } catch (erro) {
-      throw new AppError('Failed to login', 400)
+      throw new BadRequestError('E-mail or password invalid')
     }
   }
 
-  public async updateUser(
+  public async update(
     id: string,
     username: string,
     name: string,
@@ -174,6 +174,44 @@ class UserRepository implements IUserRepository {
         'Error to update user, verify all fields are valid !',
         400,
       )
+    }
+  }
+
+  public async delete(id: string): Promise<void> {
+    try {
+      const userExists = await prisma.user.findUnique({
+        where: { id },
+      })
+
+      if (!userExists) {
+        console.log(`User with id ${id} does not exist`)
+        throw new AppError('User does not exist', 400)
+      }
+
+      await prisma.orderProduct.deleteMany({
+        where: {
+          order: {
+            userId: id,
+          },
+        },
+      })
+
+      await prisma.order.deleteMany({
+        where: { userId: id },
+      })
+
+      await prisma.address.deleteMany({
+        where: { userId: id },
+      })
+
+      await prisma.user.delete({
+        where: { id },
+      })
+
+      console.log(`User with id ${id} deleted successfully`)
+    } catch (error) {
+      console.error(`Error deleting user with id ${id}: `, error)
+      throw new AppError('Failed to delete user', 500)
     }
   }
 }

@@ -2,7 +2,7 @@ import { UserRole } from '@prisma/client'
 import { UserTypes } from '../dtos/UserTypes'
 
 export interface IUserRepository {
-  createUser(
+  create(
     id: string,
     username: string,
     name: string,
@@ -18,13 +18,19 @@ export interface IUserRepository {
       zipCode: string
     },
   ): Promise<UserTypes>
+
   getUser(id: string): Promise<UserTypes | null>
-  getUsers(): Promise<UserTypes[]>
+
+  getAllUsers(): Promise<UserTypes[]>
+
   login(email: string, password: string): Promise<UserTypes>
-  updateUser(
+
+  update(
     id: string,
     username: string,
     name: string,
     phone: string,
   ): Promise<UserTypes>
+
+  delete(id: string): Promise<void>
 }
