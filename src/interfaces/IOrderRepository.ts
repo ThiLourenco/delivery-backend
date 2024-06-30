@@ -21,4 +21,6 @@ export interface IOrderRepository {
   getAllOrdersUnavailable(): Promise<OrderTypes[]>
 
   getAllOrdersCompleted(): Promise<OrderTypes[]>
+
+  getOrderById(id: string): Promise<OrderTypes[]>
 }

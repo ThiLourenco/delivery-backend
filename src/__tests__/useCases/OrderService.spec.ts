@@ -31,7 +31,7 @@ describe('OrderService', () => {
 
     createOrderSpy.mockResolvedValue(mockOrder)
 
-    const order = await orderService.execute(
+    const order = await orderService.create(
       mockOrder.products,
       mockOrder.userId,
       mockOrder.totalAmount,
@@ -236,5 +236,32 @@ describe('OrderService', () => {
 
     expect(getAllOrdersCompletedSpy).toHaveBeenCalled()
     expect(orders).toEqual(mockOrders)
+  })
+
+  it('should return a order by id', async () => {
+    const mockOrders: OrderTypes[] = [
+      {
+        id: '1234',
+        products: [
+          {
+            productId: '123456',
+            quantity: 1,
+          },
+        ],
+        userId: '123',
+        totalAmount: 100,
+        discount: 0,
+        status: 'Em rota de entrega',
+      },
+    ]
+
+    const getOrderByIdSpy = jest.spyOn(OrderRepository, 'getOrderById')
+    getOrderByIdSpy.mockResolvedValue(mockOrders)
+
+    const orders = await orderService.getOrderById(mockOrders[0].id)
+
+    expect(getOrderByIdSpy).toHaveBeenCalledWith(mockOrders[0].id)
+    expect(orders).toEqual(mockOrders)
+    expect(orders[0].id).toBe(mockOrders[0].id)
   })
 })

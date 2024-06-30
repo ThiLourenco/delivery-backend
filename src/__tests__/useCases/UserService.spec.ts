@@ -254,24 +254,13 @@ describe('UserRepository', () => {
     expect(updateUser.username).toBe(mockUser.username)
   })
 
-  it('should allow deleting user if not is admin', async () => {
-    const mockUser: UserTypes = {
-      id: '123',
-      name: 'John',
-      username: 'John',
-      email: 'john@example.com',
-      phone: '123',
-      password: '123',
-      isAdmin: false,
-      role: 'CLIENT',
-    }
+  it('should allow deleting user, if not is admin', async () => {
+    const mockUserId = '1dae449e-141f-4131-83a1-328704f1e9bd'
 
-    const deletUserSpy = jest.spyOn(UserRepository, 'delete')
-    deletUserSpy.mockResolvedValue()
+    const deleteUserSpy = jest.spyOn(UserRepository, 'delete')
 
-    const deleteUser = await userService.deleteUser(mockUser.id)
+    await userService.deleteUser(mockUserId)
 
-    expect(deleteUser).toHaveBeenCalled()
-    expect(deleteUser).toBe(mockUser.id)
+    expect(deleteUserSpy).toHaveBeenCalledWith(mockUserId)
   })
 })

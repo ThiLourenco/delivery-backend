@@ -1,5 +1,5 @@
 import { prisma } from '../database'
-import { AppError } from '../errors/AppError'
+import { AppError, BadRequestError } from '../errors/AppError'
 import { IOrderRepository } from '../interfaces/IOrderRepository'
 import { OrderTypes } from '../dtos/OrderTypes'
 
@@ -15,7 +15,6 @@ class OrderRepository implements IOrderRepository {
     status: string,
   ): Promise<OrderTypes> {
     try {
-      // verify that the product exists
       const productIds = products.map((product) => product.productId)
       const productExists = await prisma.product.findMany({
         where: {
@@ -51,7 +50,7 @@ class OrderRepository implements IOrderRepository {
         },
       })
 
-      return order
+      return order as OrderTypes
     } catch (error) {
       console.error(error)
 
@@ -203,6 +202,28 @@ class OrderRepository implements IOrderRepository {
     } catch (error) {
       console.log(error)
       throw new AppError('Orders not found')
+    }
+  }
+
+  public async getOrderById(id: string): Promise<OrderTypes[]> {
+    try {
+      const order = await prisma.order.findMany({
+        where: {
+          id,
+        },
+        include: {
+          products: true,
+        },
+      })
+
+      if (!order) {
+        throw new BadRequestError('Order not found')
+      }
+
+      return order
+    } catch (error) {
+      console.error(error)
+      throw new AppError('Failed to get order')
     }
   }
 }

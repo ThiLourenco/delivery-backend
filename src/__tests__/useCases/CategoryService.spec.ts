@@ -92,19 +92,13 @@ describe('CategoryRepository', () => {
   })
 
   it('should delete a category', async () => {
-    const mockCategory: CategoryTypes = {
-      id: '1dae449e-141f-4131-83a1-328704f1e9bd',
-      name: 'teste',
-    }
+    const mockCategoryId = '1dae449e-141f-4131-83a1-328704f1e9bd'
 
     const deleteCategorySpy = jest.spyOn(CategoryRepository, 'deleteCategory')
     deleteCategorySpy.mockResolvedValue()
 
-    const deleteCategory = await categoryService.deleteCategory(
-      mockCategory.id!,
-    )
+    await categoryService.deleteCategory(mockCategoryId)
 
-    expect(deleteCategory).toBeTruthy()
-    expect(deleteCategory).toBe(mockCategory.id)
+    expect(deleteCategorySpy).toHaveBeenCalledWith(mockCategoryId)
   })
 })

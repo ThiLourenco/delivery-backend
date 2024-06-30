@@ -1,5 +1,5 @@
 import { prisma } from '../database'
-import { AppError } from '../errors/AppError'
+import { AppError, BadRequestError } from '../errors/AppError'
 import { ICategoryRepository } from '../interfaces/ICategoryRepository'
 import { CategoryTypes } from '../dtos/CategoryTypes'
 
@@ -37,13 +37,13 @@ class CategoryRepository implements ICategoryRepository {
       const categories = await prisma.category.findMany()
 
       if (!categories || categories.length === 0) {
-        throw new AppError('No categories found.', 404)
+        throw new BadRequestError('No categories found.')
       }
 
       return categories
     } catch (error) {
       console.error(error)
-      throw new AppError('Failed to retrieve categories.')
+      throw new BadRequestError('Failed to retrieve categories.')
     }
   }
 
@@ -58,7 +58,7 @@ class CategoryRepository implements ICategoryRepository {
       return categoriesByProduct
     } catch (error) {
       console.error(error)
-      throw new AppError('No categories with products found.')
+      throw new BadRequestError('No categories with products found.')
     }
   }
 
@@ -74,7 +74,7 @@ class CategoryRepository implements ICategoryRepository {
       })
 
       if (!categoryExists) {
-        throw new AppError('Category not exists', 400)
+        throw new BadRequestError('Category not exists')
       }
 
       const updateCategory = await prisma.category.update({
@@ -89,7 +89,7 @@ class CategoryRepository implements ICategoryRepository {
 
       return updateCategory
     } catch (error) {
-      throw new AppError('Error to update category')
+      throw new BadRequestError('Error to update category')
     }
   }
 
@@ -102,7 +102,7 @@ class CategoryRepository implements ICategoryRepository {
       })
 
       if (!categoryExists) {
-        throw new AppError('Category not exists', 400)
+        throw new BadRequestError('Category not exists')
       }
 
       await prisma.category.delete({

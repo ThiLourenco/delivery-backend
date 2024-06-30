@@ -45,6 +45,10 @@ class OrderService {
   public async getAllOrdersCompleted() {
     return await this.OrderRepository.getAllOrdersCompleted()
   }
+
+  public async getOrderById(id: string) {
+    return await this.OrderRepository.getOrderById(id)
+  }
 }
 
 export { OrderService }

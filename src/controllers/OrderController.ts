@@ -1,23 +1,21 @@
 import { Response, Request } from 'express'
 import OrderRepository from './../repositories/OrderRepository'
 import { OrderService } from './../services/OrderService'
+import { BadRequestError } from '../errors/AppError'
 
 const createOrder = async (request: Request, response: Response) => {
   try {
-    console.log('createOrder controller triggered')
-    console.log('User ID from request:', request.userId)
+    // console.log('createOrder controller triggered')
+    // console.log('User ID from request:', request.userId)
 
     const { products, totalAmount, discount, status } = request.body
     const userId = request.userId
 
-    if (userId === undefined) {
-      return response.status(401).json({
-        message: 'User ID not found in request',
-      })
+    if (!userId || userId === undefined) {
+      throw new BadRequestError('Invalid token received')
     }
 
-    console.log(userId, 'userID')
-    console.log(products, totalAmount, discount, status, 'Req.Body')
+    // console.log(userId, 'userID')
 
     const createOrderService = new OrderService(OrderRepository)
     await createOrderService.create(
@@ -41,7 +39,7 @@ const createOrder = async (request: Request, response: Response) => {
 
 const getOrderByUser = async (request: Request, response: Response) => {
   try {
-    console.log('User ID from request: ' + request.userId)
+    // console.log('User ID from request: ' + request.userId)
 
     const userId = request.userId
 
@@ -50,7 +48,7 @@ const getOrderByUser = async (request: Request, response: Response) => {
         message: 'User ID not specified in request',
       })
     }
-    console.log(userId, 'userId')
+    // console.log(userId, 'userId')
 
     const getOrderByUserId = new OrderService(OrderRepository)
     const order = await getOrderByUserId.findOrder(userId)
@@ -123,12 +121,12 @@ const getAllOrdersCompleted = async (request: Request, response: Response) => {
 
 const updateEndDate = async (request: Request, response: Response) => {
   try {
-    console.log('User ID from request:', request.deliveryManId)
+    // console.log('User ID from request:', request.deliveryManId)
 
     const deliveryManId = request.deliveryManId
     const { id: orderId } = request.params
 
-    console.log('Order ID:', orderId)
+    // console.log('Order ID:', orderId)
     if (deliveryManId === undefined) {
       return response.status(401).json({
         message: 'DeliveryMan ID not found in request',
@@ -148,7 +146,26 @@ const updateEndDate = async (request: Request, response: Response) => {
   } catch (error) {
     console.error(error)
     return response.status(400).json({
-      message: 'Failed to update orders',
+      message: 'Failed to update order, verify available order',
+    })
+  }
+}
+
+const getOrderById = async (request: Request, response: Response) => {
+  try {
+    const { id } = request.params
+
+    const orderService = new OrderService(OrderRepository)
+    const order = await orderService.getOrderById(id)
+
+    return response.status(200).json({
+      message: 'get order with success!',
+      order,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to create orders',
     })
   }
 }
@@ -160,4 +177,5 @@ export default {
   getAllOrdersAvailable,
   getAllOrdersUnavailable,
   getAllOrdersCompleted,
+  getOrderById,
 }

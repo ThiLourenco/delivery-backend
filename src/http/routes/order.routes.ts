@@ -29,4 +29,6 @@ orderRoutes.get('/ordersUnavailable', OrderController.getAllOrdersUnavailable)
 
 orderRoutes.get('/ordersCompleted', OrderController.getAllOrdersCompleted)
 
+orderRoutes.get('/:id', OrderController.getOrderById)
+
 export { orderRoutes }
