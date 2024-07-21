@@ -2,7 +2,7 @@ import { prisma } from '../database'
 import { AppError, BadRequestError } from '../errors/AppError'
 import { IOrderRepository } from '../interfaces/IOrderRepository'
 import { OrderTypes } from '../dtos/OrderTypes'
-import { createOrderSchema, updateEndDateSchema } from '../../prisma/schemas/orderSchemas'
+import { createOrderSchema, updateEndDateSchema } from '../../prisma/schemas/orderSchema'
 import { z } from 'zod'
 
 class OrderRepository implements IOrderRepository {
