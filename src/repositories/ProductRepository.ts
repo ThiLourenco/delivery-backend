@@ -1,7 +1,13 @@
 import { prisma } from '../database'
-import { AppError } from '../errors/AppError'
+import { AppError, BadRequestError } from '../errors/AppError'
 import { IProductRepository } from '../interfaces/IProductRepository'
 import { ProductsTypes } from '../dtos/ProductsTypes'
+import { 
+  createProductSchema,
+  updateProductCategorySchema, 
+  updateProductImageSchema,
+  updateProductSchema } from '../../prisma/schemas/productSchema'
+import { z } from 'zod'
 
 class ProductRepository implements IProductRepository {
   public async create(
@@ -12,9 +18,17 @@ class ProductRepository implements IProductRepository {
     situation: boolean,
   ): Promise<ProductsTypes> {
     try {
+      const validateData = createProductSchema.parse({
+        name,
+        description,
+        image,
+        price,
+        situation,
+      })
+
       const productExists = await prisma.product.findUnique({
         where: {
-          name,
+          name: validateData.name,
         },
       })
 
@@ -24,16 +38,19 @@ class ProductRepository implements IProductRepository {
 
       const product = await prisma.product.create({
         data: {
-          name,
-          description,
-          image,
-          price,
-          situation,
+          name: validateData.name,
+          description: validateData.description || '',
+          image: validateData.image || '',
+          price: validateData.price,
+          situation: validateData.situation,
         },
       })
 
-      return product
+      return product;
     } catch (error) {
+      if(error instanceof z.ZodError) {
+        throw new BadRequestError('Validation error')
+      }
       throw new AppError(
         'Error to create new product, verify all fields are valid !',
         400,
@@ -48,12 +65,7 @@ class ProductRepository implements IProductRepository {
           name,
         },
       })
-
-      if (product) {
-        return product
-      } else {
-        return null
-      }
+      return product;
     } catch (error) {
       throw new AppError('Failed to create product', 500)
     }
@@ -79,11 +91,7 @@ class ProductRepository implements IProductRepository {
 
   public async findAllProducts(): Promise<ProductsTypes[]> {
     try {
-      const products = await prisma.product.findMany({
-        include: {
-          // category: true
-        },
-      })
+      const products = await prisma.product.findMany()
 
       if (!products || products.length === 0) {
         throw new AppError('Products not found')
@@ -101,9 +109,14 @@ class ProductRepository implements IProductRepository {
     name: string,
   ): Promise<ProductsTypes> {
     try {
+      const validatedData = updateProductCategorySchema.parse({
+        id,
+        name
+      })
+
       const productExists = await prisma.product.findUnique({
         where: {
-          id,
+          id: validatedData.id,
         },
       })
 
@@ -113,7 +126,7 @@ class ProductRepository implements IProductRepository {
 
       const category = await prisma.category.findUnique({
         where: {
-          name,
+          name: validatedData.name,
         },
       })
 
@@ -127,16 +140,17 @@ class ProductRepository implements IProductRepository {
           updatedAt: new Date(),
         },
         where: {
-          id,
+          id: validatedData.id,
         },
       })
 
       return updatedProduct
     } catch (error) {
+      if(error instanceof z.ZodError) {
+        throw new BadRequestError('Validation error')
+      }
       throw new AppError(
-        'Error to update product, verify all fields are valid !',
-        400,
-      )
+        'Error to update product', 400)
     }
   }
 
@@ -148,9 +162,18 @@ class ProductRepository implements IProductRepository {
     situation: boolean,
   ): Promise<ProductsTypes> {
     try {
+
+      const validateData = updateProductSchema.parse({
+        id,
+        name,
+        description,
+        price,
+        situation,
+      })
+
       const productExists = await prisma.product.findUnique({
         where: {
-          id,
+          id: validateData.id,
         },
       })
 
@@ -158,40 +181,21 @@ class ProductRepository implements IProductRepository {
         throw new AppError('Product not exists', 400)
       }
 
-      // validation in refactor
-      const updateData: { [key: string]: any } = {}
-
-      if (name !== undefined) {
-        updateData.name = name
-      }
-
-      if (description !== undefined) {
-        updateData.description = description
-      }
-
-      if (price !== undefined) {
-        if (typeof price !== 'number' || price < 0) {
-          throw new AppError('Price must be a positive number', 400)
-        }
-        updateData.price = price
-      }
-
-      if (situation !== undefined) {
-        updateData.situation = situation
-      }
-
       const updatedProduct = await prisma.product.update({
         data: {
-          ...updateData,
+          ...validateData,
           updatedAt: new Date(),
         },
         where: {
           id: productExists.id,
         },
-      })
+      });
 
       return updatedProduct
     } catch (error) {
+      if(error instanceof z.ZodError) {
+        throw new BadRequestError('Validation error')
+      }
       throw new AppError(
         'Error to update product, verify all fields are valid !',
         400,
@@ -204,9 +208,15 @@ class ProductRepository implements IProductRepository {
     imagePath: string,
   ): Promise<ProductsTypes> {
     try {
+
+      const validateData = updateProductImageSchema.parse({
+        productId,
+        imagePath,
+      })
+
       const productExists = await prisma.product.findUnique({
         where: {
-          id: productId,
+          id: validateData.productId,
         },
       })
 
@@ -216,15 +226,18 @@ class ProductRepository implements IProductRepository {
 
       const updateImage = await prisma.product.update({
         where: {
-          id: productId,
+          id: validateData.productId,
         },
         data: {
-          image: imagePath,
+          image: validateData.imagePath,
         },
       })
 
       return updateImage
     } catch (error) {
+      if(error instanceof z.ZodError) {
+        throw new BadRequestError('Validation error')
+      }
       throw new AppError('Error to update image product!', 400)
     }
   }

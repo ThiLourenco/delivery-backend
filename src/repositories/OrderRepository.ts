@@ -17,7 +17,7 @@ class OrderRepository implements IOrderRepository {
     status: string,
   ): Promise<OrderTypes> {
     try {
-      const validateDate = createOrderSchema.parse({
+      const validateData = createOrderSchema.parse({
         products,
         userId,
         totalAmount,
@@ -25,7 +25,7 @@ class OrderRepository implements IOrderRepository {
         status,
       });
 
-      const productIds = validateDate.products.map((product) => product.productId)
+      const productIds = validateData.products.map((product) => product.productId)
       const productExists = await prisma.product.findMany({
         where: {
           id: {
@@ -40,12 +40,12 @@ class OrderRepository implements IOrderRepository {
 
       const order = await prisma.order.create({
         data: {
-          userId: validateDate.userId,
-          totalAmount: validateDate.totalAmount,
-          discount: validateDate.discount,
-          status: validateDate.status,
+          userId: validateData.userId,
+          totalAmount: validateData.totalAmount,
+          discount: validateData.discount,
+          status: validateData.status,
           products: {
-            create: validateDate.products.map((product) => ({
+            create: validateData.products.map((product) => ({
               productId: product.productId,
               quantity: product.quantity,
             })),
