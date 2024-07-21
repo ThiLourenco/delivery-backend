@@ -1,9 +1,11 @@
 import { prisma } from '../database'
+import { UserRole } from '@prisma/client';
 import { AppError, BadRequestError } from '../errors/AppError'
 import { IUserRepository } from '../interfaces/IUserRepository'
 import { UserTypes, UserWithAddress } from '../dtos/UserTypes'
 import { compare, hash } from 'bcrypt'
-import { UserRole } from '@prisma/client'
+import { createUserSchema, loginUserSchema, updateUserSchema } from '../../prisma/schemas/userSchema'
+import { z } from 'zod';
 
 class UserRepository implements IUserRepository {
   public async create(
@@ -23,9 +25,20 @@ class UserRepository implements IUserRepository {
     },
   ): Promise<UserTypes> {
     try {
+      const validateData = createUserSchema.parse({
+        id,
+        username,
+        name,
+        email,
+        password,
+        phone,
+        role,
+        address,
+      })
+
       const userExist = await prisma.user.findUnique({
         where: {
-          email,
+          email: validateData.email,
         },
       })
 
@@ -33,31 +46,26 @@ class UserRepository implements IUserRepository {
         throw new AppError('User already exists!')
       }
 
-      const hashPassword = await hash(password, 10)
+      const hashPassword = await hash(validateData.password, 10)
 
       const user = await prisma.user.create({
         data: {
-          id,
-          username,
-          name,
-          email,
-          phone,
+          ...validateData,
           password: hashPassword,
-          role,
-          address: {
-            create: {
-              street: address?.street,
-              country: address?.country,
-              number: address?.number,
-              city: address?.city,
-              zipCode: address?.zipCode,
-            },
-          },
+          address: validateData.address ? {
+            create: validateData.address,
+          }: undefined
         },
       })
 
-      return user
+      return user;
     } catch (error) {
+
+      if(error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
+        throw new BadRequestError('Validation error')
+      }
+
       throw new AppError('Failed to create user', 500)
     }
   }
@@ -117,9 +125,14 @@ class UserRepository implements IUserRepository {
 
   public async login(email: string, password: string): Promise<UserTypes> {
     try {
+      const validateData = loginUserSchema.parse({
+        email,
+        password,
+      })
+
       const user = await prisma.user.findUnique({
         where: {
-          email,
+          email: validateData.email,
         },
       })
 
@@ -127,14 +140,20 @@ class UserRepository implements IUserRepository {
         throw new BadRequestError('E-mail or password invalid')
       }
 
-      const passwordMatch = await compare(password, user.password)
+      const passwordMatch = await compare(validateData.password, user.password)
 
       if (!passwordMatch) {
         throw new BadRequestError('E-mail or password invalid')
       }
 
-      return user
-    } catch (erro) {
+      return user;
+
+    } catch (error) {
+      if(error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
+        throw new BadRequestError('Validation error')
+      }
+
       throw new BadRequestError('E-mail or password invalid')
     }
   }
@@ -146,9 +165,16 @@ class UserRepository implements IUserRepository {
     phone: string,
   ): Promise<UserTypes> {
     try {
+      const validateData = updateUserSchema.parse({
+        id,
+        username,
+        name,
+        phone,
+      })
+
       const userExists = await prisma.user.findUnique({
         where: {
-          id,
+          id: validateData.id,
         },
       })
 
@@ -158,22 +184,24 @@ class UserRepository implements IUserRepository {
 
       const updatedUser = await prisma.user.update({
         data: {
-          username,
-          name,
-          phone,
+          username: validateData.username,
+          name: validateData.name,
+          phone: validateData.phone,
           updatedAt: new Date(),
         },
         where: {
-          id,
+          id: validateData.id,
         },
       })
 
-      return updatedUser
+      return updatedUser;
+
     } catch (error) {
-      throw new AppError(
-        'Error to update user, verify all fields are valid !',
-        400,
-      )
+      if(error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
+        throw new BadRequestError('Validation error')
+      }
+      throw new AppError('Failed to update user', 400)
     }
   }
 

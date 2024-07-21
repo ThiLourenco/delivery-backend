@@ -29,6 +29,7 @@ class CategoryRepository implements ICategoryRepository {
       return category;
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
         throw new BadRequestError('Validation error');
       }
       throw new AppError('Failed to create category', 500);
@@ -96,6 +97,7 @@ class CategoryRepository implements ICategoryRepository {
       return updateCategory;
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
         throw new BadRequestError('Validation error');
       }
       throw new BadRequestError('Error to update category');

@@ -49,6 +49,7 @@ class ProductRepository implements IProductRepository {
       return product;
     } catch (error) {
       if(error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
         throw new BadRequestError('Validation error')
       }
       throw new AppError(
@@ -143,6 +144,7 @@ class ProductRepository implements IProductRepository {
       return updatedProduct
     } catch (error) {
       if(error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
         throw new BadRequestError('Validation error')
       }
       throw new AppError(
@@ -190,12 +192,10 @@ class ProductRepository implements IProductRepository {
       return updatedProduct
     } catch (error) {
       if(error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
         throw new BadRequestError('Validation error')
       }
-      throw new AppError(
-        'Error to update product, verify all fields are valid !',
-        400,
-      )
+      throw new AppError('Failed to update product', 400)
     }
   }
 
@@ -232,9 +232,13 @@ class ProductRepository implements IProductRepository {
       return updateImage
     } catch (error) {
       if(error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
         throw new BadRequestError('Validation error')
       }
-      throw new AppError('Error to update image product!', 400)
+      throw new AppError(
+        'Failed to update image product',
+        400,
+      )
     }
   }
 }

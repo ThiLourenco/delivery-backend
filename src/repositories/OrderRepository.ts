@@ -63,9 +63,10 @@ class OrderRepository implements IOrderRepository {
       return order as OrderTypes
     } catch (error) {
       if(error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
         throw new BadRequestError('Validation error')
       }
-      console.error(error)
+
       throw new AppError('Failed to create order', 500)
     }
   }
@@ -129,9 +130,9 @@ class OrderRepository implements IOrderRepository {
       return updateDeliveryMan as OrderTypes
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
         throw new BadRequestError('Validation error');
       }
-      console.error(error);
       throw new AppError('Failed to update order', 500);
     }
     }

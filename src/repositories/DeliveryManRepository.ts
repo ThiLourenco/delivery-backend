@@ -68,11 +68,10 @@ class DeliveryManRepository implements IDeliveryManRepository {
       return deliveryMan;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.error('Validation error');
+        console.error('Validation error', error.issues);
         throw new AppError('Validation error', 400);
       }
-      console.error(error);
-      throw new AppError('Error creating delivery man', 500);
+      throw new AppError('Failed to create delivery man', 500);
     }
   }
 
@@ -112,14 +111,12 @@ class DeliveryManRepository implements IDeliveryManRepository {
     } catch (error) {
       if (error instanceof z.ZodError) {
 
-        console.error('Validation error');
+        console.error('Validation error', error.issues);
         throw new AppError('Validation error', 400);
       }
 
       throw new AppError(
-        'Error to update user, verify all fields are valid !',
-        400,
-      )
+        'Error to update user', 400)
     }
   }
 
@@ -153,7 +150,7 @@ class DeliveryManRepository implements IDeliveryManRepository {
 
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.error('Validation error');
+        console.error('Validation error', error.issues);
         throw new AppError('Validation error', 400);
       }
 
@@ -196,7 +193,7 @@ class DeliveryManRepository implements IDeliveryManRepository {
 
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.error('Validation error');
+        console.error('Validation error', error.issues);
         throw new AppError('Validation error', 400);
       }
 
