@@ -16,7 +16,17 @@ const createDeliveryMan = async (request: Request, response: Response) => {
     const data = new DeliveryManService(DeliveryManRepository)
     const deliveryMan = await data.create(deliveryManData)
 
-    const { password, role, phone, email, ...userWithPassword } = deliveryMan
+    const { 
+        password, 
+        role, 
+        phone, 
+        email, 
+        isAdmin, 
+        name, 
+        username, 
+        createdAt,
+        updatedAt, 
+        ...userWithPassword } = deliveryMan
 
     return response.status(201).json({
       message: 'User created with success!',
@@ -99,9 +109,15 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
     )
 
     const {
-      password: _,
+      password: _,      
+      id,
       role,
       phone,
+      isAdmin,
+      createdAt,
+      updatedAt,
+      name,
+      username,
       ...deliveryManUserLogin
     } = deliveryManUser
 
@@ -117,7 +133,7 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
   }
 }
 
-const updateOrderDeliveryMan = async (request: Request, response: Response) => {
+const acceptOrderDeliveryService = async (request: Request, response: Response) => {
   try {
     const { id: orderId } = request.params
     console.log('User ID from request: ' + request.deliveryManId)
@@ -134,10 +150,10 @@ const updateOrderDeliveryMan = async (request: Request, response: Response) => {
     }
     console.log(deliveryManId, 'userId')
 
-    const updateOrderDeliveryService = new DeliveryManService(
+    const orderDeliveryService = new DeliveryManService(
       DeliveryManRepository,
     )
-    await updateOrderDeliveryService.updateDeliveryOrder(deliveryManId, orderId)
+    await orderDeliveryService.updateDeliveryOrder(deliveryManId, orderId)
 
     return response.status(200).json({
       message: 'DeliveryMan Order accepted with successfully',
@@ -181,6 +197,6 @@ export default {
   createDeliveryMan,
   updateDeliveryMan,
   loginDeliveryMan,
-  updateOrderDeliveryMan,
+  acceptOrderDeliveryService,
   getOrderByDeliveryMan,
 }

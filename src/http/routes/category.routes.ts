@@ -3,13 +3,13 @@ import CategoryController from '../../controllers/CategoryController'
 
 const categoryRoutes = Router()
 
-categoryRoutes.post('/category', CategoryController.createCategory)
-categoryRoutes.get('/category', CategoryController.getCategories)
+categoryRoutes.post('/category/create', CategoryController.createCategory)
+categoryRoutes.get('/categories', CategoryController.getCategories)
 categoryRoutes.get(
-  '/category/products/:id',
+  '/category/:id/product',
   CategoryController.getCategoriesByProduct,
 )
-categoryRoutes.put('/category/:id', CategoryController.updateCategory)
-categoryRoutes.delete('/category/:id', CategoryController.deleteCategory)
+categoryRoutes.put('/category/:id/update', CategoryController.updateCategory)
+categoryRoutes.delete('/category/:id/remove', CategoryController.deleteCategory)
 
 export { categoryRoutes }

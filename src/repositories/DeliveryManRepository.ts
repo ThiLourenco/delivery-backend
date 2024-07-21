@@ -5,6 +5,7 @@ import { DeliveryManTypes } from '../dtos/DeliveryManTypes'
 import {
   AppError,
   BadRequestError,
+  NotFoundError,
   UnauthorizedError,
 } from '../errors/AppError'
 import { IDeliveryManRepository } from '../interfaces/IDeliveryManRepository'
@@ -138,11 +139,11 @@ class DeliveryManRepository implements IDeliveryManRepository {
       const orderExists = await prisma.order.findUnique({
         where: {
           id: orderId,
-        },
+        },        
       })
 
       if (!orderExists) {
-        throw new BadRequestError('Order not exists')
+        throw new NotFoundError('Order not exists')
       }
 
       const updateOrderDeliveryMan = await prisma.order.update({
@@ -153,6 +154,7 @@ class DeliveryManRepository implements IDeliveryManRepository {
         where: {
           id: orderId,
           endAt: null,
+          deliveryManId: null,
         },
         include: {
           products: true,

@@ -12,9 +12,9 @@ orderRoutes.post(
 )
 
 orderRoutes.put(
-  '/updateEndDate/:id',
+  '/delivered/:id',
   ensureAuthenticateDeliveryMan,
-  OrderController.updateEndDate,
+  OrderController.deliveredOrder,
 )
 
 orderRoutes.get(
@@ -23,11 +23,11 @@ orderRoutes.get(
   OrderController.getOrderByUser,
 )
 
-orderRoutes.get('/ordersAvailable', OrderController.getAllOrdersAvailable)
+orderRoutes.get('/availables', OrderController.getAllOrdersAvailable)
 
-orderRoutes.get('/ordersUnavailable', OrderController.getAllOrdersUnavailable)
+orderRoutes.get('/unavailables', OrderController.getAllOrdersUnavailable)
 
-orderRoutes.get('/ordersCompleted', OrderController.getAllOrdersCompleted)
+orderRoutes.get('/completed', OrderController.getAllOrdersCompleted)
 
 orderRoutes.get('/:id', OrderController.getOrderById)
 

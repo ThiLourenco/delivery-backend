@@ -5,16 +5,16 @@ import { ensureAuthenticateDeliveryMan } from './../../middlewares/ensureAuthent
 const deliveryManRoutes = Router()
 
 deliveryManRoutes.post('/create', DeliveryManController.createDeliveryMan)
-deliveryManRoutes.post('/login', DeliveryManController.loginDeliveryMan)
-deliveryManRoutes.put('/update/:id', DeliveryManController.updateDeliveryMan)
+deliveryManRoutes.post('/login/user', DeliveryManController.loginDeliveryMan)
+deliveryManRoutes.put('/update/:id/user', DeliveryManController.updateDeliveryMan)
 deliveryManRoutes.put(
-  '/orderDeliveryMan/:id',
+  '/order-accept/:id',
   ensureAuthenticateDeliveryMan,
-  DeliveryManController.updateOrderDeliveryMan,
+  DeliveryManController.acceptOrderDeliveryService,
 )
 
 deliveryManRoutes.get(
-  '/getOrders',
+  '/orders',
   ensureAuthenticateDeliveryMan,
   DeliveryManController.getOrderByDeliveryMan,
 )

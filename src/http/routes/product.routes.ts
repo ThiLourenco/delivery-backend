@@ -9,12 +9,12 @@ productRoutes.get('/product/', ProductController.getProductByName)
 productRoutes.get('/product/:id', ProductController.getProductById)
 productRoutes.get('/products', ProductController.getAllProducts)
 productRoutes.put(
-  '/product/category/:id',
+  '/product/:id/category',
   ProductController.updateProductCategory,
 )
 productRoutes.put('/product/:id', ProductController.updateProduct)
 productRoutes.put(
-  '/product/image/:id',
+  '/product/:id/image',
   upload.single('image'),
   ProductController.updateProductImage,
 )

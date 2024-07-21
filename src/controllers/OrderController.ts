@@ -97,7 +97,7 @@ const getAllOrdersUnavailable = async (
   } catch (error) {
     console.error(error)
     return response.status(400).json({
-      message: 'Failed to create orders',
+      message: 'Failed to get orders unavailable!',
     })
   }
 }
@@ -114,12 +114,12 @@ const getAllOrdersCompleted = async (request: Request, response: Response) => {
   } catch (error) {
     console.error(error)
     return response.status(400).json({
-      message: 'Failed to create orders',
+      message: 'Failed to received orders completed',
     })
   }
 }
 
-const updateEndDate = async (request: Request, response: Response) => {
+const deliveredOrder = async (request: Request, response: Response) => {
   try {
     // console.log('User ID from request:', request.deliveryManId)
 
@@ -173,7 +173,7 @@ const getOrderById = async (request: Request, response: Response) => {
 export default {
   createOrder,
   getOrderByUser,
-  updateEndDate,
+  deliveredOrder,
   getAllOrdersAvailable,
   getAllOrdersUnavailable,
   getAllOrdersCompleted,

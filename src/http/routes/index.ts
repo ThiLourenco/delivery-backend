@@ -7,10 +7,10 @@ import { deliveryManRoutes } from './deliveryMan.routes'
 
 const router = Router()
 
-router.use('/deliveryMan', deliveryManRoutes)
-router.use('/', usersRoutes)
-router.use('/', productRoutes)
-router.use('/', categoryRoutes)
-router.use('/order', orderRoutes)
+router.use('/api/v1/deliveryman', deliveryManRoutes)
+router.use('/api/v1/', usersRoutes)
+router.use('/api/v1/', productRoutes)
+router.use('/api/v1/', categoryRoutes)
+router.use('/api/v1/order', orderRoutes)
 
 export { router }

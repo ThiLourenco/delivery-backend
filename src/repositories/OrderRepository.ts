@@ -100,6 +100,7 @@ class OrderRepository implements IOrderRepository {
             deliveryManId,
             id: orderId,
           },
+          endAt: null,
         },
         data: {
           status: 'Pedido Entregue',

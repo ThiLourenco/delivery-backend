@@ -3,12 +3,12 @@ import UserController from '../../controllers/UserController'
 
 const usersRoutes = Router()
 
-usersRoutes.post('/user/create', UserController.createUser)
-usersRoutes.post('/login', UserController.login)
-usersRoutes.put('/user/updateAddress', UserController.updateAddress)
-usersRoutes.put('/user/update/:id', UserController.updateUser)
+usersRoutes.post('/users/create/user', UserController.createUser)
+usersRoutes.post('/users/login', UserController.login)
+usersRoutes.put('/users/update-address', UserController.updateAddress)
+usersRoutes.put('/users/update/:id/user', UserController.updateUser)
 usersRoutes.get('/users', UserController.getUsers)
-usersRoutes.get('/user/:id', UserController.getUser)
-usersRoutes.delete('/user/:id', UserController.deleteUser)
+usersRoutes.get('/users/:id/user', UserController.getUser)
+usersRoutes.delete('/users/:id/user', UserController.deleteUser)
 
 export { usersRoutes }
