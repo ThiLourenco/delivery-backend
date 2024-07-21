@@ -22,6 +22,9 @@ describe('DeliveryManService', () => {
       password: '123',
       phone: '552299999999',
       role: 'DELIVERY_MAN',
+      isAdmin: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       address: {
         street: 'Street view',
         number: 'S/N',
@@ -59,7 +62,10 @@ describe('DeliveryManService', () => {
       email: 'john@example.com',
       password: '123',
       phone: '552299999999',
+      isAdmin: false,
       role: 'DELIVERY_MAN',
+      createdAt: new Date(),
+      updatedAt: new Date(),
       address: {
         street: 'Street view',
         number: 'S/N',
@@ -97,7 +103,10 @@ describe('DeliveryManService', () => {
       email: 'john@example.com',
       password: '123',
       phone: '552299999999',
+      isAdmin: false,
       role: 'DELIVERY_MAN',
+      createdAt: new Date(),
+      updatedAt: new Date(),
       address: {
         street: 'Street view',
         number: 'S/N',

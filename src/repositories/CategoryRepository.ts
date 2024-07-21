@@ -2,7 +2,7 @@ import { prisma } from '../database';
 import { AppError, BadRequestError } from '../errors/AppError';
 import { ICategoryRepository } from '../interfaces/ICategoryRepository';
 import { CategoryTypes } from '../dtos/CategoryTypes';
-import { createCategorySchema, updateCategorySchema } from '../../prisma/schemas/categorySchemas';
+import { createCategorySchema, updateCategorySchema } from '../../prisma/schemas/categorySchema';
 import { z } from 'zod';
 
 class CategoryRepository implements ICategoryRepository {

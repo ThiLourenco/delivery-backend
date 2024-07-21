@@ -79,11 +79,7 @@ class ProductRepository implements IProductRepository {
         },
       })
 
-      if (product) {
-        return product
-      } else {
-        return null
-      }
+      return product
     } catch (error) {
       throw new AppError('Failed to create product', 500)
     }
