@@ -1,95 +1,104 @@
-import { prisma } from '../database'
-import { AppError, BadRequestError } from '../errors/AppError'
-import { ICategoryRepository } from '../interfaces/ICategoryRepository'
-import { CategoryTypes } from '../dtos/CategoryTypes'
+import { prisma } from '../database';
+import { AppError, BadRequestError } from '../errors/AppError';
+import { ICategoryRepository } from '../interfaces/ICategoryRepository';
+import { CategoryTypes } from '../dtos/CategoryTypes';
+import { createCategorySchema, updateCategorySchema } from '../../prisma/schemas/categorySchemas';
+import { z } from 'zod';
 
 class CategoryRepository implements ICategoryRepository {
   public async createCategory(name: string): Promise<CategoryTypes> {
     try {
-      if (!name) {
-        throw new AppError('Category name is required.', 400)
-      }
+      const validatedData = createCategorySchema.parse({ name });
 
       const categoryExist = await prisma.category.findUnique({
         where: {
-          name,
+          name: validatedData.name,
         },
-      })
+      });
 
       if (categoryExist) {
-        throw new AppError('Category already exists!', 400)
+        throw new AppError('Category already exists!', 400);
       }
 
       const category = await prisma.category.create({
         data: {
-          name,
+          name: validatedData.name,
         },
-      })
+      });
 
-      return category
+      return category;
     } catch (error) {
-      throw new AppError('Category already exists!', 400)
+      if (error instanceof z.ZodError) {
+        throw new BadRequestError('Validation error');
+      }
+      throw new AppError('Failed to create category', 500);
     }
   }
 
   public async getCategories(): Promise<CategoryTypes[]> {
     try {
-      const categories = await prisma.category.findMany()
+      const categories = await prisma.category.findMany();
 
       if (!categories || categories.length === 0) {
-        throw new BadRequestError('No categories found.')
+        throw new BadRequestError('No categories found.');
       }
 
-      return categories
+      return categories;
     } catch (error) {
-      console.error(error)
-      throw new BadRequestError('Failed to retrieve categories.')
+      console.error(error);
+      throw new BadRequestError('Failed to retrieve categories.');
     }
   }
 
   public async findCategoriesByProductId(id: string): Promise<CategoryTypes[]> {
     try {
-      const categoriesByProduct = await prisma.product.findMany({
+      const categories = await prisma.category.findMany({
         where: {
-          categoryId: id,
+          products: {
+            some: {
+              id,
+            },
+          },
         },
-      })
+      });
 
-      return categoriesByProduct
+      return categories;
     } catch (error) {
-      console.error(error)
-      throw new BadRequestError('No categories with products found.')
+      console.error(error);
+      throw new BadRequestError('No categories with products found.');
     }
   }
 
-  public async updateCategory(
-    id: string,
-    name: string,
-  ): Promise<CategoryTypes> {
+  public async updateCategory(id: string, name: string): Promise<CategoryTypes> {
     try {
+      const validatedData = updateCategorySchema.parse({ name });
+
       const categoryExists = await prisma.category.findUnique({
         where: {
           id,
         },
-      })
+      });
 
       if (!categoryExists) {
-        throw new BadRequestError('Category not exists')
+        throw new BadRequestError('Category not exists');
       }
 
       const updateCategory = await prisma.category.update({
         data: {
-          name,
+          name: validatedData.name,
           updatedAt: new Date(),
         },
         where: {
           id,
         },
-      })
+      });
 
-      return updateCategory
+      return updateCategory;
     } catch (error) {
-      throw new BadRequestError('Error to update category')
+      if (error instanceof z.ZodError) {
+        throw new BadRequestError('Validation error');
+      }
+      throw new BadRequestError('Error to update category');
     }
   }
 
@@ -99,21 +108,21 @@ class CategoryRepository implements ICategoryRepository {
         where: {
           id,
         },
-      })
+      });
 
       if (!categoryExists) {
-        throw new BadRequestError('Category not exists')
+        throw new BadRequestError('Category not exists');
       }
 
       await prisma.category.delete({
         where: {
           id,
         },
-      })
+      });
     } catch (error) {
-      throw new AppError('Failed deleting category')
+      throw new AppError('Failed deleting category');
     }
   }
 }
 
-export default new CategoryRepository()
+export default new CategoryRepository();

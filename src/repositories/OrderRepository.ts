@@ -2,6 +2,8 @@ import { prisma } from '../database'
 import { AppError, BadRequestError } from '../errors/AppError'
 import { IOrderRepository } from '../interfaces/IOrderRepository'
 import { OrderTypes } from '../dtos/OrderTypes'
+import { createOrderSchema, updateEndDateSchema } from '../../prisma/schemas/orderSchemas'
+import { z } from 'zod'
 
 class OrderRepository implements IOrderRepository {
   public async createOrder(
@@ -15,7 +17,15 @@ class OrderRepository implements IOrderRepository {
     status: string,
   ): Promise<OrderTypes> {
     try {
-      const productIds = products.map((product) => product.productId)
+      const validateDate = createOrderSchema.parse({
+        products,
+        userId,
+        totalAmount,
+        discount,
+        status,
+      });
+
+      const productIds = validateDate.products.map((product) => product.productId)
       const productExists = await prisma.product.findMany({
         where: {
           id: {
@@ -25,17 +35,17 @@ class OrderRepository implements IOrderRepository {
       })
 
       if (productExists.length !== productIds.length) {
-        throw new AppError('Product not exist', 400)
+        throw new AppError('Some products do not exist', 400)
       }
 
       const order = await prisma.order.create({
         data: {
-          userId,
-          totalAmount,
-          discount,
-          status: 'Em preparo',
+          userId: validateDate.userId,
+          totalAmount: validateDate.totalAmount,
+          discount: validateDate.discount,
+          status: validateDate.status,
           products: {
-            create: products.map((product) => ({
+            create: validateDate.products.map((product) => ({
               productId: product.productId,
               quantity: product.quantity,
             })),
@@ -52,9 +62,11 @@ class OrderRepository implements IOrderRepository {
 
       return order as OrderTypes
     } catch (error) {
+      if(error instanceof z.ZodError) {
+        throw new BadRequestError('Validation error')
+      }
       console.error(error)
-
-      throw new AppError('Failed to create order', 400)
+      throw new AppError('Failed to create order', 500)
     }
   }
 
@@ -84,9 +96,14 @@ class OrderRepository implements IOrderRepository {
     orderId: string,
   ): Promise<OrderTypes> {
     try {
+      const validatedData = updateEndDateSchema.parse({
+        deliveryManId,
+        orderId,
+      })
+      
       const deliveryManExists = await prisma.user.findUnique({
         where: {
-          id: deliveryManId,
+          id: validatedData.deliveryManId,
         },
       })
 
@@ -96,11 +113,9 @@ class OrderRepository implements IOrderRepository {
 
       const updateDeliveryMan = await prisma.order.update({
         where: {
-          link_delivery_deliveryman: {
-            deliveryManId,
-            id: orderId,
-          },
-          endAt: null,
+            deliveryManId: validatedData.deliveryManId,
+            id: validatedData.orderId,
+            endAt: null,
         },
         data: {
           status: 'Pedido Entregue',
@@ -111,14 +126,15 @@ class OrderRepository implements IOrderRepository {
         },
       })
 
-      return updateDeliveryMan
+      return updateDeliveryMan as OrderTypes
     } catch (error) {
-      throw new AppError(
-        'Error to update user, verify all fields are valid !',
-        400,
-      )
+      if (error instanceof z.ZodError) {
+        throw new BadRequestError('Validation error');
+      }
+      console.error(error);
+      throw new AppError('Failed to update order', 500);
     }
-  }
+    }
 
   public async getAllOrdersAvailable(): Promise<OrderTypes[]> {
     try {
