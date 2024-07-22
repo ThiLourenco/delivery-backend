@@ -6,12 +6,21 @@ const createCategory = async (request: Request, response: Response) => {
   try {
     const { name } = request.body
 
-    const newCategory = new CategoryService(CategoryRepository)
-    const category = await newCategory.create(name)
+    const getCategory = new CategoryService(CategoryRepository)
+    const category = await getCategory.findCategoryByName(name)
 
-    return response.status(201).json({
+    if(category!.name) {
+      return response.status(400).json({
+        message: 'Category already exists',
+      })
+    }
+
+    const newCategory = new CategoryService(CategoryRepository)
+    const data = await newCategory.create(name)
+
+      return response.status(201).json({
       message: 'Category created with success!',
-      category,
+      data,
     })
   } catch (error) {
     console.error(error)
@@ -38,6 +47,38 @@ const getCategories = async (request: Request, response: Response) => {
     console.error(error)
     return response.status(400).json({
       message: 'Failed to retrieve categories',
+    })
+  }
+}
+
+const getCategoryByName = async (request: Request, response: Response) => {
+  
+  try {
+    const { name } = request.query
+
+    if (!name || typeof name !== 'string') {
+      return response.status(400).json({
+        message: 'Invalid or missing parameter: name',
+      })
+    }
+
+    const getCategory = new CategoryService(CategoryRepository)
+    const category = await getCategory.findCategoryByName(name)
+
+    if (category === null) {
+      return response.status(404).json({
+        message: 'Category not found.',
+      })
+    }
+
+    return response.status(200).json({
+      message: 'Category retrieved successfully!',
+      category,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to retrieve category',
     })
   }
 }
@@ -119,6 +160,7 @@ const deleteCategory = async (request: Request, response: Response) => {
 export default {
   createCategory,
   getCategories,
+  getCategoryByName,
   getCategoriesByProduct,
   updateCategory,
   deleteCategory,

@@ -9,6 +9,11 @@ class CategoryService {
     return await this.CategoryRepository.createCategory(name)
   }
 
+  public async findCategoryByName(name: string) {
+    const category = await this.CategoryRepository.findCategoryByName(name)
+    return category
+  }
+
   public async findAllCategory() {
     return await this.CategoryRepository.getCategories()
   }

@@ -51,6 +51,20 @@ class CategoryRepository implements ICategoryRepository {
     }
   }
 
+  public async findCategoryByName(name: string): Promise<CategoryTypes | null> {
+    try {
+      const category = await prisma.category.findUnique({
+        where: {
+          name,
+        },
+      });
+
+      return category;
+    } catch (error) {
+      throw new BadRequestError('Failed to retrieve category.');
+    }
+  }
+
   public async findCategoriesByProductId(id: string): Promise<CategoryTypes[]> {
     try {
       const categories = await prisma.category.findMany({
