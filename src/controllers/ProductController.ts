@@ -16,6 +16,15 @@ const createProduct = async (request: Request, response: Response) => {
       category,
     }: ProductsTypes = request.body
 
+    const getProduct = new ProductService(ProductRepository)
+    const product = await getProduct.findProductByName(name)
+
+    if(product!.name) {
+      return response.status(400).json({
+        message: 'Product already exists with this name!',
+      })
+    }
+
     const createProduct = new ProductService(ProductRepository)
 
     await createProduct.create(
@@ -28,12 +37,12 @@ const createProduct = async (request: Request, response: Response) => {
     )
 
     return response.status(201).json({
-      message: 'Product created with success!',
+      message: 'Product created with success',
     })
   } catch (error) {
     console.error(error)
     return response.status(400).json({
-      message: 'Error creating a new product, verify all fields are valid!',
+      message: 'Failed creating product',
     })
   }
 }
@@ -137,8 +146,8 @@ const updateProductCategory = async (request: Request, response: Response) => {
     })
   } catch (error) {
     console.error(error)
-    return response.status(500).json({
-      message: 'Error updating product category',
+    return response.status(400).json({
+      message: 'Failed updating product category',
     })
   }
 }
@@ -171,8 +180,8 @@ const updateProduct = async (request: Request, response: Response) => {
     })
   } catch (error) {
     console.error(error)
-    return response.status(500).json({
-      message: 'Error updating product',
+    return response.status(400).json({
+      message: 'Failed updating product',
     })
   }
 }
@@ -196,7 +205,7 @@ const updateProductImage = async (request: Request, response: Response) => {
     return response.status(200).json({ imageUrl })
   } catch (error) {
     return response.status(500).json({
-      message: 'Error updating product image',
+      message: 'Failed updating product image',
     })
   }
 }
