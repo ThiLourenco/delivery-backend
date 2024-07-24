@@ -26,7 +26,9 @@ class CategoryRepository implements ICategoryRepository {
         },
       });
 
-      return category;
+      const { createdAt, updatedAt, ...data } = category
+
+      return data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         console.error('Validation error', error.issues);
@@ -38,16 +40,13 @@ class CategoryRepository implements ICategoryRepository {
 
   public async getCategories(): Promise<CategoryTypes[]> {
     try {
-      const categories = await prisma.category.findMany();
+      const categories = await prisma.category.findMany()
 
-      if (!categories || categories.length === 0) {
-        throw new BadRequestError('No categories found.');
-      }
+      const [ ...data ]  = categories;
 
-      return categories;
+      return data;
     } catch (error) {
-      console.error(error);
-      throw new BadRequestError('Failed to retrieve categories.');
+      throw new AppError('Erro to retrieved category');
     }
   }
 
@@ -61,7 +60,7 @@ class CategoryRepository implements ICategoryRepository {
 
       return category;
     } catch (error) {
-      throw new BadRequestError('Failed to retrieve category.');
+      throw new AppError('Error finding category by name');
     }
   }
 
@@ -69,18 +68,29 @@ class CategoryRepository implements ICategoryRepository {
     try {
       const categories = await prisma.category.findMany({
         where: {
-          products: {
-            some: {
-              id,
-            },
-          },
-        },
+         id: id
+        },include: {
+          products: true
+        }
       });
+      
+      const data = categories.map((category) => {
+        return {
+          id: category.id,
+          name: category.name,
+          products: category.products.map((product) => ({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image
+          })),
+        };
+      })
 
-      return categories;
+      return data;
     } catch (error) {
       console.error(error);
-      throw new BadRequestError('No categories with products found.');
+      throw new AppError('Error finding categories by product');
     }
   }
 

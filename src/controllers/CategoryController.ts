@@ -7,20 +7,20 @@ const createCategory = async (request: Request, response: Response) => {
     const { name } = request.body
 
     const getCategory = new CategoryService(CategoryRepository)
-    const category = await getCategory.findCategoryByName(name)
+    const data = await getCategory.findCategoryByName(name)
 
-    if(category!.name) {
+    if(name === data?.name) {
       return response.status(400).json({
         message: 'Category already exists',
       })
     }
 
     const newCategory = new CategoryService(CategoryRepository)
-    const data = await newCategory.create(name)
+    const category = await newCategory.create(name)
 
       return response.status(201).json({
       message: 'Category created with success!',
-      data,
+      category,
     })
   } catch (error) {
     console.error(error)
@@ -34,18 +34,18 @@ const getCategories = async (request: Request, response: Response) => {
   try {
     const getCategory = new CategoryService(CategoryRepository)
     const categories = await getCategory.findAllCategory()
-    if (!categories || categories.length === 0) {
+
+    if(!categories || categories.length === 0) {
       return response.status(404).json({
-        message: 'No categories found.',
+        message: 'No categories were found',
       })
     }
+    
     return response.status(200).json({
-      message: 'Categories retrieved successfully!',
       categories,
     })
   } catch (error) {
-    console.error(error)
-    return response.status(400).json({
+    return response.status(500).json({
       message: 'Failed to retrieve categories',
     })
   }
@@ -72,13 +72,12 @@ const getCategoryByName = async (request: Request, response: Response) => {
     }
 
     return response.status(200).json({
-      message: 'Category retrieved successfully!',
       category,
     })
   } catch (error) {
-    console.error(error)
     return response.status(400).json({
       message: 'Failed to retrieve category',
+      error
     })
   }
 }
@@ -88,16 +87,22 @@ const getCategoriesByProduct = async (request: Request, response: Response) => {
 
   try {
     const categoryService = new CategoryService(CategoryRepository)
-    const allCategoryByProduct =
-      await categoryService.findAllProductByCategoryId(id)
+    const data =
+    await categoryService.findAllProductByCategoryId(id)
+
+    if(data.length === 0) {
+      return response.status(404).json({
+        message: 'No products found for this category',
+      })
+    }
 
     return response.status(200).json({
-      message: 'Product by category retrieved successfully',
-      allCategoryByProduct,
+      data,
     })
+
   } catch (error) {
     console.error(error)
-    return response.status(400).json({
+    return response.status(500).json({
       message: 'Failed to retrieved Product by category',
     })
   }
@@ -107,6 +112,9 @@ const updateCategory = async (request: Request, response: Response) => {
   try {
     const { id } = request.params
     const { name } = request.body
+
+    const getCategory = new CategoryService(CategoryRepository)
+    const categoryNameExists = await getCategory.findCategoryByName(name)
 
     if (
       id === undefined ||
@@ -118,12 +126,17 @@ const updateCategory = async (request: Request, response: Response) => {
         message: 'Invalid or missing parameter: id, name',
       })
     }
-
-    const updateCategoryService = new CategoryService(CategoryRepository)
-    await updateCategoryService.updateCategory(id, name)
+    
+    if (categoryNameExists) {
+      return response.status(400).json({
+        message: 'Category name already exists',
+      })
+    }
+    
+    await getCategory.updateCategory(id, name)
 
     return response.status(200).json({
-      message: 'Category Updated successfully',
+      message: 'Category updated successfully',
     })
   } catch (error) {
     console.error(error)
@@ -143,8 +156,8 @@ const deleteCategory = async (request: Request, response: Response) => {
       })
     }
 
-    const deleteCategoryService = new CategoryService(CategoryRepository)
-    await deleteCategoryService.deleteCategory(id)
+    const category = new CategoryService(CategoryRepository)
+    await category.deleteCategory(id)
 
     return response.status(200).json({
       message: 'Category deleted successfully',
