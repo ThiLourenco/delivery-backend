@@ -18,15 +18,20 @@ describe('CategoryRepository', () => {
       name: 'New Category',
     }
 
+    
     const createCategorySpy = jest.spyOn(CategoryRepository, 'createCategory')
-
+    
     createCategorySpy.mockResolvedValue(mockCategory)
+    
+    const categoryNameExists = await categoryService.findCategoryByName(mockCategory.name)
 
-    const category = await categoryService.create(mockCategory.name)
+    const createdCategory = await categoryService.create(mockCategory.name)
+
+    expect(categoryNameExists).toEqual(mockCategory.name)
 
     expect(createCategorySpy).toHaveBeenCalledWith(mockCategory.name)
 
-    expect(category.name).toBe(mockCategory.name)
+    expect(createdCategory.name).toBe(mockCategory.name)
   })
 
   it('should get all categories', async () => {
