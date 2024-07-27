@@ -82,8 +82,8 @@ class OrderRepository implements IOrderRepository {
         },
       })
 
-      if (!orders || orders.length === 0) {
-        throw new AppError('Orders is empty')
+      if (!orders) {
+        throw new BadRequestError('Orders not found')
       }
       return orders
     } catch (error) {
@@ -92,7 +92,115 @@ class OrderRepository implements IOrderRepository {
     }
   }
 
-  public async updateEndDate(
+  public async getAllOrdersAvailable(): Promise<OrderTypes[]> {
+    try {
+      const orders = await prisma.order.findMany({
+        where: {
+          deliveryManId: null,
+          endAt: null,
+        },
+        include: {
+          products: true,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      })
+
+      if (!orders) {
+        throw new AppError('Orders not found')
+      }
+
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw new AppError('Orders not found')
+    }
+  }
+
+  public async getAllOrdersUnavailable(): Promise<OrderTypes[]> {
+    try {
+      const orders = await prisma.order.findMany({
+        where: {
+          NOT: {
+            deliveryManId: null,
+          },
+          AND: {
+            status: 'Em rota de entrega',
+          },
+        },
+        include: {
+          products: true,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      })
+
+      if (!orders) {
+        throw new BadRequestError('Orders not found')
+      }
+
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw new AppError('Error to get orders')
+    }
+  }
+
+  public async getAllOrdersCompleted(): Promise<OrderTypes[]> {
+    try {
+      const orders = await prisma.order.findMany({
+        where: {
+          NOT: {
+            deliveryManId: null,
+          },
+          AND: {
+            status: 'Pedido Entregue',
+          },
+        },
+        include: {
+          products: true,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      })
+
+      if (!orders) {
+        throw new BadRequestError('Orders not found')
+      }
+
+      return orders
+    } catch (error) {
+      console.log(error)
+      throw new AppError('Orders not found')
+    }
+  }
+
+  public async getOrderById(id: string): Promise<OrderTypes[]> {
+    try {
+      const order = await prisma.order.findMany({
+        where: {
+          id,
+        },
+        include: {
+          products: true,
+        },
+      })
+
+      if (!order) {
+        throw new BadRequestError('Order not found')
+      }
+
+      return order
+    } catch (error) {
+      console.error(error)
+      throw new AppError('Failed to get order')
+    }
+  }
+
+    public async updateEndDate(
     deliveryManId: string,
     orderId: string,
   ): Promise<OrderTypes> {
@@ -136,114 +244,6 @@ class OrderRepository implements IOrderRepository {
       throw new AppError('Failed to update order', 500);
     }
     }
-
-  public async getAllOrdersAvailable(): Promise<OrderTypes[]> {
-    try {
-      const orders = await prisma.order.findMany({
-        where: {
-          deliveryManId: null,
-          endAt: null,
-        },
-        include: {
-          products: true,
-        },
-        orderBy: {
-          createdAt: 'asc',
-        },
-      })
-
-      if (!orders || orders.length === 0) {
-        throw new AppError('Orders is empty')
-      }
-
-      return orders
-    } catch (error) {
-      console.log(error)
-      throw new AppError('Orders not found')
-    }
-  }
-
-  public async getAllOrdersUnavailable(): Promise<OrderTypes[]> {
-    try {
-      const orders = await prisma.order.findMany({
-        where: {
-          NOT: {
-            deliveryManId: null,
-          },
-          AND: {
-            status: 'Em rota de entrega',
-          },
-        },
-        include: {
-          products: true,
-        },
-        orderBy: {
-          createdAt: 'asc',
-        },
-      })
-
-      if (!orders || orders.length === 0) {
-        throw new AppError('Orders is empty')
-      }
-
-      return orders
-    } catch (error) {
-      console.log(error)
-      throw new AppError('Orders not found')
-    }
-  }
-
-  public async getAllOrdersCompleted(): Promise<OrderTypes[]> {
-    try {
-      const orders = await prisma.order.findMany({
-        where: {
-          NOT: {
-            deliveryManId: null,
-          },
-          AND: {
-            status: 'Pedido Entregue',
-          },
-        },
-        include: {
-          products: true,
-        },
-        orderBy: {
-          createdAt: 'asc',
-        },
-      })
-
-      if (!orders || orders.length === 0) {
-        throw new AppError('Orders is empty')
-      }
-
-      return orders
-    } catch (error) {
-      console.log(error)
-      throw new AppError('Orders not found')
-    }
-  }
-
-  public async getOrderById(id: string): Promise<OrderTypes[]> {
-    try {
-      const order = await prisma.order.findMany({
-        where: {
-          id,
-        },
-        include: {
-          products: true,
-        },
-      })
-
-      if (!order) {
-        throw new BadRequestError('Order not found')
-      }
-
-      return order
-    } catch (error) {
-      console.error(error)
-      throw new AppError('Failed to get order')
-    }
-  }
 }
 
 export default new OrderRepository()

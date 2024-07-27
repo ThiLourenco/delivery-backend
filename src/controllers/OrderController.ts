@@ -2,32 +2,33 @@ import { Response, Request } from 'express'
 import OrderRepository from './../repositories/OrderRepository'
 import { OrderService } from './../services/OrderService'
 import { BadRequestError } from '../errors/AppError'
+import { OrderTypes } from 'dtos/OrderTypes'
 
 const createOrder = async (request: Request, response: Response) => {
   try {
     // console.log('createOrder controller triggered')
     // console.log('User ID from request:', request.userId)
-
-    const { products, totalAmount, discount, status } = request.body
+    const { products, totalAmount, discount, status }: OrderTypes = request.body
     const userId = request.userId
 
     if (!userId || userId === undefined) {
       throw new BadRequestError('Invalid token received')
     }
-
     // console.log(userId, 'userID')
-
     const createOrderService = new OrderService(OrderRepository)
-    await createOrderService.create(
+    const order = await createOrderService.create(
       products,
       userId,
       totalAmount,
-      discount,
+      discount!,
       status,
     )
 
+    const { id } = order
+
     return response.status(201).json({
       message: 'Orders created with success!',
+      id,
     })
   } catch (error) {
     console.error(error)
@@ -37,10 +38,8 @@ const createOrder = async (request: Request, response: Response) => {
   }
 }
 
-const getOrderByUser = async (request: Request, response: Response) => {
+const getOrderByUserWithoutProducts = async (request: Request, response: Response) => {
   try {
-    // console.log('User ID from request: ' + request.userId)
-
     const userId = request.userId
 
     if (userId === undefined) {
@@ -48,18 +47,62 @@ const getOrderByUser = async (request: Request, response: Response) => {
         message: 'User ID not specified in request',
       })
     }
-    // console.log(userId, 'userId')
 
     const getOrderByUserId = new OrderService(OrderRepository)
-    const order = await getOrderByUserId.findOrder(userId)
+    const orders = await getOrderByUserId.findOrder(userId)
+
+    if(!orders || orders.length === 0) {
+      return response.status(404).json({
+        message: 'No orders found for this user',
+      })
+    }
+
+    const orderData = orders.map((order) => {
+      const { products, userId, ...orderData } = order
+      return orderData
+    })
 
     return response.status(200).json({
-      message: 'get Orders with success!',
-      order,
+      orders: orderData,
     })
   } catch (error) {
     console.error(error)
-    return response.status(400).json({
+    return response.status(500).json({
+      message: 'Failed to get order',
+    })
+  }
+}
+
+const getOrderByUserWihProducts = async (request: Request, response: Response) => {
+  try {
+    const userId = request.userId
+
+    if (userId === undefined) {
+      return response.status(401).json({
+        message: 'User ID not specified in request',
+      })
+    }
+
+    const getOrderByUserId = new OrderService(OrderRepository)
+    const orders = await getOrderByUserId.findOrder(userId)
+
+    if(!orders || orders.length === 0) {
+      return response.status(404).json({
+        message: 'No orders found for this user',
+      })
+    }
+
+    const orderData = orders.map((order) => {
+      const { userId, ...orderData } = order
+      return orderData
+    })
+
+    return response.status(200).json({
+      orders: orderData,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(500).json({
       message: 'Failed to get order',
     })
   }
@@ -70,10 +113,21 @@ const getAllOrdersAvailable = async (request: Request, response: Response) => {
     const getAllOrders = new OrderService(OrderRepository)
     const ordersAvailable = await getAllOrders.getAllOrders()
 
-    return response.status(200).json({
-      message: 'get Orders with success!',
-      ordersAvailable,
+    const orderData = ordersAvailable.map((order) => {
+      const { products, ...orderData } = order
+      return orderData
     })
+
+    if(!orderData || orderData.length === 0) {
+      return response.status(404).json({
+        message: 'No Order Available',
+      })
+    }
+
+    return response.status(200).json({
+      orders: orderData,
+    })
+
   } catch (error) {
     console.error(error)
     return response.status(400).json({
@@ -90,8 +144,18 @@ const getAllOrdersUnavailable = async (
     const getAllOrders = new OrderService(OrderRepository)
     const ordersUnavailable = await getAllOrders.getAllOrdersUnavailable()
 
+    const orderData = ordersUnavailable.map((order) => {
+      const { products, ...orderData } = order
+      return orderData
+    })
+
+    if(!orderData || orderData.length === 0) {
+      return response.status(404).json({
+        message: 'No Order Unavailable',
+      })
+    }
+
     return response.status(200).json({
-      message: 'get Orders with success!',
       ordersUnavailable,
     })
   } catch (error) {
@@ -105,11 +169,22 @@ const getAllOrdersUnavailable = async (
 const getAllOrdersCompleted = async (request: Request, response: Response) => {
   try {
     const getAllOrders = new OrderService(OrderRepository)
-    const ordersUnavailable = await getAllOrders.getAllOrdersCompleted()
+    const ordersCompleted = await getAllOrders.getAllOrdersCompleted()
+
+    const orderData = ordersCompleted.map((order) => {
+      const { products, userId, ...orderData } = order
+
+      return orderData
+    })
+
+    if(!orderData || orderData.length === 0) {
+      return response.status(404).json({
+        message: 'No Order Completed',
+      })
+    }
 
     return response.status(200).json({
-      message: 'get Orders with success!',
-      ordersUnavailable,
+      orderData,
     })
   } catch (error) {
     console.error(error)
@@ -119,14 +194,35 @@ const getAllOrdersCompleted = async (request: Request, response: Response) => {
   }
 }
 
+const getOrderById = async (request: Request, response: Response) => {
+  try {
+    const { id } = request.params
+
+    const orderService = new OrderService(OrderRepository)
+    const order = await orderService.getOrderById(id)
+
+    if(!order || order.length === 0) {
+      return response.status(404).json({
+        message: 'Order not found',
+      })
+    }
+
+    return response.status(200).json({      
+      order,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'Failed to get order',
+    })
+  }
+}
+
 const deliveredOrder = async (request: Request, response: Response) => {
   try {
-    // console.log('User ID from request:', request.deliveryManId)
-
     const deliveryManId = request.deliveryManId
     const { id: orderId } = request.params
 
-    // console.log('Order ID:', orderId)
     if (deliveryManId === undefined) {
       return response.status(401).json({
         message: 'DeliveryMan ID not found in request',
@@ -139,9 +235,10 @@ const deliveredOrder = async (request: Request, response: Response) => {
       orderId,
     )
 
-    return response.status(200).json({
-      message: 'Updated EndDate Order with successfully',
-      order,
+    const { products, totalAmount, discount, ...orderData } = order
+
+    return response.status(200).json({      
+      order: orderData,
     })
   } catch (error) {
     console.error(error)
@@ -151,28 +248,10 @@ const deliveredOrder = async (request: Request, response: Response) => {
   }
 }
 
-const getOrderById = async (request: Request, response: Response) => {
-  try {
-    const { id } = request.params
-
-    const orderService = new OrderService(OrderRepository)
-    const order = await orderService.getOrderById(id)
-
-    return response.status(200).json({
-      message: 'get order with success!',
-      order,
-    })
-  } catch (error) {
-    console.error(error)
-    return response.status(400).json({
-      message: 'Failed to create orders',
-    })
-  }
-}
-
 export default {
   createOrder,
-  getOrderByUser,
+  getOrderByUserWithoutProducts,
+  getOrderByUserWihProducts,
   deliveredOrder,
   getAllOrdersAvailable,
   getAllOrdersUnavailable,

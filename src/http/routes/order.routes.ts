@@ -18,9 +18,15 @@ orderRoutes.put(
 )
 
 orderRoutes.get(
-  '/user',
+  '/user/list',
   ensureAuthenticateClient,
-  OrderController.getOrderByUser,
+  OrderController.getOrderByUserWithoutProducts,
+)
+
+orderRoutes.get(
+  '/user/products/list',
+  ensureAuthenticateClient,
+  OrderController.getOrderByUserWihProducts,
 )
 
 orderRoutes.get('/availables', OrderController.getAllOrdersAvailable)
