@@ -27,7 +27,7 @@ const createProduct = async (request: Request, response: Response) => {
 
     const createProduct = new ProductService(ProductRepository)
 
-    await createProduct.create(
+    const productData = await createProduct.create(
       name,
       description,
       image,
@@ -37,6 +37,8 @@ const createProduct = async (request: Request, response: Response) => {
     )
 
     return response.status(201).json({
+      success: true,
+      data: productData,
       message: 'Product created with success',
     })
   } catch (error) {
@@ -64,7 +66,9 @@ const getProductByName = async (request: Request, response: Response) => {
       const { createdAt, updatedAt, ...product } = productData
 
       return response.status(200).json({
-        product,
+        success: true,
+        data: product,
+        message: 'Product retrieved successfully',
       })
     }
 
@@ -90,7 +94,9 @@ const getProductById = async (request: Request, response: Response) => {
       const { createdAt, updatedAt, ...product } = productData
 
       return response.status(200).json({
-        product,
+        success: true,
+        data: product,
+        message: 'Product retrieved successfully',
       })
     }
 
@@ -122,7 +128,9 @@ const getAllProducts = async (request: Request, response: Response) => {
     })
 
     return response.status(200).json({
-      product: productsData
+      success: true,
+      data: productsData,
+      message: 'Product retrieved successfully',
     })
 
   } catch (error) {
@@ -151,7 +159,9 @@ const updateProductCategory = async (request: Request, response: Response) => {
       const { description, image, price, situation, createdAt, updatedAt, ...productData } = product
 
       return response.status(200).json({
-        product: productData,
+        success: true,
+        data: productData,
+        message: 'Product category updated successfully',
       })
     }
 
@@ -186,9 +196,11 @@ const updateProduct = async (request: Request, response: Response) => {
       })
     }
 
-    await product.updateProduct(id, name, description, price, situation)
+    const productData = await product.updateProduct(id, name, description, price, situation)
 
     return response.status(200).json({
+      success: true,
+      data: productData,
       message: 'Product updated with success!',
     })
     
@@ -216,7 +228,11 @@ const updateProductImage = async (request: Request, response: Response) => {
     )}/images/${path.basename(relativeImagePath)}`
 
     // Return the URL of the updated image
-    return response.status(200).json({ imageUrl })
+    return response.status(200).json({
+      success: true,
+      data: imageUrl ,
+      message: 'Product image updated successfully!',
+    })
   } catch (error) {
     return response.status(500).json({
       message: 'Failed updating product image',

@@ -19,8 +19,9 @@ const createCategory = async (request: Request, response: Response) => {
     const category = await newCategory.create(name)
 
       return response.status(201).json({
-      message: 'Category created with success!',
-      category,
+        success: true,
+        data: category,
+        message: 'Category created with success!',
     })
   } catch (error) {
     console.error(error)
@@ -42,7 +43,9 @@ const getCategories = async (request: Request, response: Response) => {
     }
     
     return response.status(200).json({
-      categories,
+      success: true,
+      data: categories,
+      message: 'Categories retrieved successfully',
     })
   } catch (error) {
     return response.status(500).json({
@@ -72,7 +75,9 @@ const getCategoryByName = async (request: Request, response: Response) => {
     }
 
     return response.status(200).json({
-      category,
+      success: true,
+      data: category,
+      message: 'Category retrieved successfully',
     })
   } catch (error) {
     return response.status(400).json({
@@ -97,7 +102,9 @@ const getCategoriesByProduct = async (request: Request, response: Response) => {
     }
 
     return response.status(200).json({
-      category,
+      success: true,
+      data: category,
+      message: 'Products retrieved successfully for this category',
     })
 
   } catch (error) {
@@ -133,9 +140,11 @@ const updateCategory = async (request: Request, response: Response) => {
       })
     }
     
-    await getCategory.updateCategory(id, name)
+    const category = await getCategory.updateCategory(id, name)
 
     return response.status(200).json({
+      success: true,
+      data: category,
       message: 'Category updated successfully',
     })
   } catch (error) {
@@ -165,6 +174,7 @@ const deleteCategory = async (request: Request, response: Response) => {
   } catch (error) {
     console.error(error)
     return response.status(400).json({
+      success: true,
       message: 'Error deleting category',
     })
   }

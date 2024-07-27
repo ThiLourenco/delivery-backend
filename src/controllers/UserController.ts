@@ -19,12 +19,50 @@ const createUser = async (request: Request, response: Response) => {
     const { password, isAdmin, phone, role, createdAt, updatedAt, ...createdUserWithSucessed } = user
     
     return response.status(201).json({
-      user: createdUserWithSucessed,
+      success: true,
+      data: createdUserWithSucessed,
+      message: 'User created with success!',
     })
   } catch (error) {
     console.error(error)
     return response.status(400).json({
       message: 'User already exists',
+    })
+  }
+}
+
+const login = async (request: Request, response: Response) => {
+  try {
+    const { email, password } = request.body
+
+    const getUser = new UserService(UserRepository)
+    const user = await getUser.login(email, password)
+
+    if (!user) {
+      throw new BadRequestError('E-mail or password invalid')
+    }
+
+    const verifyPass = await bcrypt.compare(password, user.password)
+
+    if (!verifyPass) {
+      throw new BadRequestError('E-mail or password invalid')
+    }
+
+    const token = jwt.sign({ id: user.id }, process.env.CLIENT_SECRET ?? '', {
+      expiresIn: '1d',
+    })
+
+    const { password: _, isAdmin, role, phone, createdAt, updatedAt, ...userLogin } = user
+
+    return response.status(200).json({
+      success: true,
+      data: userLogin,
+      token,
+    })
+  } catch (error) {
+    console.error(error)
+    return response.status(400).json({
+      message: 'E-mail or password invalid',
     })
   }
 }
@@ -43,7 +81,9 @@ const getUser = async (request: Request, response: Response) => {
     const { password, isAdmin, createdAt, updatedAt, ...userWithPassword } = user
 
     return response.status(200).json({
-      user: userWithPassword,
+      success: true,
+      data: userWithPassword,
+      message: 'User retrieved successfully',
     })
   } catch (error) {
     console.error(error)
@@ -70,7 +110,9 @@ const getUsers = async (request: Request, response: Response) => {
     })
 
     return response.status(200).json({
-      users: userWithoutPasswords,
+      success: true,
+      data: userWithoutPasswords,
+      message: 'Users retrieved successfully',
     })
   } catch (error) {
     console.error(error)
@@ -92,9 +134,13 @@ const updateUser = async (request: Request, response: Response) => {
     }
 
     const updateUserService = new UserService(UserRepository)
-    await updateUserService.updateUserById(id, username, name, phone)
+    const updateUser = await updateUserService.updateUserById(id, username, name, phone)
+
+    const { role, email, password, isAdmin, createdAt, updatedAt, ...UserData} = updateUser
 
     return response.status(200).json({
+      success: true,
+      data: UserData,
       message: 'User updated successfully',
     })
   } catch (error) {
@@ -113,47 +159,13 @@ const updateAddress = async (request: Request, response: Response) => {
     await userService.updateAddress(email, address)
 
     return response.status(200).json({
+      success: true,
       message: 'Address updated or created successfully',
     })
   } catch (error) {
     console.error(error)
     return response.status(400).json({
       message: 'Failed to update or create address',
-    })
-  }
-}
-
-const login = async (request: Request, response: Response) => {
-  try {
-    const { email, password } = request.body
-
-    const getUser = new UserService(UserRepository)
-    const user = await getUser.login(email, password)
-
-    if (!user) {
-      throw new BadRequestError('E-mail or password invalid')
-    }
-
-    const verifyPass = await bcrypt.compare(password, user.password)
-
-    if (!verifyPass) {
-      throw new BadRequestError('E-mail or password invalid')
-    }
-
-    const token = jwt.sign({ id: user.id }, process.env.CLIENT_SECRET ?? '', {
-      expiresIn: '1d',
-    })
-
-    const { password: _, isAdmin, role, phone, ...userLogin } = user
-
-    return response.status(200).json({
-      user: userLogin,
-      token,
-    })
-  } catch (error) {
-    console.error(error)
-    return response.status(400).json({
-      message: 'E-mail or password invalid',
     })
   }
 }
@@ -172,6 +184,7 @@ const deleteUser = async (request: Request, response: Response) => {
     await userService.deleteUser(id)
 
     return response.status(200).json({
+      success: true,
       message: 'User deleted successfully',
     })
   } catch (error) {

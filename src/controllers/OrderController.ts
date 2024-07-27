@@ -17,7 +17,7 @@ const createOrder = async (request: Request, response: Response) => {
     // console.log(userId, 'userID')
     const createOrderService = new OrderService(OrderRepository)
     const order = await createOrderService.create(
-      products,
+      products!,
       userId,
       totalAmount,
       discount!,
@@ -27,8 +27,9 @@ const createOrder = async (request: Request, response: Response) => {
     const { id } = order
 
     return response.status(201).json({
+      success: true,
+      data: id,
       message: 'Orders created with success!',
-      id,
     })
   } catch (error) {
     console.error(error)
@@ -63,7 +64,9 @@ const getOrderByUserWithoutProducts = async (request: Request, response: Respons
     })
 
     return response.status(200).json({
-      orders: orderData,
+      success: true,
+      data: orderData,
+      message: 'Orders retrieved successfully',
     })
   } catch (error) {
     console.error(error)
@@ -98,7 +101,9 @@ const getOrderByUserWihProducts = async (request: Request, response: Response) =
     })
 
     return response.status(200).json({
-      orders: orderData,
+      success: true,
+      data: orderData,
+      message: 'Orders retrieved successfully with products',
     })
   } catch (error) {
     console.error(error)
@@ -125,7 +130,9 @@ const getAllOrdersAvailable = async (request: Request, response: Response) => {
     }
 
     return response.status(200).json({
-      orders: orderData,
+      success: true,
+      data: orderData,
+      message: 'Orders retrieved successfully',
     })
 
   } catch (error) {
@@ -156,7 +163,9 @@ const getAllOrdersUnavailable = async (
     }
 
     return response.status(200).json({
-      ordersUnavailable,
+      success: true,
+      data: ordersUnavailable,
+      message: 'Orders retrieved successfully',
     })
   } catch (error) {
     console.error(error)
@@ -184,7 +193,9 @@ const getAllOrdersCompleted = async (request: Request, response: Response) => {
     }
 
     return response.status(200).json({
-      orderData,
+      success: true,
+      data: orderData,
+      message: 'Order completed successfully'
     })
   } catch (error) {
     console.error(error)
@@ -208,7 +219,9 @@ const getOrderById = async (request: Request, response: Response) => {
     }
 
     return response.status(200).json({      
-      order,
+      success: true,
+      data: order,
+      message: 'Order retrieved successfully',
     })
   } catch (error) {
     console.error(error)
@@ -237,8 +250,10 @@ const deliveredOrder = async (request: Request, response: Response) => {
 
     const { products, totalAmount, discount, ...orderData } = order
 
-    return response.status(200).json({      
+    return response.status(200).json({ 
+      success: true,     
       order: orderData,
+      message: 'Order delivered successfully',
     })
   } catch (error) {
     console.error(error)

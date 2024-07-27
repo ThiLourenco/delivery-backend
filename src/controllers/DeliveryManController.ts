@@ -28,7 +28,9 @@ const createDeliveryMan = async (request: Request, response: Response) => {
         ...delivery } = deliveryMan
 
     return response.status(201).json({
-      user: delivery,
+      success: true,
+      data: delivery,
+      message: 'Delivery man created with success!',
     })
   } catch (error) {
     console.log(error)
@@ -65,24 +67,25 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
 
     const {
       password: _,      
-      id,
       role,
       phone,
       isAdmin,
       createdAt,
       updatedAt,
-      name,
       username,
       ...deliveryManUserLogin
     } = deliveryManUser
 
     return response.status(200).json({
-      user: deliveryManUserLogin,
+      success: true,
       token,
+      user: deliveryManUserLogin,
+      message: 'Login successful!',
     })
   } catch (error) {
     console.error(error)
     return response.status(401).json({
+      success: false,
       message: 'E-mail or password invalid',
     })
   }
@@ -100,6 +103,8 @@ const updateDeliveryMan = async (request: Request, response: Response) => {
     await deliveryMan.update(id, name, phone)
 
     return response.status(200).json({
+      success: true,
+      data: deliveryManData,
       message: 'DeliveryMan updated successfully',
     })
   } catch (error) {
@@ -131,7 +136,9 @@ const acceptOrderDeliveryService = async (request: Request, response: Response) 
     await orderDeliveryService.updateDeliveryOrder(deliveryManId, orderId)
 
     return response.status(200).json({
-      message: 'DeliveryMan Order accepted with successfully',
+      success: true,
+      data: orderId,
+      message: 'DeliveryMan accepted with successfully',
     })
   } catch (error) {
     console.error(error)
@@ -154,7 +161,11 @@ const getOrderByDeliveryMan = async (request: Request, response: Response) => {
     const data = new DeliveryManService(DeliveryManRepository)
     const orders = await data.getOrdersDelivery(deliveryManId)
 
-    return response.status(200).send(orders)
+    return response.status(200).json({
+      success: true,
+      data: orders,
+      messsage: 'Orders retrieved successfully'
+    })
   } catch (error) {
     console.error(error)
     return response.status(400).json({
