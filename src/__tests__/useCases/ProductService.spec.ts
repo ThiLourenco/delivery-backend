@@ -20,10 +20,11 @@ describe('ProductService', () => {
       image: 'test-image.png',
       price: 100,
       situation: true,
-      // retornar o código da categoria refactor
-      // category: {
-      //   name: 'Test Category',
-      // },
+      createdAt: new Date(), 
+      updatedAt: new Date(),
+      category: {
+        name: 'Test Category',
+      },
     }
 
     const createProductSpy = jest.spyOn(ProductRepository, 'create')
@@ -63,6 +64,8 @@ describe('ProductService', () => {
       image: 'test-image.png',
       price: 100,
       situation: true,
+      createdAt: new Date(), 
+      updatedAt: new Date(),
       category: {
         name: 'Test Category',
       },
@@ -87,6 +90,8 @@ describe('ProductService', () => {
       image: 'test-image.png',
       price: 100,
       situation: true,
+      createdAt: new Date(), 
+      updatedAt: new Date(),
       category: {
         name: 'Test Category',
       },
@@ -110,6 +115,8 @@ describe('ProductService', () => {
         image: 'test-image.png',
         price: 100,
         situation: true,
+        createdAt: new Date(), 
+        updatedAt: new Date(),
         category: {
           name: 'Test Category',
         },
@@ -121,6 +128,8 @@ describe('ProductService', () => {
         image: 'test-image.png',
         price: 100,
         situation: true,
+        createdAt: new Date(), 
+        updatedAt: new Date(),
         category: {
           name: 'Test Category',
         },
@@ -144,6 +153,8 @@ describe('ProductService', () => {
       image: 'test-image.png',
       price: 100,
       situation: true,
+      createdAt: new Date(), 
+      updatedAt: new Date(),
       category: {
         name: 'Test Category',
       },
@@ -176,6 +187,8 @@ describe('ProductService', () => {
       image: 'test-image.png',
       price: 100,
       situation: true,
+      createdAt: new Date(), 
+      updatedAt: new Date(),
       category: {
         name: 'Test Category',
       },
@@ -215,6 +228,8 @@ describe('ProductService', () => {
       image: '/images/008aa273cf8201b4fc427715641b0787-image.png',
       price: 100,
       situation: true,
+      createdAt: new Date(), 
+      updatedAt: new Date(),
       category: {
         name: 'Test Category',
       },
@@ -232,10 +247,8 @@ describe('ProductService', () => {
       mockProduct.image,
     )
 
-    // product image for return url imagem
     // expect(updateProductImageSpy).toHaveBeenCalledWith(
     //   mockProduct.id,
-    //   mockProduct.image,
     // )
 
     expect(updateImage.id).toEqual(mockProduct.id)

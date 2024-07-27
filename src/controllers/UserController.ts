@@ -156,10 +156,11 @@ const updateAddress = async (request: Request, response: Response) => {
     const { email, address }: UserTypes = request.body
 
     const userService = new UserService(UserRepository)
-    await userService.updateAddress(email, address)
+    const updateUserAddress = await userService.updateAddress(email, address)
 
     return response.status(200).json({
       success: true,
+      data: updateUserAddress,
       message: 'Address updated or created successfully',
     })
   } catch (error) {

@@ -22,6 +22,8 @@ describe('UserRepository', () => {
       password: '123',
       isAdmin: true,
       role: 'ADMIN',
+      createdAt: new Date(), 
+      updatedAt: new Date(),
     }
 
     const createUserSpy = jest.spyOn(UserRepository, 'create')
@@ -49,6 +51,8 @@ describe('UserRepository', () => {
       password: '123',
       isAdmin: false,
       role: 'CLIENT',
+      createdAt: new Date(), 
+      updatedAt: new Date(),
     }
 
     const createUserSpy = jest.spyOn(UserRepository, 'create')
@@ -76,6 +80,8 @@ describe('UserRepository', () => {
       password: '123',
       isAdmin: false,
       role: 'DELIVERY_MAN',
+      createdAt: new Date(), 
+      updatedAt: new Date(),
     }
 
     const createUserSpy = jest.spyOn(UserRepository, 'create')
@@ -103,6 +109,8 @@ describe('UserRepository', () => {
       password: '123',
       isAdmin: true,
       role: 'ADMIN',
+      createdAt: new Date(), 
+      updatedAt: new Date(),
     }
 
     const loginSpy = jest.spyOn(UserRepository, 'login')
@@ -124,6 +132,8 @@ describe('UserRepository', () => {
       password: '123',
       isAdmin: false,
       role: 'CLIENT',
+      createdAt: new Date(), 
+      updatedAt: new Date(),
     }
 
     const loginSpy = jest.spyOn(UserRepository, 'login')
@@ -145,6 +155,8 @@ describe('UserRepository', () => {
       password: '123',
       isAdmin: false,
       role: 'DELIVERY_MAN',
+      createdAt: new Date(), 
+      updatedAt: new Date(),
     }
 
     const loginSpy = jest.spyOn(UserRepository, 'login')
@@ -167,6 +179,8 @@ describe('UserRepository', () => {
         password: '123',
         role: 'CLIENT',
         isAdmin: false,
+        createdAt: new Date(), 
+        updatedAt: new Date(),
         address: {
           street: 'St. 15aver',
           number: '23',
@@ -197,6 +211,8 @@ describe('UserRepository', () => {
         password: '123',
         isAdmin: false,
         role: 'CLIENT',
+        createdAt: new Date(), 
+        updatedAt: new Date(),
       },
       {
         id: '1234',
@@ -207,6 +223,8 @@ describe('UserRepository', () => {
         password: '123',
         isAdmin: false,
         role: 'CLIENT',
+        createdAt: new Date(), 
+        updatedAt: new Date(),
       },
     ]
 
@@ -229,6 +247,8 @@ describe('UserRepository', () => {
       password: '123',
       isAdmin: false,
       role: 'CLIENT',
+      createdAt: new Date(), 
+      updatedAt: new Date(),
     }
 
     const updateUserSpy = jest.spyOn(UserRepository, 'update')
@@ -252,6 +272,28 @@ describe('UserRepository', () => {
     expect(updateUser.name).toBe(mockUser.name)
     expect(updateUser.phone).toBe(mockUser.phone)
     expect(updateUser.username).toBe(mockUser.username)
+  })
+
+  it('should update address by user', async () => {
+    const mockAddress = {
+      street: 'New Street',
+      number: '100',
+      city: 'New City',
+      country: 'New Country',
+      zipCode: '000000',
+    }
+  
+    const updateUserAddressSpy = jest.spyOn(UserRepository, 'updateAddress')
+    updateUserAddressSpy.mockResolvedValue(mockAddress)
+  
+    const updatedAddress = await userService.updateAddress('john@example.com', mockAddress)
+  
+    expect(updateUserAddressSpy).toHaveBeenCalledWith('john@example.com', mockAddress)
+    expect(updatedAddress?.street).toBe(mockAddress.street)
+    expect(updatedAddress?.number).toBe(mockAddress.number)
+    expect(updatedAddress?.city).toBe(mockAddress.city)
+    expect(updatedAddress?.country).toBe(mockAddress.country)
+    expect(updatedAddress?.zipCode).toBe(mockAddress.zipCode)
   })
 
   it('should allow deleting user, if not is admin', async () => {

@@ -32,7 +32,7 @@ describe('OrderService', () => {
     createOrderSpy.mockResolvedValue(mockOrder)
 
     const order = await orderService.create(
-      mockOrder.products,
+      mockOrder.products!,
       mockOrder.userId,
       mockOrder.totalAmount,
       mockOrder.discount!,

@@ -32,7 +32,7 @@ export interface IUserRepository {
     phone: string,
   ): Promise<UserTypes>
 
-  updateAddress(email: string, address: UserTypes['address']): Promise<void>
+  updateAddress(email: string, address: UserTypes['address']): Promise<UserTypes['address']>
 
   delete(id: string): Promise<void>
 }

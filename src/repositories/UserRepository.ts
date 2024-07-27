@@ -206,7 +206,7 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  public async updateAddress(email: string, address: UserTypes['address']): Promise<void>  {
+  public async updateAddress(email: string, address: UserTypes['address']): Promise<UserTypes['address']>  {
     try {
       const userExists = await prisma.user.findUnique({
         where: {
@@ -223,9 +223,11 @@ class UserRepository implements IUserRepository {
           userId: userExists.id,
         },
       })
+
+      let updatedAddress;
   
       if (addressExists) {
-        await prisma.address.update({
+        updatedAddress = await prisma.address.update({
           where: {
             userId: userExists.id,
           },
@@ -238,7 +240,7 @@ class UserRepository implements IUserRepository {
           },
         })
       } else {
-        await prisma.address.create({
+        updatedAddress = await prisma.address.create({
           data: {
             userId: userExists.id,
             street: address?.street,
@@ -249,6 +251,13 @@ class UserRepository implements IUserRepository {
           },
         })
       }
+      return {
+        street: updatedAddress.street!,
+        number: updatedAddress.number!,
+        city: updatedAddress.city!,
+        country: updatedAddress.country!,
+        zipCode: updatedAddress.zipCode!,
+      };
 
     } catch (error) {
       console.error(error)
