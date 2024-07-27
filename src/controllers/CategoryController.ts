@@ -87,17 +87,17 @@ const getCategoriesByProduct = async (request: Request, response: Response) => {
 
   try {
     const categoryService = new CategoryService(CategoryRepository)
-    const data =
+    const category =
     await categoryService.findAllProductByCategoryId(id)
 
-    if(data.length === 0) {
+    if(category.length === 0) {
       return response.status(404).json({
         message: 'No products found for this category',
       })
     }
 
     return response.status(200).json({
-      data,
+      category,
     })
 
   } catch (error) {
