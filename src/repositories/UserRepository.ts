@@ -66,7 +66,7 @@ class UserRepository implements IUserRepository {
         throw new BadRequestError('Validation error')
       }
 
-      throw new AppError('Failed to create user', 500)
+      throw new AppError('Failed to create user', 400)
     }
   }
 
@@ -80,11 +80,10 @@ class UserRepository implements IUserRepository {
           address: true,
         },
       })
-
       if (!user) {
-        throw new AppError('User not exists!')
+        throw new AppError('User not found')
       }
-
+      
       return {
         id: user.id,
         name: user.name,
@@ -94,6 +93,8 @@ class UserRepository implements IUserRepository {
         phone: user.phone,
         isAdmin: user.isAdmin,
         role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
         address: {
           city: user.address?.city || '',
           country: user.address?.country || '',
@@ -112,14 +113,14 @@ class UserRepository implements IUserRepository {
     try {
       const users = await prisma.user.findMany()
 
-      if (!users || users.length === 0) {
-        throw new AppError('Failed to retrieve users.')
+      if (!users) {
+        throw new AppError('Failed to retrieve users.', 400)
       }
 
       return users
     } catch (error) {
       console.error(error)
-      throw new AppError('No users found.')
+      throw new AppError('Failed to retrieve users.')
     }
   }
 
@@ -205,6 +206,56 @@ class UserRepository implements IUserRepository {
     }
   }
 
+  public async updateAddress(email: string, address: UserTypes['address']): Promise<void>  {
+    try {
+      const userExists = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      })
+  
+      if (!userExists) {
+        throw new AppError('User not found', 404)
+      }
+  
+      const addressExists = await prisma.address.findUnique({
+        where: {
+          userId: userExists.id,
+        },
+      })
+  
+      if (addressExists) {
+        await prisma.address.update({
+          where: {
+            userId: userExists.id,
+          },
+          data: {
+            street: address?.street,
+            number: address?.number,
+            city: address?.city,
+            country: address?.country,
+            zipCode: address?.zipCode,
+          },
+        })
+      } else {
+        await prisma.address.create({
+          data: {
+            userId: userExists.id,
+            street: address?.street,
+            number: address?.number,
+            city: address?.city,
+            country: address?.country,
+            zipCode: address?.zipCode,
+          },
+        })
+      }
+
+    } catch (error) {
+      console.error(error)
+      throw new AppError('Failed to update or create address', 400)
+    }
+  }
+  
   public async delete(id: string): Promise<void> {
     try {
       const userExists = await prisma.user.findUnique({

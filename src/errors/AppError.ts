@@ -8,20 +8,21 @@ export class AppError {
     this.statusCode = statusCode
   }
 }
+
 export class BadRequestError extends AppError {
   constructor(message: string) {
-    super(message, 400)
+    super(message, 400);
   }
 }
 
 export class NotFoundError extends AppError {
   constructor(message: string) {
-    super(message, 404)
+    super(message, 404);
   }
 }
 
-export class UnauthorizedError extends AppError {
+export class Unauthorized extends AppError {
   constructor(message: string) {
-    super(message, 401)
+    super(message, 401);
   }
 }

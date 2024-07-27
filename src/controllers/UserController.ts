@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { prisma } from '../database'
 import { UserRole } from '@prisma/client'
 import { AppError, BadRequestError } from '../errors/AppError'
 import { CreateUserDTO, UserTypes } from '../dtos/UserTypes'
@@ -17,16 +16,15 @@ const createUser = async (request: Request, response: Response) => {
     const data = new UserService(UserRepository)
     const user = await data.create(userData)
 
-    const { password, isAdmin, phone, role, ...createdUserWithSucessed } = user
-
+    const { password, isAdmin, phone, role, createdAt, updatedAt, ...createdUserWithSucessed } = user
+    
     return response.status(201).json({
-      message: 'User created with success!',
       user: createdUserWithSucessed,
     })
   } catch (error) {
     console.error(error)
     return response.status(400).json({
-      message: 'Failed to create user',
+      message: 'User already exists',
     })
   }
 }
@@ -39,13 +37,12 @@ const getUser = async (request: Request, response: Response) => {
     const user = await getUser.findUserById(id)
 
     if (!user) {
-      throw new AppError('User not exists!', 400)
+      throw new AppError('User not exists', 400)
     }
 
-    const { password, isAdmin, ...userWithPassword } = user
+    const { password, isAdmin, createdAt, updatedAt, ...userWithPassword } = user
 
     return response.status(200).json({
-      message: 'User retrieved successfully!',
       user: userWithPassword,
     })
   } catch (error) {
@@ -63,22 +60,21 @@ const getUsers = async (request: Request, response: Response) => {
 
     if (!users || users.length === 0) {
       return response.status(404).json({
-        message: 'No user found.',
+        message: 'No user found',
       })
     }
 
     const userWithoutPasswords = users.map((user) => {
-      const { password, isAdmin, ...userWithoutPassword } = user
+      const { password, isAdmin, createdAt, updatedAt, ...userWithoutPassword } = user
       return userWithoutPassword
     })
 
     return response.status(200).json({
-      message: 'Users retrieved successfully!',
       users: userWithoutPasswords,
     })
   } catch (error) {
     console.error(error)
-    return response.status(400).json({
+    return response.status(500).json({
       message: 'Failed to retrieve users',
     })
   }
@@ -87,18 +83,9 @@ const getUsers = async (request: Request, response: Response) => {
 const updateUser = async (request: Request, response: Response) => {
   try {
     const { id } = request.params
-    const { username, name, phone } = request.body
+    const { username, name, phone }: UserTypes = request.body
 
-    if (
-      !id ||
-      !username ||
-      !name ||
-      !phone ||
-      typeof id !== 'string' ||
-      typeof username !== 'string' ||
-      typeof name !== 'string' ||
-      typeof phone !== 'string'
-    ) {
+    if ( !id || !username || !name || !phone ) {
       return response.status(400).json({
         message: 'Invalid or missing parameters: id, username, name, phone',
       })
@@ -122,35 +109,16 @@ const updateAddress = async (request: Request, response: Response) => {
   try {
     const { email, address }: UserTypes = request.body
 
-    const userExists = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    })
-
-    if (!userExists) {
-      throw new AppError('User not found', 404)
-    }
-
-    await prisma.address.update({
-      where: {
-        userId: userExists.id,
-      },
-      data: {
-        street: address?.street,
-        number: address?.number,
-        city: address?.city,
-        country: address?.country,
-        zipCode: address?.zipCode,
-      },
-    })
+    const userService = new UserService(UserRepository)
+    await userService.updateAddress(email, address)
 
     return response.status(200).json({
-      message: 'Address updated with success!',
+      message: 'Address updated or created successfully',
     })
   } catch (error) {
+    console.error(error)
     return response.status(400).json({
-      message: 'Failed to update user',
+      message: 'Failed to update or create address',
     })
   }
 }

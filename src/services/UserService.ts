@@ -41,6 +41,10 @@ class UserService {
     return await this.UserRepository.update(id, username, name, phone)
   }
 
+  public async updateAddress(email: string, address: UserTypes['address']): Promise<void> {
+    await this.UserRepository.updateAddress(email, address)
+  }
+  
   public async deleteUser(id: string): Promise<void> {
     return await this.UserRepository.delete(id)
   }

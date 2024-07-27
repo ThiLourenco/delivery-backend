@@ -32,5 +32,7 @@ export interface IUserRepository {
     phone: string,
   ): Promise<UserTypes>
 
+  updateAddress(email: string, address: UserTypes['address']): Promise<void>
+
   delete(id: string): Promise<void>
 }

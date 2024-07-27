@@ -9,6 +9,8 @@ export type UserTypes = {
   password: string
   role: UserRole
   isAdmin: boolean
+  createdAt: Date,
+  updatedAt: Date,
   address?: {
     street: string
     number?: string
@@ -27,6 +29,8 @@ export type UserWithAddress = {
   password: string
   role: UserRole
   isAdmin: boolean
+  createdAt: Date,
+  updatedAt: Date,
   address: {
     street: string
     number?: string
