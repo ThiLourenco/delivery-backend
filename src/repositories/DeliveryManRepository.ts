@@ -5,8 +5,8 @@ import { DeliveryManTypes } from '../dtos/DeliveryManTypes';
 import { 
   AppError, 
   BadRequestError, 
-  NotFoundError, 
-  UnauthorizedError 
+  NotFoundError,
+  Unauthorized
 } from '../errors/AppError';
 import { IDeliveryManRepository } from '../interfaces/IDeliveryManRepository';
 import { OrderTypes } from 'dtos/OrderTypes';
@@ -49,7 +49,7 @@ class DeliveryManRepository implements IDeliveryManRepository {
         where: { email: validatedData.email },
       });
 
-      if (deliveryManExists) {
+      if(deliveryManExists) {
         throw new AppError('DeliveryMan already exists', 400);
       }
 
@@ -71,7 +71,45 @@ class DeliveryManRepository implements IDeliveryManRepository {
         console.error('Validation error', error.issues);
         throw new AppError('Validation error', 400);
       }
-      throw new AppError('Failed to create delivery man', 500);
+      throw new AppError('Failed to create delivery man', 400);
+    }
+  }
+
+  public async loginDeliveryMan(
+    email: string,
+    password: string,
+  ): Promise<DeliveryManTypes> {
+    try {
+      const validateData = loginDeliveryManSchema.parse({
+        email,
+        password,
+      })
+
+      const deliveryManUser = await prisma.user.findUnique({
+        where: {
+          email: validateData.email,
+        },
+      })
+
+      if (!deliveryManUser) {
+        throw new BadRequestError('E-mail or password invalid')
+      }
+
+      const passwordMatch = await compare(validateData.password, deliveryManUser.password)
+
+      if (!passwordMatch) {
+        throw new BadRequestError('E-mail or password invalid')
+      }
+
+      return deliveryManUser;
+
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error('Validation error', error.issues);
+        throw new AppError('Validation error', 400);
+      }
+
+      throw new Unauthorized('Failed to login')
     }
   }
 
@@ -110,51 +148,12 @@ class DeliveryManRepository implements IDeliveryManRepository {
 
     } catch (error) {
       if (error instanceof z.ZodError) {
-
         console.error('Validation error', error.issues);
         throw new AppError('Validation error', 400);
       }
 
       throw new AppError(
         'Error to update user', 400)
-    }
-  }
-
-  public async loginDeliveryMan(
-    email: string,
-    password: string,
-  ): Promise<DeliveryManTypes> {
-    try {
-      const validateData = loginDeliveryManSchema.parse({
-        email,
-        password,
-      })
-
-      const deliveryManUser = await prisma.user.findUnique({
-        where: {
-          email: validateData.email,
-        },
-      })
-
-      if (!deliveryManUser) {
-        throw new BadRequestError('E-mail or password invalid')
-      }
-
-      const passwordMatch = await compare(validateData.password, deliveryManUser.password)
-
-      if (!passwordMatch) {
-        throw new BadRequestError('E-mail or password invalid')
-      }
-
-      return deliveryManUser;
-
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        console.error('Validation error', error.issues);
-        throw new AppError('Validation error', 400);
-      }
-
-      throw new UnauthorizedError('Failed to login')
     }
   }
 
@@ -214,7 +213,7 @@ class DeliveryManRepository implements IDeliveryManRepository {
         },
         include: {
           _count: true,
-          products: true,
+          products: false,
         },
       })
 

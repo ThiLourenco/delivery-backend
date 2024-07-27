@@ -1,6 +1,6 @@
 export type OrderTypes = {
   id: string
-  products: {
+  products?: {
     productId: string
     quantity: number
   }[]

@@ -15,7 +15,6 @@ const createDeliveryMan = async (request: Request, response: Response) => {
 
     const data = new DeliveryManService(DeliveryManRepository)
     const deliveryMan = await data.create(deliveryManData)
-
     const { 
         password, 
         role, 
@@ -26,59 +25,15 @@ const createDeliveryMan = async (request: Request, response: Response) => {
         username, 
         createdAt,
         updatedAt, 
-        ...userWithPassword } = deliveryMan
+        ...delivery } = deliveryMan
 
     return response.status(201).json({
-      message: 'User created with success!',
-      user: userWithPassword,
+      user: delivery,
     })
   } catch (error) {
     console.log(error)
     return response.status(400).json({
-      message: 'Failed to create deliveryMan',
-    })
-  }
-}
-
-const updateDeliveryMan = async (request: Request, response: Response) => {
-  const validateRequestParams = (
-    id: string,
-    name: string,
-    phone: string,
-  ): boolean => {
-    return (
-      typeof id === 'string' &&
-      typeof name === 'string' &&
-      typeof phone === 'string' &&
-      id.trim() !== '' &&
-      name.trim() !== '' &&
-      phone.trim() !== ''
-    )
-  }
-
-  try {
-    const { id } = request.params
-    const { name, phone } = request.body
-
-    if (!validateRequestParams) {
-      return response.status(400).json({
-        message: 'Invalid or missing parameters: id, name, phone',
-      })
-    }
-
-    const deliveryManData: DeliveryManTypes = request.body
-    deliveryManData.role = UserRole.DELIVERY_MAN
-
-    const deliveryMan = new DeliveryManService(DeliveryManRepository)
-    await deliveryMan.update(id, name, phone)
-
-    return response.status(200).json({
-      message: 'DeliveryMan updated successfully',
-    })
-  } catch (error) {
-    console.log(error)
-    return response.status(400).json({
-      message: 'Failed to update deliveryMan',
+      message: 'User already exists with this email!',
     })
   }
 }
@@ -133,10 +88,31 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
   }
 }
 
+const updateDeliveryMan = async (request: Request, response: Response) => {
+  try {
+    const { id } = request.params
+    const { name, phone } = request.body
+
+    const deliveryManData: DeliveryManTypes = request.body
+    deliveryManData.role = UserRole.DELIVERY_MAN
+
+    const deliveryMan = new DeliveryManService(DeliveryManRepository)
+    await deliveryMan.update(id, name, phone)
+
+    return response.status(200).json({
+      message: 'DeliveryMan updated successfully',
+    })
+  } catch (error) {
+    console.log(error)
+    return response.status(400).json({
+      message: 'Invalid or missing parameters: id, name, phone',
+    })
+  }
+}
+
 const acceptOrderDeliveryService = async (request: Request, response: Response) => {
   try {
     const { id: orderId } = request.params
-    console.log('User ID from request: ' + request.deliveryManId)
 
     const deliveryManId = request.deliveryManId
 
@@ -148,7 +124,6 @@ const acceptOrderDeliveryService = async (request: Request, response: Response) 
         message: 'User ID not specified in request',
       })
     }
-    console.log(deliveryManId, 'userId')
 
     const orderDeliveryService = new DeliveryManService(
       DeliveryManRepository,
@@ -168,8 +143,6 @@ const acceptOrderDeliveryService = async (request: Request, response: Response) 
 
 const getOrderByDeliveryMan = async (request: Request, response: Response) => {
   try {
-    console.log('DeliveryManID from request:' + request.deliveryManId)
-
     const deliveryManId = request.deliveryManId
 
     if (!deliveryManId || deliveryManId === undefined) {
@@ -181,10 +154,7 @@ const getOrderByDeliveryMan = async (request: Request, response: Response) => {
     const data = new DeliveryManService(DeliveryManRepository)
     const orders = await data.getOrdersDelivery(deliveryManId)
 
-    return response.status(200).json({
-      message: 'get Orders with success!',
-      orders,
-    })
+    return response.status(200).send(orders)
   } catch (error) {
     console.error(error)
     return response.status(400).json({
