@@ -5,6 +5,8 @@ export type ProductsTypes = {
   image: string
   price: number
   situation: boolean
+  createdAt: Date,
+  updatedAt: Date,
   category?: {
     name: string
   }

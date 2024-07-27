@@ -66,7 +66,9 @@ class ProductRepository implements IProductRepository {
           name,
         },
       })
-      return product;
+
+    return product;
+    
     } catch (error) {
       throw new AppError('Failed to create product', 500)
     }

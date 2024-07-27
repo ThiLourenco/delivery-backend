@@ -19,7 +19,7 @@ const createProduct = async (request: Request, response: Response) => {
     const getProduct = new ProductService(ProductRepository)
     const product = await getProduct.findProductByName(name)
 
-    if(product!.name) {
+    if(product?.name) {
       return response.status(400).json({
         message: 'Product already exists with this name!',
       })
@@ -58,11 +58,12 @@ const getProductByName = async (request: Request, response: Response) => {
     }
 
     const getProduct = new ProductService(ProductRepository)
-    const product = await getProduct.findProductByName(name)
+    const productData = await getProduct.findProductByName(name)
 
-    if (product) {
+    if (productData) {
+      const { createdAt, updatedAt, ...product } = productData
+
       return response.status(200).json({
-        message: 'Get product with success!',
         product,
       })
     }
@@ -83,11 +84,12 @@ const getProductById = async (request: Request, response: Response) => {
     const { id } = request.params
 
     const getProduct = new ProductService(ProductRepository)
-    const product = await getProduct.findProductById(id)
+    const productData = await getProduct.findProductById(id)
 
-    if (product) {
+    if (productData) {
+      const { createdAt, updatedAt, ...product } = productData
+
       return response.status(200).json({
-        message: 'Get product with success!',
         product,
       })
     }
@@ -114,10 +116,15 @@ const getAllProducts = async (request: Request, response: Response) => {
       })
     }
 
-    return response.status(200).json({
-      message: 'Products found with success',
-      products,
+    const productsData = products.map((product) => {
+      const { createdAt, ...productsData } = product
+      return productsData
     })
+
+    return response.status(200).json({
+      product: productsData
+    })
+
   } catch (error) {
     console.error(error)
     return response.status(500).json({
@@ -138,12 +145,16 @@ const updateProductCategory = async (request: Request, response: Response) => {
     }
 
     const updateProduct = new ProductService(ProductRepository)
-    const updatedProduct = await updateProduct.updateCategory(id, name)
+    const product = await updateProduct.updateCategory(id, name)
 
-    return response.status(200).json({
-      message: 'Product category updated with success!',
-      updatedProduct,
-    })
+    if(product) {
+      const { description, image, price, situation, createdAt, updatedAt, ...productData } = product
+
+      return response.status(200).json({
+        product: productData,
+      })
+    }
+
   } catch (error) {
     console.error(error)
     return response.status(400).json({
@@ -155,17 +166,9 @@ const updateProductCategory = async (request: Request, response: Response) => {
 const updateProduct = async (request: Request, response: Response) => {
   try {
     const { id } = request.params
-    const { name, description, price, situation } = request.body
+    const { name, description, price, situation }: ProductsTypes = request.body
 
-    if (
-      !name ||
-      !description ||
-      !price ||
-      typeof name !== 'string' ||
-      typeof description !== 'string' ||
-      typeof price !== 'number' ||
-      typeof situation !== 'boolean'
-    ) {
+    if (!name || !description || !price) {
       return response.status(400).json({
         message:
           'Invalid or missing parameters: id, name, description, price, situation',
@@ -173,11 +176,22 @@ const updateProduct = async (request: Request, response: Response) => {
     }
 
     const product = new ProductService(ProductRepository)
+    const productExists = await product.findProductByName(name).then((product) => {
+      return product? product : null
+    })
+
+    if (productExists) {
+      return response.status(400).json({
+        message: 'Product already exists with this name!',
+      })
+    }
+
     await product.updateProduct(id, name, description, price, situation)
 
     return response.status(200).json({
       message: 'Product updated with success!',
     })
+    
   } catch (error) {
     console.error(error)
     return response.status(400).json({
