@@ -86,6 +86,14 @@ npm run dev
 ```
 The server will start at http://localhost:5555 or your preferred port.
 
+
+### Running tests
+```bash
+pnpm test
+or 
+npm run test
+```
+
 ## Contribution
 If you want to contribute to this project, follow the steps below:
 

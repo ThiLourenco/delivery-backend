@@ -84,6 +84,13 @@ npm run dev
 ```
 O servidor será iniciado em http://localhost:5555 ou sua porta preferida.
 
+## Executando testes
+```bash
+pnpm test
+or 
+npm run test
+```
+
 ## Contribuição
 Se você deseja contribuir com este projeto, siga os passos abaixo:
 
