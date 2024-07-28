@@ -55,6 +55,10 @@ Este repositório contém os artefatos necessários para executar usando Docker.
 
 * Instalar o [Docker](https://docs.docker.com/get-docker/).
 
+```bash 
+  docker compose up
+```
+
 4. Configure o banco de dados PostgreSQL e crie um arquivo .env na raiz do projeto com a URL do banco de dados:
 
 ```bash

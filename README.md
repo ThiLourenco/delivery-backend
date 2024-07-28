@@ -53,6 +53,10 @@ This repository contains the artifacts necessary to run using Docker. First of a
 
   * Install [Docker](https://docs.docker.com/get-docker/).
 
+```bash 
+  docker compose up
+```
+
 
 4. Configure the PostgreSQL database and create a .env file in the project root with the database URL: 
   
