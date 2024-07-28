@@ -437,6 +437,123 @@
           }
         }
       }
+    },
+    "/users/": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get all users",
+        "description": "Get all users in the database",
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully"
+          },
+          "400": {
+            "description": "Failed to retrieve users" 
+          }
+        }
+      }
+    },
+    "/users/:id/user": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user By ID",
+        "description": "Get user by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+           
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/User/byid"
+            }
+          },
+          "400": {
+            "description": "Failed to retrieve user" 
+          }
+        }
+      }
+    },
+    "/users/update/:id/user": {
+      "put": {
+        "tags": ["User"],
+        "summary":"Update user by id",
+        "description": "Updates the user username, name and phone",
+        "parameters": [
+          {
+            "name": "body",
+            "in":"body",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/User/update"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated successfully"
+          },
+          "400": {
+            "description": "Error updating user"
+          }
+        }
+      }
+    },
+    "/users/update-address": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Update user address",
+        "description": "Updates the user's address",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/User/address"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User address updated successfully"
+          },
+          "400": {
+            "description": "Invalid or missing parameters"
+          }
+        }
+      }
+    },
+    "/users/:id/delete": {
+      "delete": {
+        "tags": ["User"],
+        "summary": "Delete user by ID",
+        "description": "Delete user by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully"
+          },
+          "400": {
+            "description": "Failed to delete user"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -527,6 +644,93 @@
           },
           "password": {
             "type": "string"
+          }
+        }
+      }, "address": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+            },
+            "address": {
+              "properties": {
+              "street": {
+              "type": "string"
+              },
+              "number": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "zipCode": {
+                "type": "string"
+              }
+            },
+            "required": ["street", "number", "city", "country", "zipCode"]
+          }
+        },
+        "required": ["email"] 
+      },
+      "update": {
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": ["username", "name", "phone"]
+      },
+      "byid": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "address": {
+            "type": "object",
+            "properties": {
+              "street": {
+                "type": "string"
+              },
+              "number": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "zipCode": {
+                "type": "string"
+              }
+            }
           }
         }
       }
