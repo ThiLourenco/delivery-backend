@@ -1,30 +1,53 @@
 {
-  "openapi": "3.0.0",
+  "swagger": "2.0",
   "info": {
-    "title": "API Delivery",
-    "description": "Delivery App",
-    "contact": {
-      "name": "Support",
-      "email": "thi3c1@gmail.com"
-    },
+    "title": "Delivery API Documentation",
+    "description": "API documentation for the delivery backend",
     "version": "1.0.0"
   },
+  "host": "localhost:5555",
+  "basePath": "/api/v1",
+  "schemes": [
+    "http"
+  ],
   "paths": {
-    "/category": {
-      "get": {
-        "summary": "Get all categories",
+    "/category/create": {
+      "post": {
         "tags": ["Category"],
+        "summary": "Create a new category",
+        "description": "Creates a new category in the system",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Category created successfully"
+          },
+          "400": {
+            "description": "Invalid input or category already exists"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get all categories",
+        "description": "Retrieves all categories from the system",
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ResponseCategory"
-                  }
-                }
+            "description": "Categories retrieved successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Category"
               }
             }
           },
@@ -32,154 +55,478 @@
             "description": "No categories found"
           },
           "500": {
-            "description": "Internal server error"
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new category",
-        "tags": ["Category"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RequestCategory"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Category created successfully"
-          },
-          "400": {
-            "description": "Invalid input, object invalid"
+            "description": "Failed to retrieve categories"
           }
         }
       }
     },
-    "/category/{id}": {
+    "/category/": {
       "get": {
-        "summary": "Get category by ID",
         "tags": ["Category"],
+        "summary": "Get category by name",
+        "description": "Retrieves a category by its name",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "name",
+            "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "description": "Retorn ID for the category",
-              "format": "uuid",
-              "example": "1dae449e-141f-4131-83a1-328704f1e9bd"
-              
-            }
+            "type": "string"
           }
         ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResponseCategory"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Category not found"
-          }
-        }
-      },
-      "put": {
-        "summary": "Update category by ID",
-        "tags": ["Category"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RequestCategory"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "Category updated successfully"
+            "description": "Category retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
           },
           "400": {
-            "description": "Invalid input, object invalid"
+            "description": "Invalid or missing parameter: name"
           },
           "404": {
             "description": "Category not found"
           }
         }
-      },
-      "delete": {
-        "summary": "Delete category by ID",
+      }
+    },
+    "/category/{id}/product": {
+      "get": {
         "tags": ["Category"],
+        "summary": "Get products by category ID",
+        "description": "Retrieves all products for a given category ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully for this category",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Product"
+              }
             }
+          },
+          "404": {
+            "description": "No products found for this category"
+          },
+          "500": {
+            "description": "Failed to retrieve products by category"
+          }
+        }
+      }
+    },
+    "/category/{id}/update": {
+      "put": {
+        "tags": ["Category"],
+        "summary": "Update a category",
+        "description": "Updates a category by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameters, or category name already exists"
+          }
+        }
+      }
+    },
+    "/category/{id}/remove": {
+      "delete": {
+        "tags": ["Category"],
+        "summary": "Delete a category",
+        "description": "Deletes a category by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "Category deleted successfully"
           },
+          "400": {
+            "description": "Invalid or missing parameter: id"
+          }
+        }
+      }
+    },
+    "/product/create": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Create a new product",
+        "description": "Creates a new product in the system",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Product created successfully"
+          },
+          "400": {
+            "description": "Invalid input or product already exists"
+          }
+        }
+      }
+    },
+    "/product/": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get product by name",
+        "description": "Retrieves a product by its name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameter: name"
+          },
           "404": {
-            "description": "Category not found"
+            "description": "Product not found"
+          }
+        }
+      }
+    },
+    "/product/{id}": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get product by ID",
+        "description": "Retrieves a product by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Product"],
+        "summary": "Update a product",
+        "description": "Updates a product by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameters"
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get all products",
+        "description": "Retrieves all products from the system",
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          },
+          "404": {
+            "description": "No products found"
+          },
+          "500": {
+            "description": "Failed to retrieve products"
+          }
+        }
+      }
+    },
+    "/product/{id}/category": {
+      "put": {
+        "tags": ["Product"],
+        "summary": "Update product category",
+        "description": "Updates the category of a product by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product category updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameters"
+          }
+        }
+      }
+    },
+    "/product/{id}/image": {
+      "put": {
+        "tags": ["Product"],
+        "summary": "Update product image",
+        "description": "Updates the image of a product by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "imageUrl": {
+                  "type": "string"
+                }
+              },
+              "required": ["imageUrl"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product image updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameters"
+          }
+        }
+      }
+    },
+    "/users/create/user": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Create a new user",
+        "description": "Creates a new user in the system",
+        "parameters": [
+          {
+            "username": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created with success"
+          },
+          "400": {
+            "description": "User already exists"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Login a user",
+        "description": "Should do login in system",
+        "parameters": [
+          {
+            "name":"body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User/login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged in successfully"
+          },
+          "401": {
+            "description": "Invalid credentials"
           }
         }
       }
     }
   },
-  "components": {
-    "schemas": {
-      "RequestCategory": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Vinhos"
-          }
+  "definitions": {
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
         },
-        "required": ["name"]
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
       },
-      "ResponseCategory": {
-        "type": "object",
+      "required": ["name"]
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "categoryId": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "price", "categoryId"]
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "number": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "zipCode": {
+              "type": "string"
+            }
+          }
+        }
+      }, "login": {
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "createdAt": {
+          "email": {
             "type": "string",
-            "format": "date-time"
+            "format": "email"
           },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
+          "password": {
+            "type": "string"
           }
         }
       }
