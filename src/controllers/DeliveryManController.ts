@@ -30,12 +30,12 @@ const createDeliveryMan = async (request: Request, response: Response) => {
     return response.status(201).json({
       success: true,
       data: delivery,
-      message: 'Delivery man created with success!',
+      message: 'Delivery man created with success',
     })
   } catch (error) {
     console.log(error)
     return response.status(400).json({
-      message: 'User already exists with this email!',
+      message: 'User already exists with this email',
     })
   }
 }
@@ -80,13 +80,13 @@ const loginDeliveryMan = async (request: Request, response: Response) => {
       success: true,
       token,
       user: deliveryManUserLogin,
-      message: 'Login successful!',
+      message: 'User logged in successfully',
     })
   } catch (error) {
     console.error(error)
     return response.status(401).json({
       success: false,
-      message: 'E-mail or password invalid',
+      message: 'Invalid email or password',
     })
   }
 }

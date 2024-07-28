@@ -723,143 +723,133 @@
           }
         }
       }
+    },
+    "/deliveryman/create": {
+      "post": {
+        "tags": ["DeliveryMan"],
+        "summary": "Create a new delivery man",
+        "description": "Creates a new delivery man in the system",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeliveryMan"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Delivery man created with success"
+          },
+          "400": {
+            "description": "User already exists with this email"
+          }
+        }
+      }
+    },
+    "/deliveryman/login/user": {
+      "post": {
+        "tags": ["DeliveryMan"],
+        "summary": "User login",
+        "description": "User login for delivery man",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "type": "object",
+            "schema": {
+              "$ref": "#/definitions/Delivery-user-login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged in successfully"
+          },
+          "400": {
+            "description": "Invalid email or password"
+          }
+        }
+      }
+    },
+    "/deliveryman/update/{id}/user": {
+      "put": {
+        "tags": ["DeliveryMan"],
+        "summary": "Update delivery man",
+        "description": "Update delivery person data - (Auth Token required)",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "type": "object",
+            "schema": {
+              "$ref": "#/definitions/Delivery-update-user"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "DeliveryMan updated successfully"
+          },
+          "400": {
+            "description": "Invalid or missing parameters: id, name, phones"
+          }
+        }
+      }
+    },
+    "/deliveryman/order-accept/{id}": {
+      "put": {
+        "tags": ["DeliveryMan"],
+        "summary": "Accept order",
+        "description": "Update order with delivery man id - (Auth Token required)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Delivery-order-accept"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "DeliveryMan accepted with successfully"
+          },
+          "400": {
+            "description": "Error updating order delivery man"
+          },
+          "401": {
+            "description": "User ID not specified in request"
+          }
+        }
+      }
+    },
+    "/deliveryman/orders": {
+      "get": {
+        "tags": ["DeliveryMan"],
+        "summary": "Get orders by Delivery man",
+        "description": "Get all orders created by deliveryman - (Auth Token required)",
+        "responses": {
+          "200": {
+            "description": "Orders retrieved successfully"
+          },
+          "400": {
+            "description": "Failed to get order"
+          },
+          "401": {
+            "description": "DeliveryManId not specified in request"
+          }
+        }
+      }
     }
   },
   "definitions": {
-    "Category": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": ["name"]
-    },
-    "Product": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "price": {
-          "type": "number",
-          "format": "float"
-        },
-        "categoryId": {
-          "type": "string"
-        },
-        "imageUrl": {
-          "type": "string"
-        }
-      },
-      "required": ["name", "price", "categoryId"]
-    },
-    "User": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string",
-          "format": "email"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "address": {
-          "type": "object",
-          "properties": {
-            "street": {
-              "type": "string"
-            },
-            "number": {
-              "type": "string"
-            },
-            "city": {
-              "type": "string"
-            },
-            "country": {
-              "type": "string"
-            },
-            "zipCode": {
-              "type": "string"
-            }
-          }
-        }
-      }, "login": {
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string"
-          }
-        }
-      }, "address": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-            },
-            "address": {
-              "properties": {
-              "street": {
-              "type": "string"
-              },
-              "number": {
-                "type": "string"
-              },
-              "city": {
-                "type": "string"
-              },
-              "country": {
-                "type": "string"
-              },
-              "zipCode": {
-                "type": "string"
-              }
-            },
-            "required": ["street", "number", "city", "country", "zipCode"]
-          }
-        },
-        "required": ["email"] 
-      },
-      "update": {
-        "properties": {
-          "username": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          }
-        },
-        "required": ["username", "name", "phone"]
-      },
-      "byid": {
+      "Category": {
         "type": "object",
         "properties": {
           "id": {
@@ -868,7 +858,44 @@
           "name": {
             "type": "string"
           },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "float"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "price", "categoryId"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
           "username": {
+            "type": "string"
+          },
+          "name": {
             "type": "string"
           },
           "email": {
@@ -878,7 +905,7 @@
           "phone": {
             "type": "string"
           },
-          "role": {
+          "password": {
             "type": "string"
           },
           "address": {
@@ -901,47 +928,199 @@
               }
             }
           }
-        }
-      }
-    },
-    "Order": {
-      "type": "object",
-      "properties": {
-        "products": {
+        }, "login": {
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        }, "address": {
           "type": "object",
           "properties": {
-            "productId": {
+            "email": {
+              "type": "string",
+              "format": "email"
+              },
+              "address": {
+                "properties": {
+                "street": {
+                "type": "string"
+                },
+                "number": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                },
+                "zipCode": {
+                  "type": "string"
+                }
+              },
+              "required": ["street", "number", "city", "country", "zipCode"]
+            }
+          },
+          "required": ["email"] 
+        },
+        "update": {
+          "properties": {
+            "username": {
               "type": "string"
             },
-            "quantity": {
-              "type": "number"
-            } 
-          }, 
-          "required": ["productId", "quantity"]
+            "name": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            }
+          },
+          "required": ["username", "name", "phone"]
         },
-        "totalAmount": {
-          "type": "number"
-        },
-        "discount": {
-          "type": "number"
-        },
-        "status": {
-          "type": "string"
+        "byid": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string"
+            },
+            "address": {
+              "type": "object",
+              "properties": {
+                "street": {
+                  "type": "string"
+                },
+                "number": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                },
+                "zipCode": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       },
-      "required": ["totalAmount", "discount", "status"]
-    },
-    "Order/delivered": {
-      "type": "object",
-      "properties": {
-        "deliveryManId": {
-          "type": "string"
+      "Order": {
+        "type": "object",
+        "properties": {
+          "products": {
+            "type": "object",
+            "properties": {
+              "productId": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              } 
+            }, 
+            "required": ["productId", "quantity"]
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "discount": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string"
+          }
         },
-        "authorization": {
-          "type": "string"
-        }
+        "required": ["totalAmount", "discount", "status"]
       },
-      "required": ["deliveryManId"]
-    }
+      "Order/delivered": {
+        "type": "object",
+        "properties": {
+          "deliveryManId": {
+            "type": "string"
+          },
+          "authorization": {
+            "type": "string"
+          }
+        },
+        "required": ["deliveryManId"]
+      },
+      "DeliveryMan": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+          },
+          "required": ["name", "email", "username", "password", "phone"]
+      },
+      "Delivery-user-login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "Delivery-update-user": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "phone"]
+      },
+      "Delivery-order-accept": {
+        "type": "object",
+        "properties": {
+          "deliveryManId": {
+            "type": "string"
+          }
+        },
+        "required": ["deliveryManId"]
+      }
     }
   }
