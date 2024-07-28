@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/ThiLourenco/delivery-backend#readme",
   "dependencies": {
-    "@hookform/resolvers": "^3.4.2",
     "@prisma/client": "^5.14.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
