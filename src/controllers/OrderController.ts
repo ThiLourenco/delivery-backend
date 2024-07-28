@@ -76,7 +76,7 @@ const getOrderByUserWithoutProducts = async (request: Request, response: Respons
   }
 }
 
-const getOrderByUserWihProducts = async (request: Request, response: Response) => {
+const getOrderByUserWithProducts = async (request: Request, response: Response) => {
   try {
     const userId = request.userId
 
@@ -170,7 +170,7 @@ const getAllOrdersUnavailable = async (
   } catch (error) {
     console.error(error)
     return response.status(400).json({
-      message: 'Failed to get orders unavailable!',
+      message: 'Failed to get orders unavailable',
     })
   }
 }
@@ -266,7 +266,7 @@ const deliveredOrder = async (request: Request, response: Response) => {
 export default {
   createOrder,
   getOrderByUserWithoutProducts,
-  getOrderByUserWihProducts,
+  getOrderByUserWithProducts,
   deliveredOrder,
   getAllOrdersAvailable,
   getAllOrdersUnavailable,

@@ -26,7 +26,7 @@ orderRoutes.get(
 orderRoutes.get(
   '/user/products/list',
   ensureAuthenticateClient,
-  OrderController.getOrderByUserWihProducts,
+  OrderController.getOrderByUserWithProducts,
 )
 
 orderRoutes.get('/availables', OrderController.getAllOrdersAvailable)
